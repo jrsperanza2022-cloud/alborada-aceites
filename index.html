@@ -2,112 +2,157 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Alborada — Gestión Aceite</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
 <style>
 :root{
-  --G:#2d6a4f;--GD:#1b4332;--GL:#f0f7f4;--GB:#b7d9c8;
-  --BL:#f0f4ff;--BB:#b0c0e8;--BT:#1a3a7a;
-  --OL:#fff8f0;--OB:#f0c080;--OT:#b05a00;
-  --R:#c0392b;--RL:#fff0ee;
-  --bg:#f5f8f6;--surf:#fff;--surf2:#f1f5f2;--surf3:#e8eeeb;
-  --bor:#dde8e2;--text:#1a2e24;--t2:#5a7060;--t3:#9ab0a2;
-  --rad:10px;--radsm:6px;
-  --sh:0 1px 3px rgba(0,0,0,.07);--shlg:0 4px 16px rgba(0,0,0,.11);
+  --pri:#1e4d8c;--prl:#e8f0fb;--prb:#c5d8f5;
+  --acc:#e67e22;--acl:#fef3e2;--acb:#f5c07a;
+  --suc:#27ae60;--sul:#e8f8ef;--sub:#a0d8b4;
+  --war:#f39c12;--wal:#fffbea;--wab:#f5d98a;
+  --dan:#e74c3c;--dal:#fff0ee;--dab:#f5a0a0;
+  --bg:#f0f4fa;--surf:#fff;--surf2:#f7f9fc;--surf3:#edf1f7;
+  --bor:#d8e2f0;--text:#1a2540;--t2:#5a6a8a;--t3:#9aaac8;
+  --rad:12px;--radsm:7px;
+  --sh:0 1px 4px rgba(30,77,140,.08);--shlg:0 4px 20px rgba(30,77,140,.13);
 }
 @media(prefers-color-scheme:dark){:root{
-  --bg:#0d1a12;--surf:#182518;--surf2:#1e2e1e;--surf3:#253025;--bor:#2a3d2a;
-  --text:#e2ede6;--t2:#7a9e84;--t3:#4a6a52;
-  --GL:#182518;--GB:#2a4a32;--BL:#111d2e;--BB:#1a2d50;--OL:#2a1a08;--OB:#5a3a10;
+  --bg:#0e1420;--surf:#161e30;--surf2:#1c2638;--surf3:#222e42;
+  --bor:#2a3850;--text:#d8e6ff;--t2:#7a94c0;--t3:#3a5080;
+  --prl:#0a1528;--prb:#1a3060;
 }}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-tap-highlight-color:transparent;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
-.app{max-width:1024px;margin:0 auto;padding-bottom:80px;}
-header{background:linear-gradient(135deg,var(--G),var(--GD));color:#fff;padding:13px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;box-shadow:var(--shlg);}
-header h1{font-size:16px;font-weight:700;flex:1;letter-spacing:-.2px;}
-.hbadge{background:rgba(255,255,255,.18);font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;}
-.hdate{font-size:11px;opacity:.7;}
-.tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--bor);overflow-x:auto;scrollbar-width:none;position:sticky;top:49px;z-index:199;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.app{max-width:1200px;margin:0 auto;padding-bottom:80px;}
+
+/* HEADER */
+header{background:linear-gradient(120deg,#1e4d8c,#2d6fbf);color:#fff;padding:13px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:var(--shlg);}
+header h1{font-size:16px;font-weight:700;flex:1;}
+.hbadge{background:rgba(255,255,255,.18);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.dolar-widget{display:flex;gap:10px;font-size:11px;}
+.dw{background:rgba(255,255,255,.12);border-radius:8px;padding:4px 10px;cursor:pointer;transition:background .2s;}
+.dw:hover{background:rgba(255,255,255,.22);}
+.dw .dl{opacity:.7;font-size:10px;}
+.dw .dv{font-weight:700;font-size:13px;}
+.dw.loading .dv{opacity:.5;}
+
+/* TABS */
+.tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--bor);overflow-x:auto;scrollbar-width:none;position:sticky;top:49px;z-index:199;box-shadow:0 2px 8px rgba(30,77,140,.06);}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{padding:11px 14px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;color:var(--t2);white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:all .15s;}
+.tab{padding:11px 15px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;color:var(--t2);white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:all .15s;}
 .tab i{font-size:14px;}
-.tab.active{border-bottom-color:var(--G);color:var(--G);font-weight:700;}
+.tab.active{border-bottom-color:var(--pri);color:var(--pri);font-weight:700;}
 .tab:hover:not(.active){background:var(--surf2);}
-.panel{display:none;padding:14px;}
+
+/* PANELS */
+.panel{display:none;padding:16px;}
 .panel.active{display:block;}
-.card{background:var(--surf);border:1px solid var(--bor);border-radius:var(--rad);padding:15px;margin-bottom:11px;box-shadow:var(--sh);}
-.sec{font-size:10px;font-weight:700;color:var(--G);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--GB);padding-bottom:5px;margin:14px 0 9px;display:flex;align-items:center;justify-content:space-between;}
+
+/* CARDS */
+.card{background:var(--surf);border:1px solid var(--bor);border-radius:var(--rad);padding:16px;margin-bottom:12px;box-shadow:var(--sh);}
+.card-accent{border-left:4px solid var(--pri);}
+.sec{font-size:10px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--prb);padding-bottom:5px;margin:15px 0 10px;display:flex;align-items:center;justify-content:space-between;}
 .sec span{display:flex;align-items:center;gap:5px;}
 .sec:first-child{margin-top:0;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
-@media(max-width:640px){.g3,.g4{grid-template-columns:1fr 1fr;}}
-@media(max-width:380px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:11px;}
+.g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:11px;}
+@media(max-width:720px){.g4,.g5{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:560px){.g3,.g4,.g5{grid-template-columns:1fr 1fr;}}
+@media(max-width:360px){.g2,.g3,.g4,.g5{grid-template-columns:1fr;}}
+
+/* FIELDS */
 .field{display:flex;flex-direction:column;gap:4px;}
 .field label{font-size:10px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
-.field input,.field select,.field textarea{font-size:14px;padding:9px 11px;border:1px solid var(--bor);border-radius:var(--radsm);background:var(--surf);color:var(--text);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--G);box-shadow:0 0 0 3px rgba(45,106,79,.12);}
+.field input,.field select,.field textarea{font-size:14px;padding:9px 12px;border:1.5px solid var(--bor);border-radius:var(--radsm);background:var(--surf);color:var(--text);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(30,77,140,.1);}
 .field input[readonly]{background:var(--surf2);color:var(--t2);cursor:default;}
-.field textarea{resize:vertical;min-height:58px;line-height:1.5;}
+.field textarea{resize:vertical;min-height:56px;line-height:1.5;}
+.field .hint{font-size:10px;color:var(--t3);}
+
+/* BUTTONS */
 .btn{padding:9px 18px;border-radius:var(--radsm);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:none;transition:all .15s;line-height:1;}
 .btn i{font-size:15px;}
-.bp{background:var(--G);color:#fff;}.bp:hover{background:var(--GD);}
-.bs{background:transparent;color:var(--G);border:1.5px solid var(--G);}.bs:hover{background:var(--GL);}
-.br{background:transparent;color:var(--R);border:1.5px solid var(--R);}.br:hover{background:var(--RL);}
+.bp{background:var(--pri);color:#fff;}.bp:hover{background:#163d70;}
+.bs{background:transparent;color:var(--pri);border:1.5px solid var(--pri);}.bs:hover{background:var(--prl);}
+.ba{background:var(--acc);color:#fff;}.ba:hover{background:#c0661a;}
+.br{background:transparent;color:var(--dan);border:1.5px solid var(--dan);}.br:hover{background:var(--dal);}
 .bsm{padding:6px 12px;font-size:11px;}
 .bi{padding:7px;border-radius:var(--radsm);background:transparent;border:1px solid var(--bor);cursor:pointer;color:var(--t2);line-height:1;transition:all .15s;}
-.bi:hover{border-color:var(--G);color:var(--G);}
-.bi.del:hover{border-color:var(--R);color:var(--R);}
-.bi.edit:hover{border-color:var(--BT);color:var(--BT);}
-.act{display:flex;gap:8px;justify-content:flex-end;margin-top:13px;border-top:1px solid var(--bor);padding-top:13px;flex-wrap:wrap;}
-.toggle{display:flex;border:1.5px solid var(--GB);border-radius:var(--radsm);overflow:hidden;width:fit-content;margin-bottom:11px;}
-.toggle button{padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--t2);transition:all .15s;}
-.toggle button.active{background:var(--G);color:#fff;}
+.bi:hover{border-color:var(--pri);color:var(--pri);}
+.bi.del:hover{border-color:var(--dan);color:var(--dan);}
+.act{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;border-top:1px solid var(--bor);padding-top:14px;flex-wrap:wrap;}
+
+/* TOGGLE */
+.toggle{display:flex;border:1.5px solid var(--prb);border-radius:var(--radsm);overflow:hidden;width:fit-content;margin-bottom:12px;}
+.toggle button{padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--t2);transition:all .15s;}
+.toggle button.active{background:var(--pri);color:#fff;}
 .chips{display:flex;gap:7px;flex-wrap:wrap;}
-.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--GB);background:transparent;color:var(--t2);transition:all .15s;}
-.chip.sel{background:var(--G);color:#fff;border-color:var(--G);}
+.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--prb);background:transparent;color:var(--t2);transition:all .15s;}
+.chip.sel{background:var(--pri);color:#fff;border-color:var(--pri);}
+
+/* BADGES */
 .badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700;white-space:nowrap;}
-.bg{background:#e8f4ec;color:#1e6b3a;}.be{background:#e8eef8;color:#1a3a7a;}
-.bo{background:#fef3e2;color:#7a5010;}.bm{background:#f3e8f8;color:#5a1a7a;}
-.bpend{background:#fef3e2;color:#7a5010;}.bcob{background:#e8f4ec;color:#1e6b3a;}
-.bpar{background:#e8eef8;color:#1a3a7a;}.bcan{background:#fde8e8;color:#a32d2d;}
-.box{border-radius:var(--radsm);padding:12px 14px;margin-top:9px;}
-.bxg{background:var(--GL);border:1px solid var(--GB);}
-.bxb{background:var(--BL);border:1px solid var(--BB);}
-.bxo{background:var(--OL);border:1px solid var(--OB);}
-.bxr{background:var(--RL);border:1px solid #f0b0b0;}
-.bx-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
-.bxg .bx-title{color:#1e6b3a;}.bxb .bx-title{color:var(--BT);}.bxo .bx-title{color:var(--OT);}.bxr .bx-title{color:var(--R);}
-.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin-bottom:13px;}
-.sc{background:var(--surf);border:1px solid var(--bor);border-radius:var(--radsm);padding:12px 13px;}
+.bg{background:#e0f5ea;color:#1a7a40;}.be{background:#e0eeff;color:#1a4090;}
+.bo{background:#fff0d8;color:#8a4a00;}.bm{background:#f0e0ff;color:#5a0a9a;}
+.bpend{background:#fff0d8;color:#8a4a00;}.bcob{background:#e0f5ea;color:#1a7a40;}
+.bpar{background:#e0eeff;color:#1a4090;}.bcan{background:#ffe0e0;color:#9a1a1a;}
+.bwin{background:#e0f5ea;color:#1a7a40;font-size:11px;padding:4px 10px;}
+.blose{background:#ffe0e0;color:#9a1a1a;font-size:11px;padding:4px 10px;}
+
+/* INFO BOXES */
+.box{border-radius:var(--radsm);padding:13px 15px;margin-top:10px;}
+.bxb{background:var(--prl);border:1.5px solid var(--prb);}
+.bxo{background:var(--wal);border:1.5px solid var(--wab);}
+.bxg{background:var(--sul);border:1.5px solid var(--sub);}
+.bxr{background:var(--dal);border:1.5px solid var(--dab);}
+.bxn{background:var(--surf2);border:1.5px solid var(--bor);}
+.bx-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px;display:flex;align-items:center;gap:5px;}
+.bxb .bx-title{color:var(--pri);}.bxo .bx-title{color:var(--war);}.bxg .bx-title{color:var(--suc);}.bxr .bx-title{color:var(--dan);}
+
+/* STAT CARDS */
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:14px;}
+.sc{background:var(--surf);border:1px solid var(--bor);border-radius:var(--radsm);padding:13px 14px;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--pri);}
+.sc.green::before{background:var(--suc);}.sc.orange::before{background:var(--acc);}.sc.red::before{background:var(--dan);}
 .sc .lbl{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;font-weight:600;}
 .sc .val{font-size:22px;font-weight:800;line-height:1;}
 .sc .val.sm{font-size:15px;font-weight:700;}
-.sc .val.g{color:var(--G);}.sc .val.r{color:var(--R);}.sc .val.b{color:var(--BT);}
+.sc .val.g{color:var(--suc);}.sc .val.r{color:var(--dan);}.sc .val.b{color:var(--pri);}.sc .val.o{color:var(--acc);}
 .sc .sub{font-size:10px;color:var(--t3);margin-top:3px;}
+
+/* TABLES */
 .tw{overflow-x:auto;border-radius:var(--radsm);border:1px solid var(--bor);}
 table{width:100%;border-collapse:collapse;font-size:12px;}
-th{background:var(--surf2);font-weight:700;font-size:10px;text-align:left;padding:8px 10px;border-bottom:1px solid var(--bor);color:var(--t2);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;}
-td{padding:8px 10px;border-bottom:1px solid var(--bor);vertical-align:middle;}
+th{background:linear-gradient(180deg,var(--surf2),var(--surf3));font-weight:700;font-size:10px;text-align:left;padding:9px 11px;border-bottom:1.5px solid var(--bor);color:var(--t2);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;z-index:2;}
+td{padding:8px 11px;border-bottom:1px solid var(--bor);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:var(--surf2);}
-.tdg{color:var(--G);font-weight:700;}.tdr{color:var(--R);font-weight:700;}.tdb{color:var(--BT);font-weight:700;}
+tr:hover td{background:var(--prl);}
+.tdg{color:var(--suc);font-weight:700;}.tdr{color:var(--dan);font-weight:700;}.tdb{color:var(--pri);font-weight:700;}.tdo{color:var(--acc);font-weight:700;}
 .empty td{text-align:center;color:var(--t3);padding:28px;font-style:italic;}
-.sbar{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap;}
-.sbar input,.sbar select{font-size:13px;padding:8px 11px;border:1px solid var(--bor);border-radius:var(--radsm);background:var(--surf);color:var(--text);flex:1;min-width:110px;}
-.sbar input:focus,.sbar select:focus{border-color:var(--G);outline:none;}
-.alert{border-radius:var(--radsm);padding:9px 12px;font-size:12px;display:flex;align-items:center;gap:8px;margin-top:7px;}
-.awarn{background:var(--OL);border:1px solid var(--OB);color:var(--OT);}
-.aok{background:var(--GL);border:1px solid var(--GB);color:#1e6b3a;}
-.ainfo{background:var(--BL);border:1px solid var(--BB);color:var(--BT);}
-.aerr{background:var(--RL);border:1px solid #f0b0b0;color:var(--R);}
-.tzone{border:2px dashed var(--GB);border-radius:var(--rad);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--GL);position:relative;margin-top:8px;}
-.tzone:hover,.tzone.drag{border-color:var(--G);background:#e0f2ea;}
+
+/* SEARCH */
+.sbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.sbar input,.sbar select{font-size:13px;padding:8px 12px;border:1.5px solid var(--bor);border-radius:var(--radsm);background:var(--surf);color:var(--text);flex:1;min-width:110px;outline:none;transition:border-color .15s;}
+.sbar input:focus,.sbar select:focus{border-color:var(--pri);}
+
+/* ALERTS */
+.alert{border-radius:var(--radsm);padding:9px 13px;font-size:12px;display:flex;align-items:center;gap:8px;margin-top:8px;}
+.awarn{background:var(--wal);border:1px solid var(--wab);color:#7a5000;}
+.aok{background:var(--sul);border:1px solid var(--sub);color:#1a6a30;}
+.aerr{background:var(--dal);border:1px solid var(--dab);color:#8a1a1a;}
+.ainfo{background:var(--prl);border:1px solid var(--prb);color:var(--pri);}
+
+/* TICKETS */
+.tzone{border:2px dashed var(--prb);border-radius:var(--rad);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--prl);position:relative;margin-top:8px;}
+.tzone:hover,.tzone.drag{border-color:var(--pri);background:#ddeeff;}
 .tzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.tzone i{font-size:24px;color:var(--G);}
+.tzone i{font-size:24px;color:var(--pri);}
 .tzone p{font-size:12px;color:var(--t2);margin-top:5px;}
 .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:9px;}
 .tthumb{position:relative;border-radius:var(--radsm);overflow:hidden;border:1px solid var(--bor);aspect-ratio:3/4;background:var(--surf2);}
@@ -117,84 +162,131 @@ tr:hover td{background:var(--surf2);}
 .tthumb .tlbl{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:9px;padding:2px 4px;text-align:center;}
 .tmini{width:32px;height:43px;object-fit:cover;border-radius:3px;border:1px solid var(--bor);cursor:pointer;transition:transform .15s;}
 .tmini:hover{transform:scale(1.15);}
-.tinline{display:flex;gap:3px;align-items:center;flex-wrap:wrap;}
-.lb{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;}
+.tinline{display:flex;gap:3px;align-items:center;}
+
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;}
 .lb img{max-width:100%;max-height:88vh;border-radius:var(--rad);}
 .lb-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .lb-info{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font-size:12px;padding:5px 14px;border-radius:20px;white-space:nowrap;}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;}
-.modal{background:var(--surf);border-radius:var(--rad);box-shadow:var(--shlg);width:100%;max-width:700px;max-height:90vh;overflow-y:auto;}
-.modal-header{padding:16px 18px;border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1;}
+
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(10,20,50,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px);}
+.modal{background:var(--surf);border-radius:var(--rad);box-shadow:var(--shlg);width:100%;max-width:820px;max-height:92vh;overflow-y:auto;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1;}
 .modal-header h3{font-size:15px;font-weight:700;}
-.modal-body{padding:16px 18px;}
-.modal-footer{padding:13px 18px;border-top:1px solid var(--bor);display:flex;justify-content:flex-end;gap:8px;}
-.chart-wrap{display:flex;align-items:flex-end;gap:4px;height:80px;margin-top:8px;}
+.modal-body{padding:16px 20px;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--bor);display:flex;justify-content:flex-end;gap:8px;}
+
+/* CHART */
+.chart-wrap{display:flex;align-items:flex-end;gap:5px;height:80px;margin-top:8px;}
 .chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
-.chart-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;cursor:pointer;transition:opacity .2s;}
-.chart-bar:hover{opacity:.8;}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;min-height:2px;cursor:pointer;transition:opacity .2s;}
+.chart-bar:hover{opacity:.75;}
 .chart-lbl{font-size:9px;color:var(--t3);text-align:center;}
-.prov-card{background:var(--surf);border:1px solid var(--bor);border-radius:var(--rad);padding:13px 15px;cursor:pointer;transition:all .15s;}
-.prov-card:hover{border-color:var(--G);box-shadow:var(--sh);}
-.gasto-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;}
-.gt-flete{background:#e8f4ec;color:#1e6b3a;}.gt-lab{background:#e8eef8;color:#1a3a7a;}
-.gt-alm{background:#fef3e2;color:#7a5010;}.gt-adm{background:#f3e8f8;color:#5a1a7a;}.gt-otro{background:var(--surf2);color:var(--t2);}
+
+/* SCENARIO RESULT */
+.scenario-box{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px;}
+.scen{border-radius:var(--radsm);padding:11px 13px;text-align:center;border:1.5px solid;}
+.scen.win{background:var(--sul);border-color:var(--sub);}
+.scen.lose{background:var(--dal);border-color:var(--dab);}
+.scen.neutral{background:var(--surf2);border-color:var(--bor);}
+.scen .s-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.scen.win .s-name{color:var(--suc);}
+.scen.lose .s-name{color:var(--dan);}
+.scen .s-val{font-size:18px;font-weight:800;}
+.scen.win .s-val{color:var(--suc);}
+.scen.lose .s-val{color:var(--dan);}
+.scen .s-sub{font-size:10px;color:var(--t2);margin-top:3px;}
+
+/* TOAST */
 .toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
-.toast{background:var(--GD);color:#fff;padding:10px 20px;border-radius:var(--rad);font-size:13px;box-shadow:var(--shlg);animation:tin .25s ease;white-space:nowrap;font-weight:500;}
-.toast.err{background:#a32d2d;}.toast.info{background:var(--BT);}
+.toast{background:#1e3a6a;color:#fff;padding:10px 22px;border-radius:var(--rad);font-size:13px;box-shadow:var(--shlg);animation:tin .25s ease;white-space:nowrap;font-weight:500;}
+.toast.err{background:#8a2020;}.toast.info{background:var(--acc);}
 @keyframes tin{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-.opn{font-size:10px;color:var(--t3);background:var(--surf2);padding:2px 6px;border-radius:4px;font-weight:700;}
-::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--GB);border-radius:3px;}
-@media print{header,.tabs,.act,.bi,.btn,.toasts,.lb{display:none!important;}.panel{display:block!important;padding:0;}.card{box-shadow:none;break-inside:avoid;}}
+.opn{font-size:10px;color:var(--t3);background:var(--surf3);padding:2px 7px;border-radius:4px;font-weight:700;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--prb);border-radius:3px;}
+@media print{header,.tabs,.act,.bi,.btn,.toasts,.lb{display:none!important;}.panel{display:block!important;}.card{break-inside:avoid;}}
+
+/* TN FLOW */
+.tn-flow{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr 40px 1fr;align-items:center;gap:6px;margin-top:8px;}
+.tn-node{background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--radsm);padding:10px 8px;text-align:center;}
+.tn-node .nn{font-size:9px;color:var(--t2);font-weight:700;text-transform:uppercase;margin-bottom:4px;}
+.tn-node .nv{font-size:15px;font-weight:800;color:var(--pri);}
+.tn-node.filled{background:var(--sul);border-color:var(--sub);}
+.tn-node.filled .nv{color:var(--suc);}
+.tn-arrow{text-align:center;color:var(--t3);font-size:18px;}
+.tn-diff{text-align:center;}
+.tn-diff .dv{font-size:12px;font-weight:700;}
+.tn-diff .dl{font-size:9px;color:var(--t2);}
+
+/* PROV CARD */
+.prov-card{background:var(--surf);border:1.5px solid var(--bor);border-radius:var(--rad);padding:14px 16px;transition:all .15s;}
+.prov-card:hover{border-color:var(--pri);box-shadow:var(--sh);}
 </style>
 </head>
 <body>
 <div class="app">
+
 <header>
   <i class="ti ti-droplet-filled" style="font-size:22px"></i>
   <h1>Alborada — Gestión Aceite</h1>
   <span class="hbadge" id="hbadge">0 ops</span>
-  <span class="hdate" id="hdate"></span>
+  <div class="dolar-widget" id="dolar-widget">
+    <div class="dw loading" id="dw-div" onclick="fetchDolar()">
+      <div class="dl">DIVISA</div><div class="dv" id="dv-div">—</div>
+    </div>
+    <div class="dw loading" id="dw-may" onclick="fetchDolar()">
+      <div class="dl">MAYOR.</div><div class="dv" id="dv-may">—</div>
+    </div>
+    <div class="dw loading" id="dw-blue" onclick="fetchDolar()">
+      <div class="dl">BLUE</div><div class="dv" id="dv-blue">—</div>
+    </div>
+  </div>
 </header>
+
 <div class="tabs">
   <div class="tab active" onclick="T('dash')"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
   <div class="tab" onclick="T('op')"><i class="ti ti-plus-circle"></i>Nueva op.</div>
+  <div class="tab" onclick="T('planilla')"><i class="ti ti-table"></i>Planilla</div>
   <div class="tab" onclick="T('echeq')"><i class="ti ti-credit-card"></i>Echeq</div>
-  <div class="tab" onclick="T('hist')"><i class="ti ti-list-details"></i>Historial</div>
   <div class="tab" onclick="T('provs')"><i class="ti ti-users"></i>Proveedores</div>
   <div class="tab" onclick="T('gastos')"><i class="ti ti-receipt"></i>Gastos</div>
   <div class="tab" onclick="T('cfg')"><i class="ti ti-settings"></i>Config.</div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ══════ DASHBOARD ══════ -->
 <div class="panel active" id="panel-dash">
   <div class="scards" id="dc"></div>
-  <div class="g2" style="gap:11px">
+  <div class="g2" style="gap:12px">
     <div>
       <div class="sec"><span><i class="ti ti-alert-triangle"></i>Alertas activas</span></div>
       <div id="d-alerts"><div style="color:var(--t3);font-size:12px;padding:6px 0">Sin alertas ✓</div></div>
     </div>
     <div>
-      <div class="sec"><span><i class="ti ti-chart-bar"></i>Profit por mes</span></div>
+      <div class="sec"><span><i class="ti ti-chart-bar"></i>Resultado mensual (dólar divisa)</span></div>
       <div class="chart-wrap" id="monthly-chart"><div style="color:var(--t3);font-size:12px">Sin datos</div></div>
     </div>
   </div>
-  <div class="sec" style="margin-top:14px"><span><i class="ti ti-credit-card"></i>Echeqs próximos a vencer</span></div>
+  <div class="sec" style="margin-top:16px"><span><i class="ti ti-credit-card"></i>Echeqs próximos a vencer</span></div>
   <div id="d-echeqs-venc"><div style="color:var(--t3);font-size:12px;padding:6px 0">Sin echeqs próximos ✓</div></div>
-  <div class="sec" style="margin-top:14px"><span><i class="ti ti-clock"></i>Últimas operaciones</span></div>
+  <div class="sec" style="margin-top:16px"><span><i class="ti ti-clock"></i>Últimas operaciones</span></div>
   <div class="tw">
-    <table><thead><tr><th>#</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Tn vend.</th><th>Profit</th><th>Entrega</th><th>Cobro</th></tr></thead>
+    <table><thead><tr><th>#</th><th>Fecha op.</th><th>Proveedor</th><th>Producto</th><th>Tn vendidas</th><th>Resultado (divisa)</th><th>Entrega</th><th>Cobro</th></tr></thead>
     <tbody id="d-recent"><tr class="empty"><td colspan="8">Sin operaciones</td></tr></tbody></table>
   </div>
 </div>
 
-<!-- NUEVA / EDITAR OP -->
+<!-- ══════ NUEVA / EDITAR OP ══════ -->
 <div class="panel" id="panel-op">
   <input type="hidden" id="edit-id" value="">
-  <div id="edit-banner" class="box bxb" style="display:none;margin-bottom:11px">
+  <div id="edit-banner" class="box bxb" style="display:none;margin-bottom:12px">
     <div class="bx-title"><i class="ti ti-pencil"></i>Editando operación <span id="edit-num"></span></div>
     <div style="font-size:12px;color:var(--t2)">Modificá los datos y guardá para actualizar.</div>
   </div>
-  <div class="card">
+
+  <!-- IDENTIFICACION -->
+  <div class="card card-accent">
     <div class="sec"><span><i class="ti ti-file-description"></i>Identificación</span></div>
     <div class="g3">
       <div class="field"><label>Proveedor *</label>
@@ -208,7 +300,7 @@ tr:hover td{background:var(--surf2);}
           <option>Javier</option><option>Andres</option><option>Fabian</option><option>Matías</option></select></div>
       <div class="field"><label>Transportista</label><input type="text" id="f-transp" placeholder="ej: Juan Pérez"></div>
     </div>
-    <div class="g4" style="margin-top:10px">
+    <div class="g4" style="margin-top:11px">
       <div class="field"><label>N° Remito</label><input type="text" id="f-remito" placeholder="R-0001-00123"></div>
       <div class="field"><label>N° Factura</label><input type="text" id="f-factura" placeholder="A-0001-00456"></div>
       <div class="field"><label>Estado entrega</label>
@@ -217,15 +309,8 @@ tr:hover td{background:var(--surf2);}
         <select id="f-est-cob"><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option><option value="Cobrado">Cobrado</option></select></div>
     </div>
   </div>
-  <div class="card">
-    <div class="sec"><span><i class="ti ti-calendar"></i>Fechas</span></div>
-    <div class="g4">
-      <div class="field"><label>Fecha operación *</label><input type="date" id="f-fop"></div>
-      <div class="field"><label>Fecha entrega</label><input type="date" id="f-fent"></div>
-      <div class="field"><label>Fecha cobro</label><input type="date" id="f-fcob"></div>
-      <div class="field"><label>Fecha liquidación</label><input type="date" id="f-fliq"></div>
-    </div>
-  </div>
+
+  <!-- PRODUCTO -->
   <div class="card">
     <div class="sec"><span><i class="ti ti-package"></i>Producto</span></div>
     <div class="toggle" id="tipo-tog">
@@ -250,12 +335,10 @@ tr:hover td{background:var(--surf2);}
             <option>Crudo envasado</option><option>Refinado envasado</option>
             <option>Girasol envasado</option><option>Aceite Mezcla envasado</option><option>Speller envasado</option></select></div>
         <div class="field"><label>Presentación</label>
-          <select id="f-pres"><option value="">— seleccionar —</option>
-            <option>850 cc</option><option>900 cc</option><option>1500 cc</option>
-            <option>3000 cc</option><option>4500 cc</option><option>5000 cc</option></select></div>
+          <select id="f-pres"><option value="">—</option><option>850 cc</option><option>900 cc</option><option>1500 cc</option><option>3000 cc</option><option>4500 cc</option><option>5000 cc</option></select></div>
         <div class="field"><label>Marca</label><input type="text" id="f-marca" placeholder="ej: Bautista"></div>
       </div>
-      <div class="g4" style="margin-top:10px">
+      <div class="g4" style="margin-top:11px">
         <div class="field"><label>P. costo ($)</label><input type="number" id="f-pcos" oninput="liveCalc()"></div>
         <div class="field"><label>P. venta ($)</label><input type="number" id="f-pve" oninput="liveCalc()"></div>
         <div class="field"><label>Unidades</label><input type="number" id="f-uni" oninput="liveCalc()"></div>
@@ -263,43 +346,95 @@ tr:hover td{background:var(--surf2);}
       </div>
     </div>
   </div>
+
+  <!-- VIAJE 1: CRUDO -->
   <div class="card" id="card-tn">
-    <div class="sec"><span><i class="ti ti-weight"></i>Toneladas</span>
-      <span style="font-size:10px;color:var(--t3)" id="tcount-lbl"></span>
-    </div>
+    <div class="sec"><span><i class="ti ti-truck"></i>Viaje 1 — Crudo (origen → refinería)</span></div>
     <div class="g4">
-      <div class="field"><label>Tn vendidas</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.260" oninput="liveCalc()"></div>
-      <div class="field"><label>Tn entregadas</label><input type="number" step="0.001" id="f-tne" placeholder="ej: 29.260" oninput="liveCalc()"></div>
-      <div class="field"><label>Tn enviadas (origen)</label><input type="number" step="0.001" id="f-tnen" placeholder="ej: 30.340" oninput="liveCalc()"></div>
-      <div class="field"><label>Tn recibidas (destino)</label><input type="number" step="0.001" id="f-tnr" placeholder="ej: 30.310" oninput="liveCalc()"></div>
+      <div class="field"><label>Fecha salida origen</label><input type="date" id="f-f1sal"></div>
+      <div class="field"><label>Fecha llegada refinería</label><input type="date" id="f-f1lle"></div>
+      <div class="field"><label>Dólar del día</label>
+        <select id="f-dol1" onchange="liveCalc()">
+          <option value="divisa">Divisa (<span class="dref-div">—</span>)</option>
+          <option value="mayorista">Mayorista</option>
+          <option value="blue">Blue</option>
+        </select></div>
+      <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-dv1" placeholder="ej: 1391" oninput="liveCalc()"></div>
     </div>
-    <div class="g4" style="margin-top:10px">
-      <div class="field"><label>Descuento (kg)</label><input type="number" step="0.001" id="f-desc" placeholder="ej: 0.547"></div>
-      <div class="field"><label>Humedad / Imp. (%)</label><input type="number" step="0.01" id="f-hum" placeholder="ej: 0.2"></div>
-      <div class="field"><label>Dólar divisa</label><input type="number" id="f-dol" placeholder="ej: 1391"></div>
-      <div class="field"><label>F.C. (tipo cambio)</label><input type="text" id="f-fc" placeholder="ej: 1425"></div>
+    <div class="g4" style="margin-top:11px">
+      <div class="field"><label>🔵 Carga crudo — origen (tn)</label><input type="number" step="0.001" id="f-tn1" placeholder="ej: 30.340" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar el camión</div></div>
+      <div class="field"><label>🟡 Descarga crudo — refinería (tn)</label><input type="number" step="0.001" id="f-tn2" placeholder="ej: 30.310" oninput="liveCalc()"><div class="hint">Ticket balanza al descargar en refinería</div></div>
+      <div class="field"><label>Diferencia crudo (auto)</label><input type="text" id="f-dif1" readonly></div>
+      <div class="field"><label>Descuento / Humedad (kg)</label><input type="number" step="0.001" id="f-desc1" placeholder="ej: 0.547" oninput="liveCalc()"></div>
     </div>
-    <div id="diff-box" style="display:none">
-      <div class="box bxo" style="margin-top:10px">
-        <div class="bx-title"><i class="ti ti-alert-triangle"></i>Diferencias de kilos — tiempo real</div>
-        <div class="g4">
-          <div><div style="font-size:10px;color:var(--t2)">Enviado vs Recibido</div><div id="dif-er" style="font-size:16px;font-weight:800"></div></div>
-          <div><div style="font-size:10px;color:var(--t2)">Vendido vs Entregado</div><div id="dif-ve" style="font-size:16px;font-weight:800"></div></div>
-          <div><div style="font-size:10px;color:var(--t2)">% merma env/rec</div><div id="dif-pct" style="font-size:16px;font-weight:800"></div></div>
-          <div><div style="font-size:10px;color:var(--t2)">Impacto económico</div><div id="dif-imp" style="font-size:14px;font-weight:700;color:var(--R)"></div></div>
-        </div>
-        <div id="merma-alert" class="alert awarn" style="display:none;margin-top:8px"><i class="ti ti-alert-circle"></i>Merma supera el 0.5% — verificar con proveedor</div>
+
+    <!-- VIAJE 2: REFINADO -->
+    <div class="sec" style="margin-top:16px"><span><i class="ti ti-truck"></i>Viaje 2 — Refinado (refinería → envasadora)</span></div>
+    <div class="g4">
+      <div class="field"><label>Fecha salida refinería</label><input type="date" id="f-f2sal"></div>
+      <div class="field"><label>Fecha llegada envasadora</label><input type="date" id="f-f2lle"></div>
+      <div class="field"><label>Dólar del día</label>
+        <select id="f-dol2" onchange="liveCalc()">
+          <option value="divisa">Divisa</option>
+          <option value="mayorista">Mayorista</option>
+          <option value="blue">Blue</option>
+        </select></div>
+      <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-dv2" placeholder="ej: 1395" oninput="liveCalc()"></div>
+    </div>
+    <div class="g4" style="margin-top:11px">
+      <div class="field"><label>🟢 Carga refinado — refinería (tn)</label><input type="number" step="0.001" id="f-tn3" placeholder="ej: 29.280" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar refinado</div></div>
+      <div class="field"><label>🔴 Entrega refinado — envasadora (tn)</label><input type="number" step="0.001" id="f-tn4" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Ticket balanza al entregar en envasadora</div></div>
+      <div class="field"><label>Diferencia refinado (auto)</label><input type="text" id="f-dif2" readonly></div>
+      <div class="field"><label>Tn vendidas (facturadas)</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.260" oninput="liveCalc()"></div>
+    </div>
+
+    <!-- DIAGRAMA DE FLUJO TN -->
+    <div id="tn-flow-box" style="display:none;margin-top:14px">
+      <div class="bx-title" style="margin-bottom:8px"><i class="ti ti-arrows-right-left" style="font-size:13px"></i>Flujo de toneladas</div>
+      <div class="tn-flow">
+        <div class="tn-node" id="fn1"><div class="nn">Carga crudo<br>origen</div><div class="nv" id="fnv1">—</div></div>
+        <div class="tn-arrow"><i class="ti ti-arrow-right"></i><div class="tn-diff"><div class="dv" id="fnd1">—</div><div class="dl">dif.</div></div></div>
+        <div class="tn-node" id="fn2"><div class="nn">Descarga crudo<br>refinería</div><div class="nv" id="fnv2">—</div></div>
+        <div class="tn-arrow"><i class="ti ti-arrow-right"></i><div class="tn-diff"><div class="dv" id="fnd2" style="color:var(--t3)">refin.</div></div></div>
+        <div class="tn-node" id="fn3"><div class="nn">Carga refinado<br>refinería</div><div class="nv" id="fnv3">—</div></div>
+        <div class="tn-arrow"><i class="ti ti-arrow-right"></i><div class="tn-diff"><div class="dv" id="fnd3">—</div><div class="dl">dif.</div></div></div>
+        <div class="tn-node" id="fn4"><div class="nn">Entrega refinado<br>envasadora</div><div class="nv" id="fnv4">—</div></div>
+      </div>
+      <div class="box bxn" style="margin-top:10px">
+        <div class="bx-title"><i class="ti ti-scale"></i>Balance general</div>
+        <div class="g4" id="balance-box"></div>
       </div>
     </div>
-    <div class="sec" style="margin-top:14px"><span><i class="ti ti-camera"></i>Tickets de peso (máx. 4)</span></div>
+
+    <!-- TICKETS -->
+    <div class="sec" style="margin-top:16px"><span><i class="ti ti-camera"></i>Tickets de peso (máx. 4)</span>
+      <span style="font-size:10px;color:var(--t3)" id="tcount-lbl"></span>
+    </div>
     <div class="tzone" id="tzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropTix(event)">
       <input type="file" id="tinput" accept="image/*" multiple onchange="addTix(this.files)">
       <i class="ti ti-photo-up"></i>
       <p><strong>Tocá o arrastrá</strong> fotos del ticket de balanza</p>
-      <p style="font-size:11px;opacity:.7">Captura de WhatsApp, JPG o PNG — máx. 4 por operación</p>
+      <p style="font-size:11px;opacity:.7">Captura de WhatsApp — máx. 4 por operación</p>
     </div>
     <div class="tgrid" id="tpreview"></div>
   </div>
+
+  <!-- FECHAS GENERALES -->
+  <div class="card">
+    <div class="sec"><span><i class="ti ti-calendar"></i>Fechas generales</span></div>
+    <div class="g4">
+      <div class="field"><label>Fecha operación *</label><input type="date" id="f-fop"></div>
+      <div class="field"><label>Fecha cobro</label><input type="date" id="f-fcob"></div>
+      <div class="field"><label>Fecha liquidación</label><input type="date" id="f-fliq"></div>
+      <div class="field"><label>Forma de pago</label>
+        <select id="f-pago2">
+          <option value="Transferencia">Transferencia</option><option value="Echeq">Echeq</option>
+          <option value="Efectivo">Efectivo</option><option value="Cheque">Cheque físico</option><option value="Mixto">Mixto</option>
+        </select></div>
+    </div>
+  </div>
+
+  <!-- FINANCIERO -->
   <div class="card">
     <div class="sec"><span><i class="ti ti-cash"></i>Financiero</span></div>
     <div class="box bxb">
@@ -311,21 +446,20 @@ tr:hover td{background:var(--surf2);}
         <div class="field"><label>Total adelantos</label><input type="text" id="f-at" readonly></div>
       </div>
     </div>
-    <div class="g3" style="margin-top:10px">
+    <div class="g3" style="margin-top:11px">
       <div class="field"><label>Total comprado ($)</label><input type="number" id="f-tc" placeholder="ej: 41579116" oninput="liveCalc()"></div>
       <div class="field"><label>Total venta ($)</label><input type="number" id="f-tv" placeholder="ej: 41978916" oninput="liveCalc()"></div>
       <div class="field"><label>Diferencia ($)</label><input type="text" id="f-dif" readonly></div>
     </div>
-    <div id="profit-box" class="box bxg" style="display:none;margin-top:10px">
-      <div class="bx-title"><i class="ti ti-trending-up"></i>Resultado estimado</div>
-      <div class="g4">
-        <div><div style="font-size:10px;color:var(--t2)">Margen unitario</div><div id="r-margen" style="font-size:15px;font-weight:800;color:var(--G)"></div></div>
-        <div><div style="font-size:10px;color:var(--t2)">Profit bruto</div><div id="r-profit" style="font-size:15px;font-weight:800;color:var(--G)"></div></div>
-        <div><div style="font-size:10px;color:var(--t2)">Saldo a cobrar</div><div id="r-saldo" style="font-size:15px;font-weight:800;color:var(--BT)"></div></div>
-        <div><div style="font-size:10px;color:var(--t2)">Margen %</div><div id="r-pct" style="font-size:15px;font-weight:800;color:var(--G)"></div></div>
-      </div>
+
+    <!-- RESULTADO POR ESCENARIO -->
+    <div id="scenario-box" style="display:none;margin-top:12px">
+      <div class="bx-title" style="margin-bottom:6px;color:var(--pri)"><i class="ti ti-trending-up" style="font-size:13px"></i>Resultado por tipo de dólar</div>
+      <div class="scenario-box" id="scenarios"></div>
     </div>
   </div>
+
+  <!-- LOGISTICA -->
   <div class="card">
     <div class="sec"><span><i class="ti ti-truck"></i>Logística y costos</span></div>
     <div class="g4">
@@ -334,27 +468,60 @@ tr:hover td{background:var(--surf2);}
       <div class="field"><label>Comisión (%)</label><input type="number" id="f-com" placeholder="ej: 10"></div>
       <div class="field"><label>Almacenaje ($)</label><input type="number" id="f-alm" placeholder="ej: 50000"></div>
     </div>
-    <div class="field" style="margin-top:10px"><label>Notas / Observaciones</label>
-      <textarea id="f-notas" placeholder="Condiciones especiales, merma acordada, referencias, etc."></textarea></div>
+    <div class="field" style="margin-top:11px"><label>Notas / Observaciones</label>
+      <textarea id="f-notas" placeholder="Condiciones especiales, merma acordada, referencias..."></textarea></div>
   </div>
-  <div class="card">
-    <div class="sec"><span><i class="ti ti-credit-card"></i>Forma de pago</span></div>
-    <div class="chips" id="chips-pago">
-      <button class="chip sel" onclick="selChip(this,'Transferencia')">Transferencia</button>
-      <button class="chip" onclick="selChip(this,'Echeq')">Echeq</button>
-      <button class="chip" onclick="selChip(this,'Efectivo')">Efectivo</button>
-      <button class="chip" onclick="selChip(this,'Cheque')">Cheque físico</button>
-      <button class="chip" onclick="selChip(this,'Mixto')">Mixto</button>
-    </div>
-    <input type="hidden" id="f-pago" value="Transferencia">
-  </div>
+
   <div class="act">
     <button class="btn bs" onclick="cancelEdit()"><i class="ti ti-x"></i>Cancelar</button>
     <button class="btn bp" onclick="saveOp()"><i class="ti ti-device-floppy"></i><span id="save-lbl">Guardar operación</span></button>
   </div>
 </div>
 
-<!-- ECHEQ -->
+<!-- ══════ PLANILLA COMPLETA ══════ -->
+<div class="panel" id="panel-planilla">
+  <div class="sbar">
+    <input type="text" id="pl-q" placeholder="🔍 Buscar proveedor, producto, remito..." oninput="renderPlanilla()">
+    <input type="date" id="pl-fd" onchange="renderPlanilla()" title="Desde">
+    <input type="date" id="pl-fh" onchange="renderPlanilla()" title="Hasta">
+    <select id="pl-ec" onchange="renderPlanilla()"><option value="">Cobro: todos</option><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option><option value="Cobrado">Cobrado</option></select>
+    <select id="pl-ee" onchange="renderPlanilla()"><option value="">Entrega: todas</option><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option><option value="Completa">Completa</option></select>
+    <button class="btn bp bsm" onclick="T('op')"><i class="ti ti-plus"></i>Nueva op.</button>
+    <button class="btn bs bsm" onclick="exportCSV()"><i class="ti ti-file-spreadsheet"></i>CSV</button>
+  </div>
+  <div class="scards" id="pl-cards"></div>
+  <div class="tw">
+    <table>
+      <thead><tr>
+        <th>#</th>
+        <th>F. Operación</th><th>F. Sal. Crudo</th><th>F. Lle. Refin.</th>
+        <th>F. Sal. Refin.</th><th>F. Lle. Envasa.</th>
+        <th>F. Cobro</th><th>F. Liquid.</th>
+        <th>Proveedor</th><th>Comprador</th><th>Transportista</th>
+        <th>Tipo</th><th>Producto</th><th>Present.</th><th>Pallets</th>
+        <th>🔵 Carga crudo origen</th>
+        <th>🟡 Descarga crudo refin.</th>
+        <th>Dif. crudo</th>
+        <th>🟢 Carga refinado refin.</th>
+        <th>🔴 Entrega refinado envasa.</th>
+        <th>Dif. refinado</th>
+        <th>Tn vendidas</th>
+        <th>Balance crudo/refinado</th>
+        <th>P.Compra</th><th>P.Venta</th>
+        <th>Resultado divisa</th><th>Resultado mayorista</th><th>Resultado blue</th>
+        <th>Margen%</th><th>Adelantos</th>
+        <th>Dólar 1 (crudo)</th><th>Dólar 2 (refin.)</th>
+        <th>Flete</th><th>Comisión</th>
+        <th>Remito</th><th>Factura</th>
+        <th>Entrega</th><th>Cobro</th><th>Pago</th>
+        <th>Tickets</th><th>Notas</th><th></th>
+      </tr></thead>
+      <tbody id="tb-planilla"><tr class="empty"><td colspan="42">Sin operaciones registradas</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════ ECHEQ ══════ -->
 <div class="panel" id="panel-echeq">
   <div class="card">
     <div class="sec" style="margin-top:0"><span><i class="ti ti-credit-card"></i>Nuevo echeq</span></div>
@@ -364,7 +531,7 @@ tr:hover td{background:var(--surf2);}
       <div class="field"><label>Estado</label>
         <select id="e-est"><option value="Pendiente">Pendiente</option><option value="Cobrado">Cobrado</option><option value="Rechazado">Rechazado</option></select></div>
     </div>
-    <div class="g3" style="margin-top:10px">
+    <div class="g3" style="margin-top:11px">
       <div class="field"><label>Proveedor *</label>
         <select id="e-prov"><option value="">— seleccionar —</option>
           <option>María Elena</option><option>Mauro</option><option>Martin Grande</option>
@@ -378,15 +545,13 @@ tr:hover td{background:var(--surf2);}
           <option>Banco Macro</option><option>ICBC</option><option>Banco Supervielle</option><option>Otro</option></select></div>
       <div class="field"><label>N° de cheque</label><input type="text" id="e-num" placeholder="ej: 00012345"></div>
     </div>
-    <div class="g3" style="margin-top:10px">
+    <div class="g3" style="margin-top:11px">
       <div class="field"><label>Importe ($) *</label><input type="number" id="e-imp" placeholder="ej: 42000000"></div>
       <div class="field"><label>Cantidad echeqs</label>
-        <select id="e-cant"><option value="1">1</option><option value="2">2</option><option value="3">3</option>
-          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-          <option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
+        <select id="e-cant"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
       <div class="field"><label>Op. asociada (N°)</label><input type="number" id="e-opref" placeholder="ej: 5"></div>
     </div>
-    <div class="field" style="margin-top:10px"><label>Observaciones</label>
+    <div class="field" style="margin-top:11px"><label>Observaciones</label>
       <textarea id="e-obs" placeholder="Notas adicionales..."></textarea></div>
     <div class="act">
       <button class="btn bs" onclick="clearEcheq()"><i class="ti ti-x"></i>Limpiar</button>
@@ -405,45 +570,16 @@ tr:hover td{background:var(--surf2);}
   </div>
 </div>
 
-<!-- HISTORIAL -->
-<div class="panel" id="panel-hist">
-  <div class="scards" id="hist-cards"></div>
-  <div class="sbar">
-    <input type="text" id="s-q" placeholder="🔍 Buscar proveedor, producto, remito..." oninput="renderHist()">
-    <input type="date" id="s-fd" onchange="renderHist()" title="Desde">
-    <input type="date" id="s-fh" onchange="renderHist()" title="Hasta">
-    <select id="s-ec" onchange="renderHist()"><option value="">Cobro: todos</option><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option><option value="Cobrado">Cobrado</option></select>
-    <select id="s-ee" onchange="renderHist()"><option value="">Entrega: todas</option><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option><option value="Completa">Completa</option></select>
-    <select id="s-tp" onchange="renderHist()"><option value="">Granel y envase</option><option value="granel">Solo granel</option><option value="envase">Solo envase</option></select>
-    <button class="btn bs bsm" onclick="exportCSV()"><i class="ti ti-file-spreadsheet"></i>CSV</button>
-  </div>
-  <div class="tw">
-    <table>
-      <thead><tr>
-        <th>#</th><th>F.Op.</th><th>F.Entrega</th><th>F.Cobro</th><th>F.Liq.</th>
-        <th>Proveedor</th><th>Comprador</th><th>Transportista</th>
-        <th>Tipo</th><th>Producto</th><th>Present.</th><th>Pallets</th>
-        <th>Tn vend.</th><th>Tn entregadas</th><th>Tn enviadas</th><th>Tn recibidas</th>
-        <th>Dif.kg</th><th>% merma</th>
-        <th>P.Compra</th><th>P.Venta</th><th>Profit</th><th>Margen%</th>
-        <th>Adelantos</th><th>Remito</th><th>Factura</th>
-        <th>Entrega</th><th>Cobro</th><th>Pago</th><th>Tickets</th><th></th>
-      </tr></thead>
-      <tbody id="tb-ops"><tr class="empty"><td colspan="30">Sin operaciones</td></tr></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- PROVEEDORES -->
+<!-- ══════ PROVEEDORES ══════ -->
 <div class="panel" id="panel-provs">
   <div class="sbar">
     <input type="text" id="pq" placeholder="🔍 Buscar proveedor..." oninput="renderProvs()">
     <button class="btn bp bsm" onclick="openProvModal()"><i class="ti ti-plus"></i>Agregar proveedor</button>
   </div>
-  <div id="provs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px"></div>
+  <div id="provs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:11px"></div>
 </div>
 
-<!-- GASTOS -->
+<!-- ══════ GASTOS ══════ -->
 <div class="panel" id="panel-gastos">
   <div class="card">
     <div class="sec" style="margin-top:0"><span><i class="ti ti-receipt"></i>Registrar gasto operativo</span></div>
@@ -455,9 +591,9 @@ tr:hover td{background:var(--surf2);}
           <option value="Impuestos">Impuestos</option><option value="Otro">Otro</option></select></div>
       <div class="field"><label>Importe ($)</label><input type="number" id="g-imp" placeholder="ej: 150000"></div>
     </div>
-    <div class="g2" style="margin-top:10px">
+    <div class="g2" style="margin-top:11px">
       <div class="field"><label>Proveedor / Concepto</label><input type="text" id="g-prov" placeholder="ej: Transportes Pérez"></div>
-      <div class="field"><label>Descripción</label><input type="text" id="g-desc" placeholder="ej: Flete Rosario-Córdoba op#5"></div>
+      <div class="field"><label>Descripción</label><input type="text" id="g-desc" placeholder="ej: Flete op#5"></div>
     </div>
     <div class="act"><button class="btn bp" onclick="saveGasto()"><i class="ti ti-device-floppy"></i>Registrar gasto</button></div>
   </div>
@@ -469,7 +605,7 @@ tr:hover td{background:var(--surf2);}
   </div>
 </div>
 
-<!-- CONFIG -->
+<!-- ══════ CONFIG ══════ -->
 <div class="panel" id="panel-cfg">
   <div class="card">
     <div class="sec" style="margin-top:0"><span><i class="ti ti-building"></i>Empresa</span></div>
@@ -477,8 +613,19 @@ tr:hover td{background:var(--surf2);}
       <div class="field"><label>Nombre empresa</label><input type="text" id="cfg-empresa" placeholder="Alborada Aceites"></div>
       <div class="field"><label>CUIT</label><input type="text" id="cfg-cuit" placeholder="30-12345678-9"></div>
     </div>
-    <div class="field" style="margin-top:10px"><label>Dirección</label><input type="text" id="cfg-dir" placeholder="Av. Pellegrini 1234, Rosario"></div>
+    <div class="field" style="margin-top:11px"><label>Dirección</label><input type="text" id="cfg-dir" placeholder="Av. Pellegrini 1234, Rosario"></div>
     <div class="act"><button class="btn bp" onclick="saveCfg()"><i class="ti ti-device-floppy"></i>Guardar</button></div>
+  </div>
+  <div class="card">
+    <div class="sec"><span><i class="ti ti-currency-dollar"></i>Cotización dólar manual (si falla el auto)</span></div>
+    <div class="g3">
+      <div class="field"><label>Dólar Divisa ($)</label><input type="number" id="cfg-div" placeholder="ej: 1391" oninput="saveDolarManual()"></div>
+      <div class="field"><label>Dólar Mayorista ($)</label><input type="number" id="cfg-may" placeholder="ej: 1380" oninput="saveDolarManual()"></div>
+      <div class="field"><label>Dólar Blue ($)</label><input type="number" id="cfg-blue" placeholder="ej: 1410" oninput="saveDolarManual()"></div>
+    </div>
+    <div class="act">
+      <button class="btn bs" onclick="fetchDolar()"><i class="ti ti-refresh"></i>Actualizar online</button>
+    </div>
   </div>
   <div class="card">
     <div class="sec"><span><i class="ti ti-database"></i>Datos y backup</span></div>
@@ -488,7 +635,7 @@ tr:hover td{background:var(--surf2);}
         <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreData(this)"></label>
       <button class="btn br" onclick="confirmClear()"><i class="ti ti-trash"></i>Borrar todos los datos</button>
     </div>
-    <div class="alert ainfo" style="margin-top:10px"><i class="ti ti-info-circle"></i>Los datos se guardan en este dispositivo. Exportá el backup regularmente para no perder información.</div>
+    <div class="alert ainfo" style="margin-top:11px"><i class="ti ti-info-circle"></i>Los datos se guardan en este navegador. Exportá el backup regularmente.</div>
   </div>
 </div>
 
@@ -508,19 +655,19 @@ tr:hover td{background:var(--surf2);}
       <button class="bi" onclick="closeProvModal()"><i class="ti ti-x"></i></button></div>
     <div class="modal-body">
       <div class="g2">
-        <div class="field"><label>Nombre *</label><input type="text" id="pm-nombre" placeholder="ej: Juan García"></div>
-        <div class="field"><label>Razón social</label><input type="text" id="pm-rs" placeholder="ej: García SA"></div>
+        <div class="field"><label>Nombre *</label><input type="text" id="pm-nombre"></div>
+        <div class="field"><label>Razón social</label><input type="text" id="pm-rs"></div>
       </div>
-      <div class="g2" style="margin-top:10px">
-        <div class="field"><label>CUIT</label><input type="text" id="pm-cuit" placeholder="20-12345678-9"></div>
-        <div class="field"><label>Teléfono</label><input type="text" id="pm-tel" placeholder="341 4567890"></div>
+      <div class="g2" style="margin-top:11px">
+        <div class="field"><label>CUIT</label><input type="text" id="pm-cuit"></div>
+        <div class="field"><label>Teléfono</label><input type="text" id="pm-tel"></div>
       </div>
-      <div class="g2" style="margin-top:10px">
-        <div class="field"><label>Email</label><input type="email" id="pm-email" placeholder="contacto@empresa.com"></div>
-        <div class="field"><label>Localidad</label><input type="text" id="pm-loc" placeholder="ej: Rosario, SF"></div>
+      <div class="g2" style="margin-top:11px">
+        <div class="field"><label>Email</label><input type="email" id="pm-email"></div>
+        <div class="field"><label>Localidad</label><input type="text" id="pm-loc"></div>
       </div>
-      <div class="field" style="margin-top:10px"><label>Notas</label>
-        <textarea id="pm-notas" placeholder="Condiciones habituales, observaciones..."></textarea></div>
+      <div class="field" style="margin-top:11px"><label>Notas</label>
+        <textarea id="pm-notas" placeholder="Condiciones habituales..."></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn bs" onclick="closeProvModal()">Cancelar</button>
@@ -531,7 +678,7 @@ tr:hover td{background:var(--surf2);}
 
 <!-- MODAL DETALLE OP -->
 <div class="modal-bg" id="odm" style="display:none">
-  <div class="modal" style="max-width:820px">
+  <div class="modal" style="max-width:860px">
     <div class="modal-header"><h3 id="odm-title">Detalle operación</h3>
       <div style="display:flex;gap:6px">
         <button class="bi" onclick="window.print()" title="Imprimir"><i class="ti ti-printer"></i></button>
@@ -545,6 +692,7 @@ tr:hover td{background:var(--surf2);}
 <div class="toasts" id="toasts"></div>
 
 <script>
+// ═══ DATA ═══
 let ops=JSON.parse(localStorage.getItem('alb_ops')||'[]');
 let echeqs=JSON.parse(localStorage.getItem('alb_echeqs')||'[]');
 let gastos=JSON.parse(localStorage.getItem('alb_gastos')||'[]');
@@ -553,7 +701,7 @@ let cfg=JSON.parse(localStorage.getItem('alb_cfg')||'{}');
 let cnt=parseInt(localStorage.getItem('alb_cnt')||'0');
 let pendTix=[];
 let editingId=null;
-let hSortKey='',hSortDir=-1;
+let dolar={divisa:0,mayorista:0,blue:0};
 
 function save(){
   localStorage.setItem('alb_ops',JSON.stringify(ops));
@@ -564,25 +712,83 @@ function save(){
   localStorage.setItem('alb_cnt',cnt);
   document.getElementById('hbadge').textContent=ops.length+' ops';
 }
-const M=n=>(n==null||n==='')?'—':'$'+Math.round(Number(n)).toLocaleString('es-AR');
+
+// ═══ UTILS ═══
+const M=n=>(n==null||n===''||n===0&&n!==0)?'—':'$'+Math.round(Number(n)).toLocaleString('es-AR');
+const MF=n=>n?'$'+Math.round(Number(n)).toLocaleString('es-AR'):'—';
 const Dt=d=>{if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];};
-const DC=v=>v>0?'var(--R)':v<0?'var(--G)':'var(--t3)';
+const Tn=n=>n?Number(n).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn':'—';
+const DC=v=>v>0?'var(--dan)':v<0?'var(--suc)':'var(--t3)';
 const DS=v=>(v>0?'+':'')+Number(v).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn';
 const N=id=>parseFloat(document.getElementById(id)?.value)||0;
 const V=id=>document.getElementById(id)?.value||'';
+
 function toast(msg,type=''){
   const c=document.getElementById('toasts'),t=document.createElement('div');
   t.className='toast'+(type?' '+type:'');t.textContent=msg;c.appendChild(t);
   setTimeout(()=>t.remove(),3200);
 }
+
+// ═══ DÓLAR ONLINE ═══
+async function fetchDolar(){
+  try{
+    document.querySelectorAll('.dw').forEach(d=>d.classList.add('loading'));
+    const r=await fetch('https://api.bluelytics.com.ar/v2/latest');
+    const d=await r.json();
+    dolar.blue=d.blue?.sell||0;
+    dolar.divisa=d.oficial_euro?.sell||d.oficial?.sell||0;
+    dolar.mayorista=d.blue_euro?.sell||d.oficial?.sell||0;
+    // fallback: try dolarapi
+    if(!dolar.divisa){
+      const r2=await fetch('https://dolarapi.com/v1/dolares');
+      const arr=await r2.json();
+      const of=arr.find(x=>x.casa==='oficial');
+      const bl=arr.find(x=>x.casa==='blue');
+      const my=arr.find(x=>x.casa==='mayorista');
+      if(of)dolar.divisa=of.venta||0;
+      if(my)dolar.mayorista=my.venta||0;
+      if(bl)dolar.blue=bl.venta||0;
+    }
+    updateDolarWidget();
+    // save to cfg
+    cfg.dolarDiv=dolar.divisa;cfg.dolarMay=dolar.mayorista;cfg.dolarBlue=dolar.blue;
+    save();
+    toast('✓ Cotización actualizada');
+  }catch(e){
+    // use manual
+    dolar.divisa=cfg.dolarDiv||0;dolar.mayorista=cfg.dolarMay||0;dolar.blue=cfg.dolarBlue||0;
+    updateDolarWidget();
+    if(!dolar.divisa)toast('Sin conexión — usá cotización manual','info');
+  }
+  document.querySelectorAll('.dw').forEach(d=>d.classList.remove('loading'));
+}
+function updateDolarWidget(){
+  const fmt=v=>v?'$'+Math.round(v).toLocaleString('es-AR'):'—';
+  document.getElementById('dv-div').textContent=fmt(dolar.divisa);
+  document.getElementById('dv-may').textContent=fmt(dolar.mayorista);
+  document.getElementById('dv-blue').textContent=fmt(dolar.blue);
+  // auto-fill form if empty
+  if(!N('f-dv1')&&dolar.divisa)document.getElementById('f-dv1').value=dolar.divisa;
+  if(!N('f-dv2')&&dolar.divisa)document.getElementById('f-dv2').value=dolar.divisa;
+}
+function saveDolarManual(){
+  cfg.dolarDiv=N('cfg-div')||cfg.dolarDiv;
+  cfg.dolarMay=N('cfg-may')||cfg.dolarMay;
+  cfg.dolarBlue=N('cfg-blue')||cfg.dolarBlue;
+  dolar.divisa=cfg.dolarDiv;dolar.mayorista=cfg.dolarMay;dolar.blue=cfg.dolarBlue;
+  updateDolarWidget();save();
+}
+
+// ═══ TABS ═══
 function T(name){
-  const names=['dash','op','echeq','hist','provs','gastos','cfg'];
+  const names=['dash','op','planilla','echeq','provs','gastos','cfg'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  const r={dash:renderDash,hist:renderHist,provs:renderProvs,gastos:renderGastos,echeq:renderEcheqs};
+  const r={dash:renderDash,planilla:renderPlanilla,provs:renderProvs,gastos:renderGastos,echeq:renderEcheqs};
   if(r[name])r[name]();
 }
+
 function setTipo(t,btn){
   document.getElementById('f-tipo').value=t;
   document.querySelectorAll('#tipo-tog button').forEach(b=>b.classList.remove('active'));
@@ -591,10 +797,8 @@ function setTipo(t,btn){
   document.getElementById('ef').style.display=t==='envase'?'block':'none';
   document.getElementById('card-tn').style.display=t==='granel'?'block':'none';
 }
-function selChip(el,val){
-  document.querySelectorAll('#chips-pago .chip').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel');document.getElementById('f-pago').value=val;
-}
+
+// ═══ TICKETS ═══
 function addTix(files){
   const rem=4-pendTix.length;
   if(rem<=0){toast('Máximo 4 tickets','err');return;}
@@ -609,48 +813,108 @@ function dropTix(e){e.preventDefault();document.getElementById('tzone').classLis
 function renderTix(){
   const g=document.getElementById('tpreview');
   g.innerHTML=pendTix.map((t,i)=>`<div class="tthumb">
-    <img src="${t.d}" onclick="openLB('${t.d}','Vista previa — Ticket ${i+1}')">
+    <img src="${t.d}" onclick="openLB('${t.d}','Ticket ${i+1}')">
     <button class="tdel" onclick="pendTix.splice(${i},1);renderTix()"><i class="ti ti-x"></i></button>
     <div class="tlbl">Ticket ${i+1}</div></div>`).join('');
   document.getElementById('tcount-lbl').textContent=pendTix.length?pendTix.length+'/4':'';
 }
-function openLB(src,info){
-  document.getElementById('lb-img').src=src;
-  document.getElementById('lb-txt').textContent=info;
-  document.getElementById('lb').style.display='flex';
-}
+function openLB(src,info){document.getElementById('lb-img').src=src;document.getElementById('lb-txt').textContent=info;document.getElementById('lb').style.display='flex';}
 function closeLB(){document.getElementById('lb').style.display='none';}
+
+// ═══ LIVE CALC ═══
+function calcScenario(pc,pv,tnBase,dvType,dvVal){
+  // profit en pesos según tipo dólar
+  const dv=dvType==='divisa'?dolar.divisa:dvType==='mayorista'?dolar.mayorista:dolar.blue;
+  const rate=dvVal||dv||1;
+  const compra=pc*tnBase;
+  const venta=pv*tnBase;
+  return venta-compra;
+}
+
 function liveCalc(){
-  const tnv=N('f-tnv'),tne=N('f-tne'),tnen=N('f-tnen'),tnr=N('f-tnr');
-  const pc=N('f-pc'),pv=N('f-pv'),tc=N('f-tc'),tv=N('f-tv');
+  const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4'),tnv=N('f-tnv');
+  const dif1=tn1&&tn2?tn2-tn1:0;
+  const dif2=tn3&&tn4?tn4-tn3:0;
+  if(tn1&&tn2){document.getElementById('f-dif1').value=DS(dif1)+' ('+((Math.abs(dif1)/tn1)*100).toFixed(3)+'%)';}
+  if(tn3&&tn4){document.getElementById('f-dif2').value=DS(dif2)+' ('+((Math.abs(dif2)/tn3)*100).toFixed(3)+'%)';}
+
+  // flow diagram
+  const hasFlow=tn1||tn2||tn3||tn4;
+  document.getElementById('tn-flow-box').style.display=hasFlow?'block':'none';
+  if(hasFlow){
+    const nodes=[
+      {id:'fn1',vid:'fnv1',v:tn1},
+      {id:'fn2',vid:'fnv2',v:tn2},
+      {id:'fn3',vid:'fnv3',v:tn3},
+      {id:'fn4',vid:'fnv4',v:tn4}
+    ];
+    nodes.forEach(n=>{
+      document.getElementById(n.vid).textContent=n.v?n.v.toLocaleString('es-AR',{maximumFractionDigits:3})+' tn':'—';
+      document.getElementById(n.id).classList.toggle('filled',!!n.v);
+    });
+    const d1el=document.getElementById('fnd1'),d3el=document.getElementById('fnd3');
+    if(tn1&&tn2){d1el.textContent=DS(dif1);d1el.style.color=DC(dif1);}else{d1el.textContent='—';}
+    if(tn3&&tn4){d3el.textContent=DS(dif2);d3el.style.color=DC(dif2);}else{d3el.textContent='—';}
+
+    // balance
+    const crudoFinal=tn2||tn1;
+    const refinadoEnt=tn4||tn3;
+    const refinadoVend=tnv;
+    const balBox=document.getElementById('balance-box');
+    balBox.innerHTML=`
+      <div><div style="font-size:10px;color:var(--t2)">Crudo entregado a refin.</div><div style="font-weight:800;color:var(--pri)">${Tn(crudoFinal)}</div></div>
+      <div><div style="font-size:10px;color:var(--t2)">Refinado entregado envasa.</div><div style="font-weight:800;color:var(--suc)">${Tn(refinadoEnt)}</div></div>
+      <div><div style="font-size:10px;color:var(--t2)">Tn vendidas (fact.)</div><div style="font-weight:800;color:var(--acc)">${Tn(refinadoVend||refinadoEnt)}</div></div>
+      <div><div style="font-size:10px;color:var(--t2)">Dif. refinado/vendido</div><div style="font-weight:800;color:${DC((refinadoVend||refinadoEnt)-refinadoEnt)}">${refinadoVend&&refinadoEnt?DS((refinadoVend)-(refinadoEnt)):'—'}</div></div>`;
+  }
+
+  // adelantos
   const adel=N('f-a1')+N('f-a2')+N('f-a3');
-  const show=tnv||tne||tnen||tnr;
-  document.getElementById('diff-box').style.display=show?'block':'none';
-  if(show){
-    const d1=tnen-tnr,d2=tnv-tne,pct=tnen>0?Math.abs(d1/tnen*100):0;
-    const e1=document.getElementById('dif-er'),e2=document.getElementById('dif-ve'),ep=document.getElementById('dif-pct'),ei=document.getElementById('dif-imp');
-    e1.textContent=DS(d1);e1.style.color=DC(d1);
-    e2.textContent=DS(d2);e2.style.color=DC(d2);
-    ep.textContent=pct.toFixed(3)+'%';ep.style.color=pct>0.5?'var(--R)':pct>0.2?'var(--OT)':'var(--G)';
-    ei.textContent=Math.abs(d1)*pc?'−'+M(Math.abs(d1)*pc):'$0';
-    document.getElementById('merma-alert').style.display=pct>0.5?'flex':'none';
-  }
-  if(tc&&tv)document.getElementById('f-dif').value=M(tv-tc);
-  const margen=pv-pc,tnBase=tne||tnv,profitEst=margen*tnBase,saldo=tv-adel;
-  const pctM=pc>0?((pv-pc)/pc*100):0;
-  const showP=(margen&&tnBase)||(tv&&adel);
-  document.getElementById('profit-box').style.display=showP?'block':'none';
-  if(showP){
-    const rm=document.getElementById('r-margen'),rp=document.getElementById('r-profit'),rs=document.getElementById('r-saldo'),rpct=document.getElementById('r-pct');
-    rm.textContent=margen?M(margen)+'/tn':'—';rp.textContent=profitEst?M(profitEst):'—';
-    rs.textContent=tv?M(saldo):'—';rpct.textContent=pctM?pctM.toFixed(2)+'%':'—';
+  document.getElementById('f-at').value=adel?MF(adel):'';
+
+  // financiero
+  const tc=N('f-tc'),tv=N('f-tv');
+  if(tc&&tv)document.getElementById('f-dif').value=MF(tv-tc);
+
+  // ESCENARIOS
+  const pc=N('f-tipo')==='granel'?N('f-pc'):N('f-pcos');
+  const pv=N('f-tipo')==='granel'?N('f-pv'):N('f-pve');
+  const tnBase=tn4||tnv||tn3||0;
+  const dv1=N('f-dv1'),dv2=N('f-dv2');
+
+  const scenarios=[
+    {name:'Dólar Divisa',val:dolar.divisa||dv1||dv2},
+    {name:'Dólar Mayorista',val:dolar.mayorista},
+    {name:'Dólar Blue',val:dolar.blue}
+  ];
+
+  const showS=(pc&&pv&&tnBase)||(tc&&tv);
+  document.getElementById('scenario-box').style.display=showS?'block':'none';
+  if(showS){
+    const baseProfit=tv-tc||((pv-pc)*tnBase);
+    document.getElementById('scenarios').innerHTML=scenarios.map(s=>{
+      let profit=baseProfit;
+      if(!tc&&!tv&&s.val&&dv1){
+        const rate=s.val/dv1;
+        profit=(pv-pc)*tnBase*rate;
+      }else if(s.val&&dolar.divisa&&tc&&tv){
+        profit=baseProfit*(s.val/dolar.divisa);
+      }
+      const win=profit>0;
+      const cls=profit>100?'win':profit<-100?'lose':'neutral';
+      return`<div class="scen ${cls}">
+        <div class="s-name">${s.name}${s.val?' ('+MF(s.val)+')':''}</div>
+        <div class="s-val">${profit?MF(Math.abs(profit)):'—'}</div>
+        <div class="s-sub">${profit>100?'✓ Ganancia':profit<-100?'✗ Pérdida':'—'}</div>
+      </div>`;
+    }).join('');
   }
 }
-function calcAdel(){
-  document.getElementById('f-at').value=M(N('f-a1')+N('f-a2')+N('f-a3'));
-}
+
+function calcAdel(){document.getElementById('f-at').value=MF(N('f-a1')+N('f-a2')+N('f-a3'));}
 ['f-tc','f-tv'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',liveCalc);});
 
+// ═══ SAVE OP ═══
 function saveOp(){
   const prov=V('f-prov'),fop=V('f-fop');
   const tipo=V('f-tipo'),prod=tipo==='granel'?V('f-acg'):V('f-ace');
@@ -658,58 +922,81 @@ function saveOp(){
   const a1=N('f-a1'),a2=N('f-a2'),a3=N('f-a3');
   const pc=tipo==='granel'?N('f-pc'):N('f-pcos');
   const pv=tipo==='granel'?N('f-pv'):N('f-pve');
-  const tnv=N('f-tnv'),tne=N('f-tne'),tnen=N('f-tnen'),tnr=N('f-tnr');
-  const profit=(pv-pc)*(tne||tnv)||0;
+  const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4'),tnv=N('f-tnv');
+  const dif1=tn1&&tn2?tn2-tn1:null;
+  const dif2=tn3&&tn4?tn4-tn3:null;
+  const pctMerma1=tn1>0&&dif1!==null?Math.abs(dif1)/tn1*100:0;
+  const pctMerma2=tn3>0&&dif2!==null?Math.abs(dif2)/tn3*100:0;
+  const tnBase=tn4||tnv||tn3||0;
+  const profit=(pv-pc)*tnBase||N('f-tv')-N('f-tc')||0;
   const pctM=pc>0?((pv-pc)/pc*100):0;
-  const dEnvRec=tnen-tnr;
-  const pctMerma=tnen>0?Math.abs(dEnvRec/tnen*100):0;
+  const dv1=N('f-dv1'),dv2=N('f-dv2');
+  const profitDiv=profit;
+  const profitMay=dolar.mayorista&&dolar.divisa&&dv1?profit*(dolar.mayorista/dv1):profit*(dolar.mayorista/(dv1||dolar.divisa||1));
+  const profitBlue=dolar.blue&&dolar.divisa&&dv1?profit*(dolar.blue/dv1):profit*(dolar.blue/(dv1||dolar.divisa||1));
+
   const data={
     proveedor:prov,comprador:V('f-comp'),transportista:V('f-transp'),
     remito:V('f-remito'),factura:V('f-factura'),
     estEntrega:V('f-est-ent'),estCobro:V('f-est-cob'),
-    fOp:fop,fEnt:V('f-fent'),fCob:V('f-fcob'),fLiq:V('f-fliq'),
+    fOp:fop,fCob:V('f-fcob'),fLiq:V('f-fliq'),
+    fSalCrudo:V('f-f1sal'),fLleCrudo:V('f-f1lle'),
+    fSalRef:V('f-f2sal'),fLleEnv:V('f-f2lle'),
+    pago:V('f-pago2'),
     tipo,producto:prod,
     presentacion:tipo==='envase'?V('f-pres'):'',
     marca:tipo==='envase'?V('f-marca'):'',
     pallets:tipo==='envase'?V('f-plt'):'',
     unidades:tipo==='envase'?V('f-uni'):'',
     pcompra:pc,pventa:pv,
-    tnVendidas:tnv,tnEntregadas:tne,tnEnviadas:tnen,tnRecibidas:tnr,
-    descuento:N('f-desc'),humedad:N('f-hum'),dolar:N('f-dol'),fc:V('f-fc'),
+    tn1,tn2,tn3,tn4,tnVendidas:tnv,
+    dif1:dif1||0,dif2:dif2||0,
+    pctMerma1,pctMerma2,
+    descuento:N('f-desc1'),
+    dolarTipo1:V('f-dol1'),dolarVal1:dv1,
+    dolarTipo2:V('f-dol2'),dolarVal2:dv2,
     adel1:a1,adel2:a2,adel3:a3,adelTotal:a1+a2+a3,
     totalComprado:N('f-tc'),totalVenta:N('f-tv'),
     flete:N('f-flete'),servicio:V('f-serv'),comision:N('f-com'),almacenaje:N('f-alm'),
-    pago:V('f-pago'),notas:V('f-notas'),
-    profit,pctMargen:pctM,pctMerma,tickets:[...pendTix]
+    notas:V('f-notas'),
+    profit:profitDiv,profitMay,profitBlue,pctMargen:pctM,
+    tickets:[...pendTix]
   };
+
   if(editingId!==null){
     const idx=ops.findIndex(o=>o.id===editingId);
     if(idx>=0){ops[idx]={...ops[idx],...data};toast('✓ Operación #'+editingId+' actualizada');}
     editingId=null;
   }else{
     cnt++;data.id=cnt;data.fechaCreacion=new Date().toISOString();
-    ops.push(data);toast('✓ Operación #'+cnt+' guardada'+(pendTix.length?' con '+pendTix.length+' ticket(s)':''));
+    ops.push(data);toast('✓ Operación #'+cnt+' guardada'+(pendTix.length?' con '+pendTix.length+' tickets':''));
   }
   save();clearForm();renderDash();
 }
+
 function clearForm(){
-  ['f-pc','f-pv','f-tnv','f-tne','f-tnen','f-tnr','f-desc','f-hum','f-dol','f-fc',
-   'f-flete','f-serv','f-com','f-alm','f-a1','f-a2','f-a3','f-at','f-tc','f-tv','f-dif',
-   'f-marca','f-uni','f-plt','f-pcos','f-pve','f-notas','f-fent','f-fcob','f-fliq','f-transp','f-remito','f-factura']
+  ['f-pc','f-pv','f-tn1','f-tn2','f-tn3','f-tn4','f-tnv','f-dif1','f-dif2',
+   'f-desc1','f-dv1','f-dv2','f-flete','f-serv','f-com','f-alm',
+   'f-a1','f-a2','f-a3','f-at','f-tc','f-tv','f-dif',
+   'f-marca','f-uni','f-plt','f-pcos','f-pve','f-notas',
+   'f-fcob','f-fliq','f-f1sal','f-f1lle','f-f2sal','f-f2lle',
+   'f-transp','f-remito','f-factura']
   .forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  ['f-prov','f-comp','f-acg','f-ace','f-pres','f-est-ent','f-est-cob'].forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=0;});
-  document.querySelectorAll('#chips-pago .chip').forEach((c,i)=>c.classList.toggle('sel',i===0));
-  document.getElementById('f-pago').value='Transferencia';
-  document.getElementById('diff-box').style.display='none';
-  document.getElementById('profit-box').style.display='none';
+  ['f-prov','f-comp','f-acg','f-ace','f-pres','f-est-ent','f-est-cob','f-pago2','f-dol1','f-dol2'].forEach(id=>{
+    const e=document.getElementById(id);if(e)e.selectedIndex=0;
+  });
+  document.getElementById('tn-flow-box').style.display='none';
+  document.getElementById('scenario-box').style.display='none';
   document.getElementById('f-fop').value=new Date().toISOString().split('T')[0];
   document.getElementById('edit-id').value='';
   document.getElementById('edit-banner').style.display='none';
   document.getElementById('save-lbl').textContent='Guardar operación';
   editingId=null;pendTix=[];renderTix();
+  if(dolar.divisa){document.getElementById('f-dv1').value=dolar.divisa;document.getElementById('f-dv2').value=dolar.divisa;}
   setTipo('granel',document.querySelector('#tipo-tog button:first-child'));
 }
 function cancelEdit(){clearForm();}
+
 function editOp(id){
   const o=ops.find(x=>x.id===id);if(!o)return;
   editingId=id;T('op');
@@ -722,59 +1009,111 @@ function editOp(id){
   s('f-remito',o.remito);s('f-factura',o.factura);
   document.getElementById('f-est-ent').value=o.estEntrega||'Pendiente';
   document.getElementById('f-est-cob').value=o.estCobro||'Pendiente';
-  s('f-fop',o.fOp);s('f-fent',o.fEnt);s('f-fcob',o.fCob);s('f-fliq',o.fLiq);
+  s('f-fop',o.fOp);s('f-fcob',o.fCob);s('f-fliq',o.fLiq);
+  s('f-f1sal',o.fSalCrudo);s('f-f1lle',o.fLleCrudo);
+  s('f-f2sal',o.fSalRef);s('f-f2lle',o.fLleEnv);
   const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
   setTipo(o.tipo,tipBtn);
   if(o.tipo==='granel'){s('f-acg',o.producto);s('f-pc',o.pcompra);s('f-pv',o.pventa);}
   else{s('f-ace',o.producto);s('f-pres',o.presentacion);s('f-marca',o.marca);s('f-plt',o.pallets);s('f-uni',o.unidades);s('f-pcos',o.pcompra);s('f-pve',o.pventa);}
-  s('f-tnv',o.tnVendidas);s('f-tne',o.tnEntregadas);s('f-tnen',o.tnEnviadas);s('f-tnr',o.tnRecibidas);
-  s('f-desc',o.descuento);s('f-hum',o.humedad);s('f-dol',o.dolar);s('f-fc',o.fc);
+  s('f-tn1',o.tn1);s('f-tn2',o.tn2);s('f-tn3',o.tn3);s('f-tn4',o.tn4);s('f-tnv',o.tnVendidas);
+  s('f-desc1',o.descuento);
+  document.getElementById('f-dol1').value=o.dolarTipo1||'divisa';
+  document.getElementById('f-dol2').value=o.dolarTipo2||'divisa';
+  s('f-dv1',o.dolarVal1);s('f-dv2',o.dolarVal2);
   s('f-a1',o.adel1);s('f-a2',o.adel2);s('f-a3',o.adel3||0);
   s('f-tc',o.totalComprado);s('f-tv',o.totalVenta);
   s('f-flete',o.flete);s('f-serv',o.servicio);s('f-com',o.comision);s('f-alm',o.almacenaje);s('f-notas',o.notas);
-  document.getElementById('f-pago').value=o.pago||'Transferencia';
-  document.querySelectorAll('#chips-pago .chip').forEach(c=>c.classList.toggle('sel',c.textContent.trim()===o.pago));
-  pendTix=[...(o.tickets||[])];renderTix();calcAdel();liveCalc();
+  document.getElementById('f-pago2').value=o.pago||'Transferencia';
+  pendTix=[...(o.tickets||[])];renderTix();
+  calcAdel();liveCalc();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function deleteOp(id){
   if(!confirm('¿Eliminar la operación #'+id+'?'))return;
-  ops=ops.filter(o=>o.id!==id);save();renderHist();renderDash();toast('Op #'+id+' eliminada');
+  ops=ops.filter(o=>o.id!==id);save();renderPlanilla();renderDash();toast('Op #'+id+' eliminada');
 }
-function viewOp(id){
-  const o=ops.find(x=>x.id===id);if(!o)return;
-  document.getElementById('odm-title').textContent='Operación #'+id+' — '+o.proveedor;
-  const row=(l,v)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bor);font-size:13px"><span style="color:var(--t2)">${l}</span><strong>${v}</strong></div>`;
-  const be={Pendiente:'bpend',Parcial:'bpar',Cobrado:'bcob',Completa:'bcob'};
-  document.getElementById('odm-body').innerHTML=`
-    <div class="g2" style="gap:16px">
-      <div>
-        <div class="sec" style="margin-top:0"><span>Identificación</span></div>
-        ${row('Proveedor',o.proveedor)}${row('Comprador',o.comprador||'—')}${row('Transportista',o.transportista||'—')}
-        ${row('Remito',o.remito||'—')}${row('Factura',o.factura||'—')}
-        ${row('Estado entrega','<span class="badge '+(be[o.estEntrega||'']||'bpend')+'">'+(o.estEntrega||'—')+'</span>')}
-        ${row('Estado cobro','<span class="badge '+(be[o.estCobro||'']||'bpend')+'">'+(o.estCobro||'—')+'</span>')}
-        <div class="sec"><span>Fechas</span></div>
-        ${row('Operación',Dt(o.fOp))}${row('Entrega',Dt(o.fEnt))}${row('Cobro',Dt(o.fCob))}${row('Liquidación',Dt(o.fLiq))}
-        <div class="sec"><span>Financiero</span></div>
-        ${row('P. Compra',o.pcompra?M(o.pcompra)+'/tn':'—')}${row('P. Venta',o.pventa?M(o.pventa)+'/tn':'—')}
-        ${row('Profit',o.profit?M(o.profit):'—')}${row('Margen %',(o.pctMargen||0).toFixed(2)+'%')}
-        ${row('Adelantos',M(o.adelTotal||0))}${row('Forma pago',o.pago||'—')}
-      </div>
-      <div>
-        <div class="sec" style="margin-top:0"><span>Producto y toneladas</span></div>
-        ${row('Tipo',o.tipo==='granel'?'Granel':'Envasado')}${row('Producto',o.producto)}
-        ${o.presentacion?row('Presentación',o.presentacion):''}
-        ${row('Tn vendidas',o.tnVendidas?o.tnVendidas+' tn':'—')}${row('Tn entregadas',o.tnEntregadas?o.tnEntregadas+' tn':'—')}
-        ${row('Tn enviadas',o.tnEnviadas?o.tnEnviadas+' tn':'—')}${row('Tn recibidas',o.tnRecibidas?o.tnRecibidas+' tn':'—')}
-        ${row('% merma',(o.pctMerma||0).toFixed(3)+'%')}
-        ${row('Dólar divisa',o.dolar?'$'+o.dolar:'—')}
-      </div>
-    </div>
-    ${o.notas?`<div class="box bxb" style="margin-top:12px"><div class="bx-title"><i class="ti ti-notes"></i>Notas</div><div style="font-size:13px">${o.notas}</div></div>`:''}
-    ${o.tickets&&o.tickets.length?`<div class="sec" style="margin-top:12px"><span>Tickets de peso (${o.tickets.length})</span></div><div class="tgrid">${o.tickets.map((t,i)=>`<div class="tthumb"><img src="${t.d}" onclick="openLB('${t.d}','Op #${id} — Ticket ${i+1}')"><div class="tlbl">Ticket ${i+1}</div></div>`).join('')}</div>`:''}`;
-  document.getElementById('odm').style.display='flex';
+
+// ═══ PLANILLA COMPLETA ═══
+function renderPlanilla(){
+  const q=(V('pl-q')||'').toLowerCase();
+  const fd=V('pl-fd'),fh=V('pl-fh'),ec=V('pl-ec'),ee=V('pl-ee');
+  let list=ops.filter(o=>{
+    if(q&&!o.proveedor.toLowerCase().includes(q)&&!o.producto.toLowerCase().includes(q)&&!(o.comprador||'').toLowerCase().includes(q)&&!(o.remito||'').toLowerCase().includes(q))return false;
+    if(fd&&o.fOp<fd)return false;if(fh&&o.fOp>fh)return false;
+    if(ec&&o.estCobro!==ec)return false;if(ee&&o.estEntrega!==ee)return false;
+    return true;
+  }).reverse();
+
+  let totV=0,totE=0,totP=0,totA=0;
+  ops.forEach(o=>{totV+=o.tnVendidas||0;totE+=(o.tn4||o.tn3)||0;totP+=o.profit||0;totA+=o.adelTotal||0;});
+  document.getElementById('pl-cards').innerHTML=`
+    <div class="sc green"><div class="lbl">Total ops</div><div class="val">${ops.length}</div></div>
+    <div class="sc green"><div class="lbl">Tn vendidas</div><div class="val g sm">${totV.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc green"><div class="lbl">Tn entregadas</div><div class="val g sm">${totE.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc green"><div class="lbl">Resultado divisa</div><div class="val g sm">${MF(totP)}</div></div>
+    <div class="sc orange"><div class="lbl">Adelantos</div><div class="val o sm">${MF(totA)}</div></div>`;
+
+  const tb=document.getElementById('tb-planilla');
+  if(!list.length){tb.innerHTML='<tr class="empty"><td colspan="42">Sin operaciones</td></tr>';return;}
+  const bm={Transferencia:'be',Echeq:'bg',Efectivo:'bo',Cheque:'bm',Mixto:'bm'};
+  const bc={Pendiente:'bpend',Parcial:'bpar',Cobrado:'bcob'};
+  const bee={Pendiente:'bpend',Parcial:'bpar',Completa:'bcob'};
+
+  tb.innerHTML=list.map(o=>{
+    const winDiv=o.profit>100,loseDiv=o.profit<-100;
+    const winMay=(o.profitMay||0)>100,loseMay=(o.profitMay||0)<-100;
+    const winBlue=(o.profitBlue||0)>100,loseBlue=(o.profitBlue||0)<-100;
+    const tHtml=o.tickets&&o.tickets.length
+      ?`<div class="tinline">${o.tickets.map((t,i)=>`<img class="tmini" src="${t.d}" onclick="openLB('${t.d}','Op #${o.id} — Ticket ${i+1}')" title="Ticket ${i+1}">`).join('')}</div>`
+      :'—';
+    return`<tr>
+      <td><span class="opn">#${o.id}</span></td>
+      <td><strong>${Dt(o.fOp)}</strong></td>
+      <td>${Dt(o.fSalCrudo)}</td><td>${Dt(o.fLleCrudo)}</td>
+      <td>${Dt(o.fSalRef)}</td><td>${Dt(o.fLleEnv)}</td>
+      <td>${Dt(o.fCob)}</td><td>${Dt(o.fLiq)}</td>
+      <td><strong>${o.proveedor}</strong></td>
+      <td>${o.comprador||'—'}</td><td>${o.transportista||'—'}</td>
+      <td><span class="badge ${o.tipo==='granel'?'bg':'be'}">${o.tipo==='granel'?'Granel':'Envase'}</span></td>
+      <td>${o.producto}</td><td>${o.presentacion||'—'}</td><td style="text-align:center">${o.pallets||'—'}</td>
+      <td class="tdb">${Tn(o.tn1)}</td>
+      <td class="tdo">${Tn(o.tn2)}</td>
+      <td style="color:${DC(o.dif1||0)};font-weight:700">${o.dif1?DS(o.dif1):'—'}</td>
+      <td class="tdg">${Tn(o.tn3)}</td>
+      <td class="tdr">${Tn(o.tn4)}</td>
+      <td style="color:${DC(o.dif2||0)};font-weight:700">${o.dif2?DS(o.dif2):'—'}</td>
+      <td class="tdg">${Tn(o.tnVendidas)}</td>
+      <td style="font-size:11px">${o.tn2&&o.tn4?Tn(o.tn2)+' → '+Tn(o.tn4):'—'}</td>
+      <td>${o.pcompra?MF(o.pcompra)+'/tn':'—'}</td>
+      <td>${o.pventa?MF(o.pventa)+'/tn':'—'}</td>
+      <td class="${winDiv?'tdg':loseDiv?'tdr':''}">
+        ${o.profit?'<span class="badge '+(winDiv?'bwin':'blose')+'">'+(winDiv?'✓ ':'✗ ')+MF(Math.abs(o.profit||0))+'</span>':'—'}</td>
+      <td class="${winMay?'tdg':loseMay?'tdr':''}">
+        ${o.profitMay?'<span class="badge '+(winMay?'bwin':'blose')+'">'+(winMay?'✓ ':'✗ ')+MF(Math.abs(o.profitMay||0))+'</span>':'—'}</td>
+      <td class="${winBlue?'tdg':loseBlue?'tdr':''}">
+        ${o.profitBlue?'<span class="badge '+(winBlue?'bwin':'blose')+'">'+(winBlue?'✓ ':'✗ ')+MF(Math.abs(o.profitBlue||0))+'</span>':'—'}</td>
+      <td style="color:var(--t2)">${o.pctMargen?o.pctMargen.toFixed(2)+'%':'—'}</td>
+      <td class="tdb">${o.adelTotal?MF(o.adelTotal):'—'}</td>
+      <td style="font-size:11px">${o.dolarTipo1||'—'} ${o.dolarVal1?'($'+Math.round(o.dolarVal1).toLocaleString('es-AR')+')':''}</td>
+      <td style="font-size:11px">${o.dolarTipo2||'—'} ${o.dolarVal2?'($'+Math.round(o.dolarVal2).toLocaleString('es-AR')+')':''}</td>
+      <td>${o.flete?MF(o.flete)+'/tn':'—'}</td>
+      <td>${o.comision?o.comision+'%':'—'}</td>
+      <td>${o.remito||'—'}</td><td>${o.factura||'—'}</td>
+      <td><span class="badge ${bee[o.estEntrega]||'bpend'}">${o.estEntrega||'—'}</span></td>
+      <td><span class="badge ${bc[o.estCobro]||'bpend'}">${o.estCobro||'—'}</span></td>
+      <td><span class="badge ${bm[o.pago]||'be'}">${o.pago||'—'}</span></td>
+      <td>${tHtml}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;color:var(--t2)">${o.notas||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="bi" onclick="editOp(${o.id})" title="Editar" style="margin-right:3px"><i class="ti ti-pencil" style="font-size:12px"></i></button>
+        <button class="bi del" onclick="deleteOp(${o.id})" title="Eliminar"><i class="ti ti-trash" style="font-size:12px"></i></button>
+      </td>
+    </tr>`;
+  }).join('');
 }
+
+// ═══ ECHEQ ═══
 function saveEcheq(){
   const fr=V('e-fr'),fc=V('e-fc'),prov=V('e-prov'),banco=V('e-banco'),imp=V('e-imp');
   if(!fr||!prov||!banco||!imp){toast('Completá los campos requeridos','err');return;}
@@ -797,110 +1136,53 @@ function renderEcheqs(){
   if(!list.length){tb.innerHTML='<tr class="empty"><td colspan="11">Sin echeqs</td></tr>';return;}
   const be={Pendiente:'bpend',Cobrado:'bcob',Rechazado:'bcan'};
   tb.innerHTML=[...list].reverse().map(e=>{
-    const dias=e.fc?Math.ceil((new Date(e.fc)-new Date())/(864e5)):null;
+    const dias=e.fc?Math.ceil((new Date(e.fc)-new Date())/864e5):null;
     const vc=dias!==null&&dias<=7&&e.estado==='Pendiente';
     return`<tr>
       <td>${Dt(e.fr)}</td>
-      <td class="${vc?'tdr':''}">${Dt(e.fc)}${vc?` <small style="color:var(--R)">(${dias}d)</small>`:''}</td>
+      <td class="${vc?'tdr':''}">${Dt(e.fc)}${vc?` <small>(${dias}d)</small>`:''}</td>
       <td>${e.prov}</td><td>${e.banco}</td><td>${e.num||'—'}</td>
-      <td class="tdg">${M(e.imp)}</td><td style="text-align:center">${e.cant}</td>
+      <td class="tdg">${MF(e.imp)}</td><td style="text-align:center">${e.cant}</td>
       <td>${e.opRef?'#'+e.opRef:'—'}</td>
       <td><span class="badge ${be[e.estado]||'bpend'}">${e.estado}</span></td>
       <td style="color:var(--t2);max-width:100px;overflow:hidden;text-overflow:ellipsis">${e.obs||'—'}</td>
-      <td><button class="bi del" onclick="deleteEcheq(${e.id})"><i class="ti ti-trash" style="font-size:13px"></i></button></td>
+      <td><button class="bi del" onclick="deleteEcheq(${e.id})"><i class="ti ti-trash" style="font-size:12px"></i></button></td>
     </tr>`;
   }).join('');
   const tot=echeqs.reduce((s,e)=>s+(e.imp||0),0);
   const pend=echeqs.filter(e=>e.estado==='Pendiente').reduce((s,e)=>s+(e.imp||0),0);
   const cob=echeqs.filter(e=>e.estado==='Cobrado').reduce((s,e)=>s+(e.imp||0),0);
   document.getElementById('echeq-totals').innerHTML=`
-    <div class="sc"><div class="lbl">Total emitido</div><div class="val sm b">${M(tot)}</div></div>
-    <div class="sc"><div class="lbl">Pendiente cobro</div><div class="val sm" style="color:var(--OT)">${M(pend)}</div></div>
-    <div class="sc"><div class="lbl">Cobrado</div><div class="val sm g">${M(cob)}</div></div>`;
+    <div class="sc"><div class="lbl">Total emitido</div><div class="val sm b">${MF(tot)}</div></div>
+    <div class="sc"><div class="lbl">Pendiente cobro</div><div class="val sm o">${MF(pend)}</div></div>
+    <div class="sc"><div class="lbl">Cobrado</div><div class="val sm g">${MF(cob)}</div></div>`;
 }
-function renderHist(){
-  const q=(V('s-q')||'').toLowerCase();
-  const fd=V('s-fd'),fh=V('s-fh'),ec=V('s-ec'),ee=V('s-ee'),tp=V('s-tp');
-  let list=ops.filter(o=>{
-    if(q&&!o.proveedor.toLowerCase().includes(q)&&!o.producto.toLowerCase().includes(q)&&!(o.comprador||'').toLowerCase().includes(q)&&!(o.remito||'').toLowerCase().includes(q))return false;
-    if(fd&&o.fOp<fd)return false;if(fh&&o.fOp>fh)return false;
-    if(ec&&o.estCobro!==ec)return false;if(ee&&o.estEntrega!==ee)return false;if(tp&&o.tipo!==tp)return false;
-    return true;
-  });
-  if(hSortKey){list=[...list].sort((a,b)=>((a[hSortKey]||0)-(b[hSortKey]||0))*hSortDir);}else{list=[...list].reverse();}
-  let totV=0,totE=0,totP=0,totA=0;
-  ops.forEach(o=>{totV+=o.tnVendidas||0;totE+=o.tnEntregadas||0;totP+=o.profit||0;totA+=o.adelTotal||0;});
-  document.getElementById('hist-cards').innerHTML=`
-    <div class="sc"><div class="lbl">Total ops</div><div class="val">${ops.length}</div></div>
-    <div class="sc"><div class="lbl">Tn vendidas</div><div class="val g sm">${totV.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
-    <div class="sc"><div class="lbl">Tn entregadas</div><div class="val g sm">${totE.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
-    <div class="sc"><div class="lbl">Profit acum.</div><div class="val g sm">${M(totP)}</div></div>
-    <div class="sc"><div class="lbl">Adelantos total</div><div class="val b sm">${M(totA)}</div></div>`;
-  const tb=document.getElementById('tb-ops');
-  if(!list.length){tb.innerHTML='<tr class="empty"><td colspan="30">Sin resultados</td></tr>';return;}
-  const bm={Transferencia:'be',Echeq:'bg',Efectivo:'bo',Cheque:'bm',Mixto:'bm'};
-  const bc={Pendiente:'bpend',Parcial:'bpar',Cobrado:'bcob'};
-  const bee={Pendiente:'bpend',Parcial:'bpar',Completa:'bcob'};
-  tb.innerHTML=list.map(o=>{
-    const dER=(o.tnEnviadas||0)-(o.tnRecibidas||0);
-    const diffStr=o.tnEnviadas||o.tnRecibidas?DS(dER):'—';
-    const pctMerma=o.tnEnviadas>0?(Math.abs(dER)/o.tnEnviadas*100).toFixed(3)+'%':'—';
-    const tHtml=o.tickets&&o.tickets.length
-      ?`<div class="tinline">${o.tickets.map((t,i)=>`<img class="tmini" src="${t.d}" onclick="openLB('${t.d}','Op #${o.id} — Ticket ${i+1}')" title="Ticket ${i+1}">`).join('')}</div>`
-      :'<span style="color:var(--t3)">—</span>';
-    return`<tr>
-      <td><span class="opn">#${o.id}</span></td>
-      <td>${Dt(o.fOp)}</td><td>${Dt(o.fEnt)}</td><td>${Dt(o.fCob)}</td><td>${Dt(o.fLiq)}</td>
-      <td><strong>${o.proveedor}</strong></td><td>${o.comprador||'—'}</td><td>${o.transportista||'—'}</td>
-      <td><span class="badge ${o.tipo==='granel'?'bg':'be'}">${o.tipo==='granel'?'Granel':'Envase'}</span></td>
-      <td>${o.producto}</td><td>${o.presentacion||'—'}</td><td style="text-align:center">${o.pallets||'—'}</td>
-      <td class="tdg">${o.tnVendidas?Number(o.tnVendidas).toLocaleString('es-AR'):'—'}</td>
-      <td class="tdg">${o.tnEntregadas?Number(o.tnEntregadas).toLocaleString('es-AR'):'—'}</td>
-      <td>${o.tnEnviadas?Number(o.tnEnviadas).toLocaleString('es-AR'):'—'}</td>
-      <td>${o.tnRecibidas?Number(o.tnRecibidas).toLocaleString('es-AR'):'—'}</td>
-      <td style="color:${DC(dER)};font-weight:700">${diffStr}</td>
-      <td style="color:${(o.pctMerma||0)>0.5?'var(--R)':'var(--t2)'}">${pctMerma}</td>
-      <td>${o.pcompra?M(o.pcompra).replace('$',''):'—'}</td>
-      <td>${o.pventa?M(o.pventa).replace('$',''):'—'}</td>
-      <td class="tdg">${o.profit?M(o.profit):'—'}</td>
-      <td style="color:var(--t2)">${o.pctMargen?o.pctMargen.toFixed(2)+'%':'—'}</td>
-      <td class="tdb">${o.adelTotal?M(o.adelTotal):'—'}</td>
-      <td>${o.remito||'—'}</td><td>${o.factura||'—'}</td>
-      <td><span class="badge ${bee[o.estEntrega]||'bpend'}">${o.estEntrega||'—'}</span></td>
-      <td><span class="badge ${bc[o.estCobro]||'bpend'}">${o.estCobro||'—'}</span></td>
-      <td><span class="badge ${bm[o.pago]||'be'}">${o.pago}</span></td>
-      <td>${tHtml}</td>
-      <td style="white-space:nowrap">
-        <button class="bi edit" onclick="viewOp(${o.id})" title="Ver detalle"><i class="ti ti-eye" style="font-size:13px"></i></button>
-        <button class="bi edit" onclick="editOp(${o.id})" title="Editar"><i class="ti ti-pencil" style="font-size:13px"></i></button>
-        <button class="bi del" onclick="deleteOp(${o.id})" title="Eliminar"><i class="ti ti-trash" style="font-size:13px"></i></button>
-      </td>
-    </tr>`;
-  }).join('');
-}
+
+// ═══ DASHBOARD ═══
 function renderDash(){
   let totV=0,totE=0,totP=0,totA=0,pendCob=0,pendEnt=0;
   ops.forEach(o=>{
-    totV+=o.tnVendidas||0;totE+=o.tnEntregadas||0;totP+=o.profit||0;totA+=o.adelTotal||0;
+    totV+=o.tnVendidas||0;totE+=(o.tn4||o.tn3)||0;totP+=o.profit||0;totA+=o.adelTotal||0;
     if(o.estCobro==='Pendiente'||o.estCobro==='Parcial')pendCob++;
     if(o.estEntrega==='Pendiente'||o.estEntrega==='Parcial')pendEnt++;
   });
-  const hoy=new Date().toISOString().slice(0,7);
+  const hoyM=new Date().toISOString().slice(0,7);
   document.getElementById('dc').innerHTML=`
-    <div class="sc"><div class="lbl">Operaciones</div><div class="val">${ops.length}</div><div class="sub">${ops.filter(o=>o.fOp&&o.fOp.slice(0,7)===hoy).length} este mes</div></div>
-    <div class="sc"><div class="lbl">Tn vendidas</div><div class="val g sm">${totV.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
-    <div class="sc"><div class="lbl">Tn entregadas</div><div class="val g sm">${totE.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
-    <div class="sc"><div class="lbl">Profit total</div><div class="val g sm">${M(totP)}</div></div>
-    <div class="sc"><div class="lbl">Adelantos</div><div class="val b sm">${M(totA)}</div></div>
-    <div class="sc"><div class="lbl">Cobro pendiente</div><div class="val r">${pendCob}</div><div class="sub">${pendEnt} entregas pend.</div></div>`;
+    <div class="sc"><div class="lbl">Operaciones</div><div class="val">${ops.length}</div><div class="sub">${ops.filter(o=>o.fOp&&o.fOp.slice(0,7)===hoyM).length} este mes</div></div>
+    <div class="sc green"><div class="lbl">Tn vendidas</div><div class="val g sm">${totV.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc green"><div class="lbl">Tn entregadas</div><div class="val g sm">${totE.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc green"><div class="lbl">Resultado (divisa)</div><div class="val g sm">${MF(totP)}</div></div>
+    <div class="sc orange"><div class="lbl">Adelantos</div><div class="val o sm">${MF(totA)}</div></div>
+    <div class="sc red"><div class="lbl">Cobros pendientes</div><div class="val r">${pendCob}</div><div class="sub">${pendEnt} entregas pend.</div></div>`;
   const alerts=[];
   ops.forEach(o=>{
-    if((o.pctMerma||0)>0.5)alerts.push(`<div class="alert awarn"><i class="ti ti-alert-circle"></i>Op #${o.id} (${o.proveedor}): merma ${(o.pctMerma||0).toFixed(2)}% — verificar</div>`);
-    if((o.estCobro==='Pendiente'||o.estCobro==='Parcial')&&(o.adelTotal||0)>0)alerts.push(`<div class="alert awarn"><i class="ti ti-coin"></i>Op #${o.id} (${o.proveedor}): cobro ${(o.estCobro||'').toLowerCase()} — adelanto ${M(o.adelTotal)}</div>`);
+    if((o.pctMerma1||0)>0.5)alerts.push(`<div class="alert awarn"><i class="ti ti-alert-circle"></i>Op #${o.id} (${o.proveedor}): merma crudo ${(o.pctMerma1||0).toFixed(2)}% — verificar</div>`);
+    if((o.pctMerma2||0)>0.5)alerts.push(`<div class="alert awarn"><i class="ti ti-alert-circle"></i>Op #${o.id} (${o.proveedor}): merma refinado ${(o.pctMerma2||0).toFixed(2)}% — verificar</div>`);
+    if((o.estCobro==='Pendiente'||o.estCobro==='Parcial')&&(o.adelTotal||0)>0)alerts.push(`<div class="alert awarn"><i class="ti ti-coin"></i>Op #${o.id} (${o.proveedor}): cobro ${(o.estCobro||'').toLowerCase()} — adelanto ${MF(o.adelTotal)}</div>`);
   });
   echeqs.filter(e=>e.estado==='Pendiente'&&e.fc).forEach(e=>{
     const d=Math.ceil((new Date(e.fc)-new Date())/864e5);
-    if(d<=7)alerts.push(`<div class="alert ${d<0?'aerr':'awarn'}"><i class="ti ti-credit-card"></i>Echeq ${e.prov} ${d<0?'VENCIDO hace '+Math.abs(d)+'d':'vence en '+d+'d'} (${Dt(e.fc)}) — ${M(e.imp)}</div>`);
+    if(d<=7)alerts.push(`<div class="alert ${d<0?'aerr':'awarn'}"><i class="ti ti-credit-card"></i>Echeq ${e.prov} ${d<0?'VENCIDO hace '+Math.abs(d)+'d':'vence en '+d+'d'} — ${MF(e.imp)}</div>`);
   });
   document.getElementById('d-alerts').innerHTML=alerts.length?alerts.join(''):'<div style="color:var(--t3);font-size:12px;padding:6px 0">Sin alertas activas ✓</div>';
   const months={};
@@ -910,11 +1192,11 @@ function renderDash(){
   document.getElementById('monthly-chart').innerHTML=sorted.length?sorted.map(([m,p])=>{
     const h=Math.round(Math.abs(p)/maxP*72)+2;
     const lbl=m.slice(5)+'/'+m.slice(2,4);
-    return`<div class="chart-col"><div class="chart-bar" style="height:${h}px;background:${p<0?'var(--R)':'var(--G)'};opacity:.7" title="${lbl}: ${M(p)}"></div><div class="chart-lbl">${lbl}</div></div>`;
-  }).join(''):'<div style="color:var(--t3);font-size:12px">Sin datos aún</div>';
+    return`<div class="chart-col"><div class="chart-bar" style="height:${h}px;background:${p<0?'var(--dan)':'var(--pri)'};opacity:.75" title="${lbl}: ${MF(p)}"></div><div class="chart-lbl">${lbl}</div></div>`;
+  }).join(''):'<div style="color:var(--t3);font-size:12px">Sin datos</div>';
   const proximos=echeqs.filter(e=>{if(e.estado!=='Pendiente'||!e.fc)return false;return Math.ceil((new Date(e.fc)-new Date())/864e5)<=14;});
   document.getElementById('d-echeqs-venc').innerHTML=proximos.length
-    ?proximos.map(e=>{const d=Math.ceil((new Date(e.fc)-new Date())/864e5);return`<div class="alert ${d<0?'aerr':d<=3?'aerr':'awarn'}"><i class="ti ti-credit-card"></i><strong>${e.prov}</strong> — ${M(e.imp)} — vence ${Dt(e.fc)} (${d<0?Math.abs(d)+'d vencido':d+'d'})</div>`;}).join('')
+    ?proximos.map(e=>{const d=Math.ceil((new Date(e.fc)-new Date())/864e5);return`<div class="alert ${d<0?'aerr':d<=3?'aerr':'awarn'}"><i class="ti ti-credit-card"></i><strong>${e.prov}</strong> — ${MF(e.imp)} — vence ${Dt(e.fc)} (${d<0?Math.abs(d)+'d vencido':d+'d'})</div>`;}).join('')
     :'<div style="color:var(--t3);font-size:12px;padding:6px 0">Sin echeqs próximos a vencer ✓</div>';
   const be2={Pendiente:'bpend',Parcial:'bpar',Cobrado:'bcob',Completa:'bcob'};
   const rec=[...ops].reverse().slice(0,7);
@@ -922,35 +1204,37 @@ function renderDash(){
     ?rec.map(o=>`<tr>
         <td><span class="opn">#${o.id}</span></td><td>${Dt(o.fOp)}</td>
         <td>${o.proveedor}</td><td>${o.producto}</td>
-        <td class="tdg">${o.tnVendidas?Number(o.tnVendidas).toLocaleString('es-AR')+' tn':'—'}</td>
-        <td class="tdg">${o.profit?M(o.profit):'—'}</td>
+        <td class="tdg">${Tn(o.tnVendidas||o.tn4)}</td>
+        <td class="${o.profit>0?'tdg':o.profit<0?'tdr':''}">${o.profit?'<span class="badge '+(o.profit>0?'bwin':'blose')+'">'+(o.profit>0?'✓ ':'✗ ')+MF(Math.abs(o.profit))+'</span>':'—'}</td>
         <td><span class="badge ${be2[o.estEntrega||'']||'bpend'}">${o.estEntrega||'Pend.'}</span></td>
         <td><span class="badge ${be2[o.estCobro||'']||'bpend'}">${o.estCobro||'Pend.'}</span></td>
       </tr>`).join('')
-    :'<tr class="empty"><td colspan="8">Sin operaciones registradas</td></tr>';
+    :'<tr class="empty"><td colspan="8">Sin operaciones</td></tr>';
 }
+
+// ═══ PROVEEDORES ═══
 let editProvId=null;
 function renderProvs(){
   const q=(V('pq')||'').toLowerCase();
   const list=proveedores.filter(p=>!q||p.nombre.toLowerCase().includes(q)||(p.rs||'').toLowerCase().includes(q));
   const grid=document.getElementById('provs-grid');
-  if(!list.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px;grid-column:1/-1;padding:20px">Sin proveedores registrados.</div>';return;}
+  if(!list.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px;grid-column:1/-1;padding:20px 0">Sin proveedores registrados.</div>';return;}
   grid.innerHTML=list.map(p=>{
     const op2=ops.filter(o=>o.proveedor===p.nombre);
     const totTn=op2.reduce((s,o)=>s+(o.tnVendidas||0),0);
     const totP=op2.reduce((s,o)=>s+(o.profit||0),0);
     return`<div class="prov-card">
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px">${p.nombre}${p.rs?`<span style="font-size:11px;color:var(--t2);font-weight:400"> · ${p.rs}</span>`:''}</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:5px">${p.nombre}${p.rs?`<span style="font-size:11px;color:var(--t2);font-weight:400"> · ${p.rs}</span>`:''}</div>
       ${p.tel?`<div style="font-size:12px;color:var(--t2);margin-bottom:4px"><i class="ti ti-phone" style="font-size:11px"></i> ${p.tel}</div>`:''}
-      ${p.loc?`<div style="font-size:12px;color:var(--t2);margin-bottom:4px"><i class="ti ti-map-pin" style="font-size:11px"></i> ${p.loc}</div>`:''}
-      <div style="display:flex;gap:12px;font-size:11px;color:var(--t2);margin-top:6px">
+      ${p.loc?`<div style="font-size:12px;color:var(--t2);margin-bottom:6px"><i class="ti ti-map-pin" style="font-size:11px"></i> ${p.loc}</div>`:''}
+      <div style="display:flex;gap:14px;font-size:11px;color:var(--t2);margin-top:8px;padding-top:8px;border-top:1px solid var(--bor)">
         <span><i class="ti ti-file-text" style="font-size:11px"></i> ${op2.length} ops</span>
         <span><i class="ti ti-weight" style="font-size:11px"></i> ${totTn.toLocaleString('es-AR',{maximumFractionDigits:1})} tn</span>
-        <span style="color:var(--G)"><i class="ti ti-trending-up" style="font-size:11px"></i> ${M(totP)}</span>
+        <span style="color:${totP>=0?'var(--suc)':'var(--dan)'}"><i class="ti ti-trending-up" style="font-size:11px"></i> ${MF(totP)}</span>
       </div>
       <div style="margin-top:10px;display:flex;gap:6px">
-        <button class="bi edit" onclick="editProv('${p.id}')" title="Editar"><i class="ti ti-pencil" style="font-size:13px"></i></button>
-        <button class="bi del" onclick="deleteProv('${p.id}')" title="Eliminar"><i class="ti ti-trash" style="font-size:13px"></i></button>
+        <button class="bi" onclick="editProv('${p.id}')" title="Editar"><i class="ti ti-pencil" style="font-size:12px"></i></button>
+        <button class="bi del" onclick="deleteProv('${p.id}')" title="Eliminar"><i class="ti ti-trash" style="font-size:12px"></i></button>
       </div>
     </div>`;
   }).join('');
@@ -972,6 +1256,8 @@ function saveProv(){
   save();closeProvModal();renderProvs();
 }
 function deleteProv(id){if(!confirm('¿Eliminar?'))return;proveedores=proveedores.filter(p=>p.id!==id);save();renderProvs();}
+
+// ═══ GASTOS ═══
 function saveGasto(){
   const fecha=V('g-fecha'),imp=V('g-imp');
   if(!fecha||!imp){toast('Completá fecha e importe','err');return;}
@@ -981,30 +1267,34 @@ function saveGasto(){
 }
 function deleteGasto(id){if(!confirm('¿Eliminar?'))return;gastos=gastos.filter(g=>g.id!==id);save();renderGastos();}
 function renderGastos(){
-  const cats={Flete:'gt-flete',Laboratorio:'gt-lab',Almacenaje:'gt-alm',Administración:'gt-adm',Impuestos:'gt-adm',Otro:'gt-otro'};
+  const cats={Flete:'bg',Laboratorio:'be',Almacenaje:'bo',Administración:'bm',Impuestos:'bm',Otro:'bpend'};
   const totales={};let tot=0;
   gastos.forEach(g=>{totales[g.cat]=(totales[g.cat]||0)+g.imp;tot+=g.imp;});
   document.getElementById('g-cards').innerHTML=`
-    <div class="sc"><div class="lbl">Total gastos</div><div class="val r sm">${M(tot)}</div></div>
-    ${Object.entries(totales).map(([k,v])=>`<div class="sc"><div class="lbl">${k}</div><div class="val r sm">${M(v)}</div></div>`).join('')}`;
+    <div class="sc red"><div class="lbl">Total gastos</div><div class="val r sm">${MF(tot)}</div></div>
+    ${Object.entries(totales).map(([k,v])=>`<div class="sc"><div class="lbl">${k}</div><div class="val r sm">${MF(v)}</div></div>`).join('')}`;
   const tb=document.getElementById('tb-gastos');
   if(!gastos.length){tb.innerHTML='<tr class="empty"><td colspan="6">Sin gastos</td></tr>';return;}
   tb.innerHTML=[...gastos].reverse().map(g=>`<tr>
     <td>${Dt(g.fecha)}</td>
-    <td><span class="gasto-tag ${cats[g.cat]||'gt-otro'}">${g.cat}</span></td>
+    <td><span class="badge ${cats[g.cat]||'bpend'}">${g.cat}</span></td>
     <td>${g.prov||'—'}</td><td>${g.desc||'—'}</td>
-    <td class="tdr">${M(g.imp)}</td>
-    <td><button class="bi del" onclick="deleteGasto(${g.id})"><i class="ti ti-trash" style="font-size:13px"></i></button></td>
+    <td class="tdr">${MF(g.imp)}</td>
+    <td><button class="bi del" onclick="deleteGasto(${g.id})"><i class="ti ti-trash" style="font-size:12px"></i></button></td>
   </tr>`).join('');
 }
-function saveCfg(){
-  cfg.empresa=V('cfg-empresa');cfg.cuit=V('cfg-cuit');cfg.dir=V('cfg-dir');
-  save();toast('✓ Configuración guardada');
-}
+
+// ═══ CONFIG / BACKUP ═══
+function saveCfg(){cfg.empresa=V('cfg-empresa');cfg.cuit=V('cfg-cuit');cfg.dir=V('cfg-dir');save();toast('✓ Configuración guardada');}
 function loadCfg(){
   if(cfg.empresa)document.getElementById('cfg-empresa').value=cfg.empresa;
   if(cfg.cuit)document.getElementById('cfg-cuit').value=cfg.cuit;
   if(cfg.dir)document.getElementById('cfg-dir').value=cfg.dir;
+  if(cfg.dolarDiv)document.getElementById('cfg-div').value=cfg.dolarDiv;
+  if(cfg.dolarMay)document.getElementById('cfg-may').value=cfg.dolarMay;
+  if(cfg.dolarBlue)document.getElementById('cfg-blue').value=cfg.dolarBlue;
+  dolar.divisa=cfg.dolarDiv||0;dolar.mayorista=cfg.dolarMay||0;dolar.blue=cfg.dolarBlue||0;
+  updateDolarWidget();
 }
 function backupData(){
   const a=document.createElement('a');
@@ -1018,36 +1308,55 @@ function restoreData(input){
   r.onload=e=>{
     try{
       const d=JSON.parse(e.target.result);
-      if(!confirm('¿Restaurar backup del '+(d.ts||'').slice(0,10)+'? Se reemplazarán todos los datos.'))return;
+      if(!confirm('¿Restaurar backup del '+(d.ts||'').slice(0,10)+'?'))return;
       ops=d.ops||[];echeqs=d.echeqs||[];gastos=d.gastos||[];proveedores=d.proveedores||[];cfg=d.cfg||{};cnt=d.cnt||0;
-      save();renderDash();toast('✓ Backup restaurado');
+      save();renderDash();loadCfg();toast('✓ Backup restaurado');
     }catch{toast('Error al leer el archivo','err');}
   };
   r.readAsText(f);input.value='';
 }
 function confirmClear(){
-  if(!confirm('¿Borrar TODOS los datos? Irreversible.'))return;
-  if(!confirm('Confirmá: ¿borrar todo?'))return;
+  if(!confirm('¿Borrar TODOS los datos?'))return;
+  if(!confirm('Confirmá de nuevo: ¿borrar todo?'))return;
   ops=[];echeqs=[];gastos=[];proveedores=[];cnt=0;
   save();renderDash();toast('Datos borrados','err');
 }
 function exportCSV(){
   if(!ops.length){toast('No hay operaciones','err');return;}
-  const h=['#','F.Operacion','F.Entrega','F.Cobro','F.Liquidacion','Proveedor','Comprador','Transportista','Tipo','Producto','Presentacion','Pallets','TnVendidas','TnEntregadas','TnEnviadas','TnRecibidas','DifKg','PctMerma','PCompra','PVenta','Profit','PctMargen','AdelantoTotal','TotalComprado','TotalVenta','Flete','Comision','Almacenaje','FormaPago','EstEntrega','EstCobro','Remito','Factura','Tickets','Notas'];
-  const rows=ops.map(o=>[o.id,o.fOp,o.fEnt||'',o.fCob||'',o.fLiq||'',o.proveedor,o.comprador||'',o.transportista||'',o.tipo,o.producto,o.presentacion||'',o.pallets||'',o.tnVendidas||'',o.tnEntregadas||'',o.tnEnviadas||'',o.tnRecibidas||'',(o.tnEnviadas||0)-(o.tnRecibidas||0),(o.pctMerma||0).toFixed(3),o.pcompra||'',o.pventa||'',Math.round(o.profit||0),(o.pctMargen||0).toFixed(2),o.adelTotal||'',o.totalComprado||'',o.totalVenta||'',o.flete||'',o.comision||'',o.almacenaje||'',o.pago,o.estEntrega||'',o.estCobro||'',o.remito||'',o.factura||'',(o.tickets||[]).length,o.notas||'']);
+  const h=['#','F.Op','F.Sal.Crudo','F.Lle.Refin','F.Sal.Refin','F.Lle.Envasa','F.Cobro','F.Liq',
+    'Proveedor','Comprador','Transportista','Tipo','Producto','Presentacion','Pallets',
+    'Carga.Crudo.Origen','Descarga.Crudo.Refin','Dif.Crudo','%Merma.Crudo',
+    'Carga.Refinado.Refin','Entrega.Refinado.Envasa','Dif.Refinado','%Merma.Refinado',
+    'Tn.Vendidas','P.Compra','P.Venta',
+    'Resultado.Divisa','Resultado.Mayorista','Resultado.Blue','Margen%',
+    'Adelantos','Dolar.Tipo1','Dolar.Val1','Dolar.Tipo2','Dolar.Val2',
+    'Flete','Comision','Almacenaje','FormaPago','EstEntrega','EstCobro','Remito','Factura','Tickets','Notas'];
+  const rows=ops.map(o=>[o.id,o.fOp,o.fSalCrudo||'',o.fLleCrudo||'',o.fSalRef||'',o.fLleEnv||'',o.fCob||'',o.fLiq||'',
+    o.proveedor,o.comprador||'',o.transportista||'',o.tipo,o.producto,o.presentacion||'',o.pallets||'',
+    o.tn1||'',o.tn2||'',(o.dif1||0).toFixed(3),(o.pctMerma1||0).toFixed(3),
+    o.tn3||'',o.tn4||'',(o.dif2||0).toFixed(3),(o.pctMerma2||0).toFixed(3),
+    o.tnVendidas||'',o.pcompra||'',o.pventa||'',
+    Math.round(o.profit||0),Math.round(o.profitMay||0),Math.round(o.profitBlue||0),(o.pctMargen||0).toFixed(2),
+    o.adelTotal||'',o.dolarTipo1||'',o.dolarVal1||'',o.dolarTipo2||'',o.dolarVal2||'',
+    o.flete||'',o.comision||'',o.almacenaje||'',o.pago||'',o.estEntrega||'',o.estCobro||'',o.remito||'',o.factura||'',(o.tickets||[]).length,o.notas||'']);
   const csv=[h,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
   a.download='alborada_ops_'+new Date().toISOString().split('T')[0]+'.csv';
   a.click();toast('✓ CSV exportado ('+ops.length+' operaciones)');
 }
+
+// ═══ INIT ═══
 const hoy=new Date();
-document.getElementById('hdate').textContent=hoy.toLocaleDateString('es-AR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+document.getElementById('hdate')&&(document.getElementById('hdate').textContent=hoy.toLocaleDateString('es-AR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}));
 document.getElementById('hbadge').textContent=ops.length+' ops';
 document.getElementById('f-fop').value=hoy.toISOString().split('T')[0];
 document.getElementById('g-fecha').value=hoy.toISOString().split('T')[0];
 document.getElementById('e-fr').value=hoy.toISOString().split('T')[0];
-loadCfg();renderDash();renderEcheqs();
+loadCfg();
+fetchDolar();
+renderDash();
+renderEcheqs();
 </script>
 </body>
 </html>
