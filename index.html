@@ -428,8 +428,15 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>Fecha liquidación</label><input type="date" id="f-fliq"></div>
       <div class="field"><label>Forma de pago</label>
         <select id="f-pago2">
-          <option value="Transferencia">Transferencia</option><option value="Echeq">Echeq</option>
-          <option value="Efectivo">Efectivo</option><option value="Cheque">Cheque físico</option><option value="Mixto">Mixto</option>
+          <option value="Transferencia">Transferencia</option>
+          <option value="Transferencia parcial">Transferencia parcial</option>
+          <option value="Echeq">Echeq</option>
+          <option value="Echeq parcial">Echeq parcial</option>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Cheque">Cheque físico</option>
+          <option value="A cuenta">A cuenta</option>
+          <option value="Mixto">Mixto</option>
+          <option value="Pendiente">Sin pago aún</option>
         </select></div>
     </div>
   </div>
@@ -529,7 +536,17 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>Fecha realizado *</label><input type="date" id="e-fr"></div>
       <div class="field"><label>Fecha cobro *</label><input type="date" id="e-fc"></div>
       <div class="field"><label>Estado</label>
-        <select id="e-est"><option value="Pendiente">Pendiente</option><option value="Cobrado">Cobrado</option><option value="Rechazado">Rechazado</option></select></div>
+        <select id="e-est" onchange="toggleEndoso()">
+          <option value="Pendiente">Pendiente</option>
+          <option value="Al cobro">Al cobro (presentado)</option>
+          <option value="Cobrado total">Cobrado — Total</option>
+          <option value="Cobrado parcial">Cobrado — Parcial</option>
+          <option value="A cuenta">A cuenta</option>
+          <option value="Endosado">Endosado</option>
+          <option value="Endosado parcial">Endosado — Parcial</option>
+          <option value="Rechazado">Rechazado</option>
+          <option value="En gestión">En gestión judicial</option>
+        </select></div>
     </div>
     <div class="g3" style="margin-top:11px">
       <div class="field"><label>Proveedor *</label>
@@ -546,11 +563,40 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>N° de cheque</label><input type="text" id="e-num" placeholder="ej: 00012345"></div>
     </div>
     <div class="g3" style="margin-top:11px">
-      <div class="field"><label>Importe ($) *</label><input type="number" id="e-imp" placeholder="ej: 42000000"></div>
+      <div class="field"><label>Importe bruto ($) *</label><input type="number" id="e-imp" placeholder="ej: 42000000" oninput="calcEcheq()"></div>
       <div class="field"><label>Cantidad echeqs</label>
         <select id="e-cant"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
       <div class="field"><label>Op. asociada (N°)</label><input type="number" id="e-opref" placeholder="ej: 5"></div>
     </div>
+
+    <div id="echeq-financiero" class="box bxo" style="margin-top:12px">
+      <div class="bx-title"><i class="ti ti-percentage"></i>Gastos financieros (endoso / cobro)</div>
+      <div class="g4">
+        <div class="field"><label>Descuento endoso (%)</label><input type="number" step="0.01" id="e-desc-pct" placeholder="ej: 2.5" oninput="calcEcheq()"><div class="hint">% que cobra el banco o cesionario</div></div>
+        <div class="field"><label>Monto descuento ($)</label><input type="text" id="e-desc-monto" readonly></div>
+        <div class="field"><label>Gastos acreditación ($)</label><input type="number" id="e-gasto-acred" placeholder="ej: 15000" oninput="calcEcheq()"><div class="hint">Costo fijo bancario</div></div>
+        <div class="field"><label>Importe neto ($)</label><input type="text" id="e-imp-neto" readonly style="font-weight:700;color:var(--suc)"></div>
+      </div>
+      <div class="g4" style="margin-top:10px">
+        <div class="field"><label>Importe pagado/cobrado ($)</label><input type="number" id="e-imp-pagado" placeholder="ej: 20000000" oninput="calcEcheq()"><div class="hint">Si es pago parcial o a cuenta</div></div>
+        <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="e-saldo-pend" readonly></div>
+        <div class="field"><label>Fecha de pago/cobro efectivo</label><input type="date" id="e-fecha-pago"></div>
+        <div class="field"><label>Forma cobro</label>
+          <select id="e-forma-cobro">
+            <option value="">—</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Acreditación">Acreditación bancaria</option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Compensación">Compensación</option>
+          </select></div>
+      </div>
+      <div class="g3" style="margin-top:10px">
+        <div class="field"><label>Endosado a</label><input type="text" id="e-endosado-a" placeholder="ej: García SA"></div>
+        <div class="field"><label>Fecha endoso</label><input type="date" id="e-fecha-endoso"></div>
+        <div class="field"><label>Banco destino endoso</label><input type="text" id="e-banco-endoso" placeholder="ej: Banco Galicia"></div>
+      </div>
+    </div>
+
     <div class="field" style="margin-top:11px"><label>Observaciones</label>
       <textarea id="e-obs" placeholder="Notas adicionales..."></textarea></div>
     <div class="act">
@@ -560,12 +606,21 @@ tr:hover td{background:var(--prl);}
   </div>
   <div class="sec"><span><i class="ti ti-list"></i>Echeqs registrados</span>
     <select id="ef-est" onchange="renderEcheqs()" style="font-size:11px;padding:4px 8px;border:1px solid var(--bor);border-radius:var(--radsm);background:var(--surf);color:var(--text)">
-      <option value="">Todos</option><option value="Pendiente">Pendiente</option><option value="Cobrado">Cobrado</option><option value="Rechazado">Rechazado</option>
+      <option value="">Todos</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Al cobro">Al cobro</option>
+      <option value="Cobrado total">Cobrado total</option>
+      <option value="Cobrado parcial">Cobrado parcial</option>
+      <option value="A cuenta">A cuenta</option>
+      <option value="Endosado">Endosado</option>
+      <option value="Endosado parcial">Endosado parcial</option>
+      <option value="Rechazado">Rechazado</option>
+      <option value="En gestión">En gestión</option>
     </select>
   </div>
-  <div id="echeq-totals" class="g3" style="gap:8px;margin-bottom:10px"></div>
+  <div id="echeq-totals" class="scards" style="margin-bottom:10px"></div>
   <div class="tw">
-    <table><thead><tr><th>Realizado</th><th>Cobro</th><th>Proveedor</th><th>Banco</th><th>N° Cheque</th><th>Importe</th><th>Cant.</th><th>Op.</th><th>Estado</th><th>Obs.</th><th></th></tr></thead>
+    <table><thead><tr><th>Realizado</th><th>Cobro</th><th>Proveedor</th><th>Banco</th><th>N° Cheque</th><th>Importe bruto</th><th>Desc.%</th><th>Gastos acred.</th><th>Importe neto</th><th>Cant.</th><th>Op.</th><th>Endosado a</th><th>F.Endoso</th><th>Estado</th><th>Pagado</th><th>Saldo pend.</th><th>Forma cobro</th><th>F.Pago</th><th>Obs.</th><th></th></tr></thead>
     <tbody id="tb-echeqs"><tr class="empty"><td colspan="11">Sin echeqs</td></tr></tbody></table>
   </div>
 </div>
@@ -1114,16 +1169,45 @@ function renderPlanilla(){
 }
 
 // ═══ ECHEQ ═══
+function calcEcheq(){
+  const imp=parseFloat(document.getElementById('e-imp').value)||0;
+  const pct=parseFloat(document.getElementById('e-desc-pct').value)||0;
+  const gastoAcred=parseFloat(document.getElementById('e-gasto-acred').value)||0;
+  const pagado=parseFloat(document.getElementById('e-imp-pagado').value)||0;
+  const descMonto=imp*pct/100;
+  const neto=imp-descMonto-gastoAcred;
+  const saldo=neto-pagado;
+  document.getElementById('e-desc-monto').value=descMonto?'$'+Math.round(descMonto).toLocaleString('es-AR'):'';
+  document.getElementById('e-imp-neto').value=imp?'$'+Math.round(neto).toLocaleString('es-AR'):'';
+  document.getElementById('e-saldo-pend').value=pagado&&neto?'$'+Math.round(saldo).toLocaleString('es-AR'):'';
+}
+function toggleEndoso(){
+  const est=document.getElementById('e-est').value;
+  document.getElementById('echeq-financiero').style.display=est==='Endosado'||est==='Cobrado'?'block':'block';
+}
 function saveEcheq(){
   const fr=V('e-fr'),fc=V('e-fc'),prov=V('e-prov'),banco=V('e-banco'),imp=V('e-imp');
   if(!fr||!prov||!banco||!imp){toast('Completá los campos requeridos','err');return;}
-  echeqs.push({id:Date.now(),fr,fc,prov,banco,num:V('e-num'),imp:Number(imp),
+  const impN=Number(imp);
+  const descPct=parseFloat(document.getElementById('e-desc-pct').value)||0;
+  const gastoAcred=parseFloat(document.getElementById('e-gasto-acred').value)||0;
+  const descMonto=impN*descPct/100;
+  const impNeto=impN-descMonto-gastoAcred;
+  const impPagado=parseFloat(document.getElementById('e-imp-pagado').value)||0;
+  const saldoPend=impNeto-impPagado;
+  echeqs.push({id:Date.now(),fr,fc,prov,banco,num:V('e-num'),imp:impN,
+    descPct,descMonto,gastoAcred,impNeto,
+    impPagado,saldoPend,fechaPago:V('e-fecha-pago'),formaCobro:V('e-forma-cobro'),
+    endosadoA:V('e-endosado-a'),fechaEndoso:V('e-fecha-endoso'),bancoEndoso:V('e-banco-endoso'),
     cant:V('e-cant'),opRef:V('e-opref'),obs:V('e-obs'),estado:V('e-est')});
   save();renderEcheqs();renderDash();toast('✓ Echeq registrado');clearEcheq();
 }
 function clearEcheq(){
-  ['e-fr','e-fc','e-num','e-imp','e-opref','e-obs'].forEach(id=>document.getElementById(id).value='');
-  ['e-prov','e-banco','e-cant','e-est'].forEach(id=>document.getElementById(id).selectedIndex=0);
+  ['e-fr','e-fc','e-num','e-imp','e-opref','e-obs','e-desc-pct','e-desc-monto',
+   'e-gasto-acred','e-imp-neto','e-saldo-pend','e-imp-pagado','e-fecha-pago',
+   'e-endosado-a','e-fecha-endoso','e-banco-endoso']
+   .forEach(id=>document.getElementById(id).value='');
+  ['e-prov','e-banco','e-cant','e-est','e-forma-cobro'].forEach(id=>document.getElementById(id).selectedIndex=0);
 }
 function deleteEcheq(id){
   if(!confirm('¿Eliminar este echeq?'))return;
@@ -1134,7 +1218,10 @@ function renderEcheqs(){
   const list=echeqs.filter(e=>!filt||e.estado===filt);
   const tb=document.getElementById('tb-echeqs');
   if(!list.length){tb.innerHTML='<tr class="empty"><td colspan="11">Sin echeqs</td></tr>';return;}
-  const be={Pendiente:'bpend',Cobrado:'bcob',Rechazado:'bcan'};
+  const be={
+    'Pendiente':'bpend','Al cobro':'bpar','Cobrado total':'bcob','Cobrado parcial':'bpar',
+    'A cuenta':'bpar','Endosado':'bm','Endosado parcial':'bm','Rechazado':'bcan','En gestión':'bcan'
+  };
   tb.innerHTML=[...list].reverse().map(e=>{
     const dias=e.fc?Math.ceil((new Date(e.fc)-new Date())/864e5):null;
     const vc=dias!==null&&dias<=7&&e.estado==='Pendiente';
@@ -1150,12 +1237,18 @@ function renderEcheqs(){
     </tr>`;
   }).join('');
   const tot=echeqs.reduce((s,e)=>s+(e.imp||0),0);
+  const totNeto=echeqs.reduce((s,e)=>s+(e.impNeto||e.imp||0),0);
+  const totGastos=echeqs.reduce((s,e)=>s+(e.descMonto||0)+(e.gastoAcred||0),0);
   const pend=echeqs.filter(e=>e.estado==='Pendiente').reduce((s,e)=>s+(e.imp||0),0);
-  const cob=echeqs.filter(e=>e.estado==='Cobrado').reduce((s,e)=>s+(e.imp||0),0);
+  const cob=echeqs.filter(e=>e.estado==='Cobrado').reduce((s,e)=>s+(e.impNeto||e.imp||0),0);
+  const end=echeqs.filter(e=>e.estado==='Endosado').reduce((s,e)=>s+(e.impNeto||e.imp||0),0);
   document.getElementById('echeq-totals').innerHTML=`
-    <div class="sc"><div class="lbl">Total emitido</div><div class="val sm b">${MF(tot)}</div></div>
+    <div class="sc"><div class="lbl">Total bruto emitido</div><div class="val sm b">${MF(tot)}</div></div>
+    <div class="sc red"><div class="lbl">Total gastos financ.</div><div class="val r sm">${MF(totGastos)}</div></div>
+    <div class="sc green"><div class="lbl">Total neto real</div><div class="val g sm">${MF(totNeto)}</div></div>
     <div class="sc"><div class="lbl">Pendiente cobro</div><div class="val sm o">${MF(pend)}</div></div>
-    <div class="sc"><div class="lbl">Cobrado</div><div class="val sm g">${MF(cob)}</div></div>`;
+    <div class="sc green"><div class="lbl">Cobrado (neto)</div><div class="val g sm">${MF(cob)}</div></div>
+    <div class="sc"><div class="lbl">Endosado (neto)</div><div class="val sm b">${MF(end)}</div></div>`;
 }
 
 // ═══ DASHBOARD ═══
@@ -1184,6 +1277,8 @@ function renderDash(){
     const d=Math.ceil((new Date(e.fc)-new Date())/864e5);
     if(d<=7)alerts.push(`<div class="alert ${d<0?'aerr':'awarn'}"><i class="ti ti-credit-card"></i>Echeq ${e.prov} ${d<0?'VENCIDO hace '+Math.abs(d)+'d':'vence en '+d+'d'} — ${MF(e.imp)}</div>`);
   });
+  const totGastosF=echeqs.reduce((s,e)=>s+(e.descMonto||0)+(e.gastoAcred||0),0);
+  if(totGastosF>0)alerts.push(`<div class="alert ainfo"><i class="ti ti-percentage"></i>Gastos financieros acumulados en echeqs: <strong>${MF(totGastosF)}</strong> (descuentos + acreditación)</div>`);
   document.getElementById('d-alerts').innerHTML=alerts.length?alerts.join(''):'<div style="color:var(--t3);font-size:12px;padding:6px 0">Sin alertas activas ✓</div>';
   const months={};
   ops.forEach(o=>{if(o.fOp){const m=o.fOp.slice(0,7);months[m]=(months[m]||0)+(o.profit||0);}});
