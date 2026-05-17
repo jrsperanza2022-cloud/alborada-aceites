@@ -337,13 +337,13 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-prov-dv" placeholder="ej: 1391"></div>
       </div>
       <div class="g4" style="margin-top:8px">
-        <div class="field"><label>Adelanto 1 ($)</label><input type="number" id="f-a1" placeholder="ej: 20000000" oninput="calcAdel()"></div>
-        <div class="field"><label>Adelanto 2 ($)</label><input type="number" id="f-a2" placeholder="ej: 0" oninput="calcAdel()"></div>
-        <div class="field"><label>Adelanto 3 ($)</label><input type="number" id="f-a3" placeholder="ej: 0" oninput="calcAdel()"></div>
-        <div class="field"><label>Total adelantos</label><input type="text" id="f-at" readonly></div>
+        <div class="field"><label id="lbl-a1">Adelanto 1 ($)</label><input type="number" id="f-a1" placeholder="ej: 20000000" oninput="calcAdel()"></div>
+        <div class="field"><label id="lbl-a2">Adelanto 2 ($)</label><input type="number" id="f-a2" placeholder="ej: 0" oninput="calcAdel()"></div>
+        <div class="field"><label id="lbl-a3">Adelanto 3 ($)</label><input type="number" id="f-a3" placeholder="ej: 0" oninput="calcAdel()"></div>
+        <div class="field"><label id="lbl-at">Total adelantos</label><input type="text" id="f-at" readonly></div>
       </div>
       <div class="g3" style="margin-top:8px">
-        <div class="field"><label>Importe pagado ($)</label><input type="number" id="f-prov-pagado" oninput="calcSaldo('prov')"></div>
+        <div class="field"><label id="lbl-prov-pagado">Importe pagado ($)</label><input type="number" id="f-prov-pagado" oninput="calcSaldo('prov')"></div>
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-prov-saldo" readonly></div>
         <div class="field"><label>Notas</label><input type="text" id="f-prov-notas" placeholder="ej: saldo a 30 días"></div>
       </div>
@@ -369,7 +369,7 @@ tr:hover td{background:var(--prl);}
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Costo servicio neto ($)</label><input type="number" id="f-ref-costo" placeholder="ej: 6500000" oninput="liveCalc()"></div>
         <div class="field"><label>Costo c/IVA ($)</label><input type="text" id="f-ref-civa" readonly></div>
-        <div class="field"><label>Pagado ($)</label><input type="number" id="f-ref-pagado" oninput="calcSaldo('ref')"></div>
+        <div class="field"><label id="lbl-ref-pagado">Pagado ($)</label><input type="number" id="f-ref-pagado" oninput="calcSaldo('ref')"></div>
         <div class="field"><label>Saldo ($)</label><input type="text" id="f-ref-saldo" readonly></div>
       </div>
       <div class="g3" style="margin-top:8px">
@@ -401,8 +401,8 @@ tr:hover td{background:var(--prl);}
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Flete tramo 1 — crudo ($)</label><input type="number" id="f-flete1" placeholder="ej: 850000" oninput="liveCalc()"><div class="hint">Origen → Refinería</div></div>
         <div class="field"><label>Flete tramo 2 — refinado ($)</label><input type="number" id="f-flete2" placeholder="ej: 900000" oninput="liveCalc()"><div class="hint">Refinería → Envasadora</div></div>
-        <div class="field"><label>Pagado tramo 1 ($)</label><input type="number" id="f-transp-pag1" oninput="calcSaldo('transp')"></div>
-        <div class="field"><label>Pagado tramo 2 ($)</label><input type="number" id="f-transp-pag2" oninput="calcSaldo('transp')"></div>
+        <div class="field"><label id="lbl-transp-pag1">Pagado tramo 1 ($)</label><input type="number" id="f-transp-pag1" oninput="calcSaldo('transp')"></div>
+        <div class="field"><label id="lbl-transp-pag2">Pagado tramo 2 ($)</label><input type="number" id="f-transp-pag2" oninput="calcSaldo('transp')"></div>
       </div>
       <div class="g3" style="margin-top:8px">
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-transp-saldo" readonly></div>
@@ -431,7 +431,7 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Tipo de dólar</label>
           <select id="f-com-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option><option value="blue">Blue</option></select></div>
-        <div class="field"><label>Pagado ($)</label><input type="number" id="f-com-pagado" oninput="calcSaldo('com')"></div>
+        <div class="field"><label id="lbl-com-pagado">Pagado ($)</label><input type="number" id="f-com-pagado" oninput="calcSaldo('com')"></div>
         <div class="field"><label>Estado</label>
           <select id="f-com-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option><option>Echeq rechazado</option></select></div>
       </div>
@@ -459,7 +459,7 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-comp-dv" placeholder="ej: 1391" oninput="liveCalc()"></div>
       </div>
       <div class="g4" style="margin-top:8px">
-        <div class="field"><label>Cobrado al comprador ($)</label><input type="number" id="f-comp-cobrado" oninput="calcSaldo('comp')"></div>
+        <div class="field"><label id="lbl-comp-cobrado">Cobrado al comprador ($)</label><input type="number" id="f-comp-cobrado" oninput="calcSaldo('comp')"></div>
         <div class="field"><label>Saldo a cobrar ($)</label><input type="text" id="f-comp-saldo" readonly></div>
         <div class="field"><label>Estado cobro</label>
           <select id="f-comp-est"><option>Pendiente</option><option>Parcial</option><option>A cuenta</option><option>Cobrado</option></select></div>
@@ -820,8 +820,23 @@ const IVA=n=>n?Math.round(n*1.105):0;
 const actorEcheqCount={prov:0,ref:0,transp:0,com:0,comp:0};
 
 function toggleActorEcheq(actor,val){
-  const show=(val||'').toLowerCase().includes('echeq');
+  const show=(val||'').toLowerCase().includes('echeq')||(val||'').toLowerCase().includes('cheque');
   document.getElementById('actor-echeqs-'+actor).style.display=show?'block':'none';
+  // Rename payment labels to reflect echeq context
+  const L=id=>{const e=document.getElementById(id);if(e)return e;};
+  const set=(id,txt)=>{const e=L(id);if(e)e.textContent=txt;};
+  if(actor==='prov'){
+    set('lbl-prov-pagado', show?'Importe echeq ($)':'Importe pagado ($)');
+  } else if(actor==='ref'){
+    set('lbl-ref-pagado', show?'Importe echeq ($)':'Pagado ($)');
+  } else if(actor==='transp'){
+    set('lbl-transp-pag1', show?'Echeq tramo 1 ($)':'Pagado tramo 1 ($)');
+    set('lbl-transp-pag2', show?'Echeq tramo 2 ($)':'Pagado tramo 2 ($)');
+  } else if(actor==='com'){
+    set('lbl-com-pagado', show?'Importe echeq ($)':'Pagado ($)');
+  } else if(actor==='comp'){
+    set('lbl-comp-cobrado', show?'Importe echeq ($)':'Cobrado al comprador ($)');
+  }
 }
 
 function addActorEcheq(actor){
@@ -988,7 +1003,14 @@ function openLB(src,info){document.getElementById('lb-img').src=src;document.get
 function closeLB(){document.getElementById('lb').style.display='none';}
 function toggleEcheqInline(){
   const p=V('f-pago').toLowerCase();
-  document.getElementById('card-echeqs-inline').style.display=p.includes('echeq')?'block':'none';
+  const isEcheq=p.includes('echeq');
+  document.getElementById('card-echeqs-inline').style.display=isEcheq?'block':'none';
+  // Rename adelanto labels when payment is echeq
+  const L=document.getElementById.bind(document);
+  if(L('lbl-a1'))L('lbl-a1').textContent=isEcheq?'Echeq 1 ($)':'Adelanto 1 ($)';
+  if(L('lbl-a2'))L('lbl-a2').textContent=isEcheq?'Echeq 2 ($)':'Adelanto 2 ($)';
+  if(L('lbl-a3'))L('lbl-a3').textContent=isEcheq?'Echeq 3 ($)':'Adelanto 3 ($)';
+  if(L('lbl-at'))L('lbl-at').textContent=isEcheq?'Total echeqs':'Total adelantos';
 }
 function addEcheqRow(){
   if(inlineEcheqCount>=6){toast('Máximo 6 echeqs','err');return;}
