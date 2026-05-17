@@ -263,24 +263,41 @@ tr:hover td{background:var(--prl);}
     </div>
     <input type="hidden" id="f-tipo" value="granel">
     <div id="gf">
+      <!-- COMPRA (crudo) -->
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sec);margin:8px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-down-circle"></i>Compra — aceite crudo</div>
       <div class="g4">
-        <div class="field"><label>Aceite *</label>
+        <div class="field"><label>Aceite comprado *</label>
           <select id="f-acg">
             <option value="">— seleccionar —</option>
-            <optgroup label="SOJA"><option>Soja crudo a granel</option><option>Soja refinado a granel</option></optgroup>
-            <optgroup label="GIRASOL"><option>Girasol crudo a granel</option><option>Girasol refinado a granel</option></optgroup>
-            <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
-            <optgroup label="OTROS"><option>Aceite Mezcla a granel</option><option>Speller a granel</option><option>Otro a granel</option></optgroup>
+            <optgroup label="SOJA"><option>Soja crudo a granel</option></optgroup>
+            <optgroup label="GIRASOL"><option>Girasol crudo a granel</option></optgroup>
+            <optgroup label="MAÍZ"><option>Maíz crudo a granel</option></optgroup>
+            <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Speller</option><option>Otro crudo</option></optgroup>
           </select></div>
-        <div class="field"><label>P. compra neto ($/tn)</label><input type="number" id="f-pc" placeholder="ej: 1050" oninput="liveCalc()"></div>
+        <div class="field"><label>P. compra neto ($/tn)</label><input type="number" id="f-pc" placeholder="ej: 990" oninput="liveCalc()"></div>
         <div class="field"><label>P. compra c/IVA ($/tn)</label><input type="text" id="f-pc-iva" readonly><div class="hint">IVA 21% incluido</div></div>
-        <div class="field"><label>Tn vendidas (facturadas)</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.260" oninput="liveCalc()"></div>
+        <div class="field"><label>Tn a pagar al proveedor</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.310" oninput="liveCalc()"><div class="hint">Peso descarga en refinería (tn2)</div></div>
+      </div>
+      <!-- VENTA (refinado) -->
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin:14px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-up-circle"></i>Venta — aceite refinado</div>
+      <div class="g4">
+        <div class="field"><label>Aceite vendido *</label>
+          <select id="f-acv">
+            <option value="">— seleccionar —</option>
+            <optgroup label="SOJA"><option>Soja refinado a granel</option></optgroup>
+            <optgroup label="GIRASOL"><option>Girasol refinado a granel</option></optgroup>
+            <optgroup label="MAÍZ"><option>Maíz refinado a granel</option></optgroup>
+            <optgroup label="OTROS"><option>Aceite Mezcla refinado</option><option>Otro refinado</option></optgroup>
+          </select></div>
+        <div class="field"><label>P. venta neto ($/tn)</label><input type="number" id="f-pv" placeholder="ej: 2050" oninput="liveCalc()"></div>
+        <div class="field"><label>P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly><div class="hint">IVA 21% incluido</div></div>
+        <div class="field"><label>Tn a cobrar al comprador</label><input type="number" step="0.001" id="f-tnventa" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Peso descarga en destino (tn4)</div></div>
       </div>
       <div class="g4" style="margin-top:10px">
-        <div class="field"><label>P. venta neto ($/tn)</label><input type="number" id="f-pv" placeholder="ej: 1055" oninput="liveCalc()"></div>
-        <div class="field"><label>P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly><div class="hint">IVA 21% incluido</div></div>
         <div class="field"><label>Total compra neto ($)</label><input type="text" id="f-tc" readonly></div>
+        <div class="field"><label>Total compra c/IVA ($)</label><input type="text" id="f-tc-iva" readonly></div>
         <div class="field"><label>Total venta neto ($)</label><input type="text" id="f-tv" readonly></div>
+        <div class="field"><label>Total venta c/IVA ($)</label><input type="text" id="f-tv-iva" readonly></div>
       </div>
     </div>
     <div id="ef" style="display:none">
@@ -813,6 +830,7 @@ const Dt=d=>{if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0
 const DC=v=>v>0?'var(--dan)':v<0?'var(--suc)':'var(--t3)';
 const DS=v=>(v>0?'+':'')+Number(v).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn';
 const N=id=>parseFloat(document.getElementById(id)?.value)||0;
+const Np=id=>{const e=document.getElementById(id);if(!e)return 0;const v=(e.value||'').replace(/\./g,'').replace(',','.');return parseFloat(v)||0;};
 const V=id=>document.getElementById(id)?.value||'';
 const IVA=n=>n?Math.round(n*1.21):0;
 
@@ -1057,21 +1075,21 @@ function getInlineEcheqs(opId){
 }
 function calcSaldo(actor){
   if(actor==='prov'){
-    const tv=N('f-tv');const p=N('f-prov-pagado');
+    const tv=N('f-tv');const p=Np('f-prov-pagado');
     if(tv)document.getElementById('f-prov-saldo').value=MF(tv-p);
   }else if(actor==='ref'){
-    const c=N('f-ref-costo');const p=N('f-ref-pagado');
+    const c=N('f-ref-costo');const p=Np('f-ref-pagado');
     if(c)document.getElementById('f-ref-saldo').value=MF(IVA(c)-p);
   }else if(actor==='transp'){
-    const t=N('f-flete1')+N('f-flete2'),p=N('f-transp-pag1')+N('f-transp-pag2');
+    const t=N('f-flete1')+N('f-flete2'),p=Np('f-transp-pag1')+Np('f-transp-pag2');
     if(t)document.getElementById('f-transp-saldo').value=MF(t-p);
   }else if(actor==='comp'){
-    const tv=N('f-tv');const c=N('f-comp-cobrado');
+    const tv=N('f-tv');const c=Np('f-comp-cobrado');
     if(tv)document.getElementById('f-comp-saldo').value=MF(tv-c);
   }
 }
 function calcAdel(){
-  const a=N('f-a1')+N('f-a2')+N('f-a3');
+  const a=Np('f-a1')+Np('f-a2')+Np('f-a3');
   document.getElementById('f-at').value=a?MF(a):'';
 }
 function calcEcheq(){
@@ -1099,8 +1117,8 @@ function liveCalc(){
   }
   const base=tipo==='granel'?tnv:uni;
   const tc=pc*base,tv=pv*base;
-  if(tc)document.getElementById('f-tc').value=MF(tc);
-  if(tv){document.getElementById('f-tv').value=MF(tv);calcSaldo('prov');calcSaldo('comp');}
+  if(tc){document.getElementById('f-tc').value=MF(tc);document.getElementById('f-tc-iva').value=MF(IVA(tc));}
+  if(tv){document.getElementById('f-tv').value=MF(tv);document.getElementById('f-tv-iva').value=MF(IVA(tv));calcSaldo('prov');calcSaldo('comp');}
   const comPct=N('f-com-pct');
   if(comPct&&tv){
     const cm=tv*comPct/100;
@@ -1165,8 +1183,8 @@ function saveOp(){
   if(!prov||!fop||!prod){toast('Completá proveedor, fecha y producto','err');return;}
   const pc=tipo==='granel'?N('f-pc'):N('f-pcos');
   const pv=tipo==='granel'?N('f-pv'):N('f-pve');
-  const tnv=N('f-tnv'),uni=N('f-uni'),base=tipo==='granel'?tnv:uni;
-  const tc=pc*base,tv=pv*base;
+  const tnv=N('f-tnv'),uni=N('f-uni'),tnventa=N('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
+  const tc=pc*base,tv=pv*basev;
   const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
   const refC=N('f-ref-costo');
   const flete=N('f-flete1')+N('f-flete2');
@@ -1176,7 +1194,7 @@ function saveOp(){
   const profitMay=dolar.mayorista?resultado*(dolar.mayorista/baseR):0;
   const profitBlue=dolar.blue?resultado*(dolar.blue/baseR):0;
   const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4');
-  const a1=N('f-a1'),a2=N('f-a2'),a3=N('f-a3');
+  const a1=Np('f-a1'),a2=Np('f-a2'),a3=Np('f-a3');
   const data={
     proveedor:prov,comprador:V('f-comp'),transportista:V('f-transp'),
     refinador:V('f-ref-nombre'),comisionista:V('f-com-nombre'),
@@ -1205,16 +1223,16 @@ function saveOp(){
     costoTotal,resultado,profitMay,profitBlue,
     pctMargen:costoTotal>0?(resultado/costoTotal*100):0,
     provPago:V('f-prov-pago'),provDolTipo:V('f-prov-dol'),provDolVal:N('f-prov-dv'),
-    provPagado:N('f-prov-pagado'),provNotas:V('f-prov-notas'),
+    provPagado:Np('f-prov-pagado'),provNotas:V('f-prov-notas'),
     refPago:V('f-ref-pago'),refDolTipo:V('f-ref-dol'),refDolVal:N('f-ref-dv'),
-    refPagado:N('f-ref-pagado'),refEst:V('f-ref-est'),refNotas:V('f-ref-notas'),
+    refPagado:Np('f-ref-pagado'),refEst:V('f-ref-est'),refNotas:V('f-ref-notas'),
     transpPago:V('f-transp-pago'),transpDolTipo:V('f-transp-dol'),transpDolVal:N('f-transp-dv'),
-    transpPag1:N('f-transp-pag1'),transpPag2:N('f-transp-pag2'),
+    transpPag1:Np('f-transp-pag1'),transpPag2:Np('f-transp-pag2'),
     transpEst:V('f-transp-est'),transpNotas:V('f-transp-notas'),
-    comPago:V('f-com-pago'),comDolTipo:V('f-com-dol'),comPagado:N('f-com-pagado'),
+    comPago:V('f-com-pago'),comDolTipo:V('f-com-dol'),comPagado:Np('f-com-pagado'),
     comEst:V('f-com-est'),comNombre:V('f-com-nombre'),comNotas:V('f-com-notas'),
     compPago:V('f-comp-pago'),compDolTipo:V('f-comp-dol'),compDolVal:N('f-comp-dv'),
-    compCobrado:N('f-comp-cobrado'),compEst:V('f-comp-est'),compNotas:V('f-comp-notas'),
+    compCobrado:Np('f-comp-cobrado'),compEst:V('f-comp-est'),compNotas:V('f-comp-notas'),
     tickets1:[...tix1],tickets2:[...tix2]
   };
   if(editingId!==null){
@@ -1293,6 +1311,8 @@ function editOp(id){
   // ── Tipo y producto ──
   const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
   setTipo(o.tipo||'granel',tipBtn);
+  sv('f-acv',o.productoVenta);
+  sv('f-tnventa',o.tnVenta||o.tnVendidas);
   if(o.tipo==='envase'){
     ss('f-ace',o.producto);ss('f-pres',o.presentacion);
     sv('f-marca',o.marca);sv('f-plt',o.pallets);sv('f-uni',o.unidades);
