@@ -238,16 +238,10 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>N° Factura</label><input type="text" id="f-factura" placeholder="A-0001-00456"></div>
       <div class="field"><label>Forma de pago general</label>
         <select id="f-pago" onchange="toggleEcheqInline()">
-          <option value="Transferencia">Transferencia — Total</option>
-          <option value="Transferencia parcial">Transferencia — Parcial</option>
-          <option value="Echeq">Echeq — Total</option>
-          <option value="Echeq parcial">Echeq — Parcial</option>
-          <option value="Efectivo">Efectivo — Total</option>
-          <option value="A cuenta">A cuenta</option>
-          <option value="Saldo pendiente">Saldo pendiente</option>
-          <option value="Mixto">Mixto</option>
-          <option value="Sin pago aún">Sin pago aún</option>
-        </select></div>
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
     </div>
     <div class="g4" style="margin-top:10px">
       <div class="field"><label>Estado entrega</label>
@@ -327,9 +321,10 @@ tr:hover td{background:var(--prl);}
             <option>Ruta 12</option><option>Cañada Rosquin</option><option>Pilar</option><option>Laruso</option><option>Otro</option></select></div>
         <div class="field"><label>Forma de pago</label>
           <select id="f-prov-pago" onchange="toggleActorEcheq('prov',this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
-            <option>Efectivo</option><option>A cuenta</option><option>Saldo pendiente</option><option>Mixto</option></select></div>
+            <option>Pendiente</option></select></div>
         <div class="field"><label>Tipo de dólar</label>
           <select id="f-prov-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
@@ -358,8 +353,10 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Refinador</label><input type="text" id="f-ref-nombre" placeholder="ej: Refinería del Norte SA"></div>
         <div class="field"><label>Forma de pago</label>
           <select id="f-ref-pago" onchange="toggleActorEcheq('ref',this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
             <option>Transferencia total</option><option>Transferencia parcial</option>
-            <option>Echeq</option><option>Efectivo</option><option>A cuenta</option><option>Pendiente</option></select></div>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
         <div class="field"><label>Tipo de dólar</label>
           <select id="f-ref-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
@@ -389,9 +386,10 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Transportista</label><input type="text" id="f-transp" placeholder="ej: Juan Pérez"></div>
         <div class="field"><label>Forma de pago</label>
           <select id="f-transp-pago" onchange="toggleActorEcheq('transp',this.value)">
-            <option>Efectivo</option><option>Transferencia</option>
-            <option>A cuenta (tramo 1)</option><option>Saldo al finalizar</option>
-            <option>Cheque</option><option>Mixto</option></select></div>
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
         <div class="field"><label>Tipo de dólar</label>
           <select id="f-transp-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
@@ -426,8 +424,10 @@ tr:hover td{background:var(--prl);}
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Forma de pago</label>
           <select id="f-com-pago" onchange="toggleActorEcheq('com',this.value)">
-            <option>Transferencia</option><option>Echeq</option>
-            <option>Efectivo</option><option>A cuenta</option><option>Pendiente</option></select></div>
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
         <div class="field"><label>Tipo de dólar</label>
           <select id="f-com-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option><option value="blue">Blue</option></select></div>
@@ -449,9 +449,10 @@ tr:hover td{background:var(--prl);}
             <option>Javier</option><option>Andres</option><option>Fabian</option><option>Matías</option></select></div>
         <div class="field"><label>Forma de cobro</label>
           <select id="f-comp-pago" onchange="toggleActorEcheq('comp',this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
-            <option>Efectivo</option><option>A cuenta</option><option>Saldo pendiente</option><option>Mixto</option></select></div>
+            <option>Pendiente</option></select></div>
         <div class="field"><label>Tipo de dólar</label>
           <select id="f-comp-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
@@ -820,23 +821,25 @@ const IVA=n=>n?Math.round(n*1.105):0;
 const actorEcheqCount={prov:0,ref:0,transp:0,com:0,comp:0};
 
 function toggleActorEcheq(actor,val){
-  const show=(val||'').toLowerCase().includes('echeq')||(val||'').toLowerCase().includes('cheque');
-  document.getElementById('actor-echeqs-'+actor).style.display=show?'block':'none';
-  // Rename payment labels to reflect echeq context
-  const L=id=>{const e=document.getElementById(id);if(e)return e;};
-  const set=(id,txt)=>{const e=L(id);if(e)e.textContent=txt;};
-  if(actor==='prov'){
-    set('lbl-prov-pagado', show?'Importe echeq ($)':'Importe pagado ($)');
-  } else if(actor==='ref'){
-    set('lbl-ref-pagado', show?'Importe echeq ($)':'Pagado ($)');
-  } else if(actor==='transp'){
-    set('lbl-transp-pag1', show?'Echeq tramo 1 ($)':'Pagado tramo 1 ($)');
-    set('lbl-transp-pag2', show?'Echeq tramo 2 ($)':'Pagado tramo 2 ($)');
-  } else if(actor==='com'){
-    set('lbl-com-pagado', show?'Importe echeq ($)':'Pagado ($)');
-  } else if(actor==='comp'){
-    set('lbl-comp-cobrado', show?'Importe echeq ($)':'Cobrado al comprador ($)');
-  }
+  const v=(val||'').toLowerCase();
+  const isEcheq=v.includes('echeq');
+  const isTotal=v.includes('total');
+  const isEcheqParcial=isEcheq&&!isTotal;
+  // Panel de echeqs individuales solo si es echeq parcial
+  const panel=document.getElementById('actor-echeqs-'+actor);
+  if(panel)panel.style.display=isEcheqParcial?'block':'none';
+  // Renombrar labels según contexto
+  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+  const labels={
+    prov:{pagado:'lbl-prov-pagado', def:'Importe pagado ($)', echeq:'Importe echeq ($)'},
+    ref: {pagado:'lbl-ref-pagado',  def:'Pagado ($)',         echeq:'Importe echeq ($)'},
+    transp:{pagado:'lbl-transp-pag1',def:'Pagado tramo 1 ($)',echeq:'Echeq tramo 1 ($)'},
+    com: {pagado:'lbl-com-pagado',  def:'Pagado ($)',         echeq:'Importe echeq ($)'},
+    comp:{pagado:'lbl-comp-cobrado',def:'Cobrado al comprador ($)',echeq:'Importe echeq ($)'},
+  };
+  const lbl=labels[actor];
+  if(lbl)set(lbl.pagado, isEcheq?lbl.echeq:lbl.def);
+  if(actor==='transp')set('lbl-transp-pag2',isEcheq?'Echeq tramo 2 ($)':'Pagado tramo 2 ($)');
 }
 
 function addActorEcheq(actor){
@@ -1002,15 +1005,16 @@ function renderTix(key){
 function openLB(src,info){document.getElementById('lb-img').src=src;document.getElementById('lb-txt').textContent=info;document.getElementById('lb').style.display='flex';}
 function closeLB(){document.getElementById('lb').style.display='none';}
 function toggleEcheqInline(){
-  const p=V('f-pago').toLowerCase();
-  const isEcheq=p.includes('echeq');
-  document.getElementById('card-echeqs-inline').style.display=isEcheq?'block':'none';
-  // Rename adelanto labels when payment is echeq
-  const L=document.getElementById.bind(document);
-  if(L('lbl-a1'))L('lbl-a1').textContent=isEcheq?'Echeq 1 ($)':'Adelanto 1 ($)';
-  if(L('lbl-a2'))L('lbl-a2').textContent=isEcheq?'Echeq 2 ($)':'Adelanto 2 ($)';
-  if(L('lbl-a3'))L('lbl-a3').textContent=isEcheq?'Echeq 3 ($)':'Adelanto 3 ($)';
-  if(L('lbl-at'))L('lbl-at').textContent=isEcheq?'Total echeqs':'Total adelantos';
+  const v=V('f-pago').toLowerCase();
+  const isEcheq=v.includes('echeq');
+  const isTotal=v.includes('total');
+  const isEcheqParcial=isEcheq&&!isTotal;
+  document.getElementById('card-echeqs-inline').style.display=isEcheqParcial?'block':'none';
+  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+  set('lbl-a1', isEcheq?'Echeq 1 ($)':'Adelanto 1 ($)');
+  set('lbl-a2', isEcheq?'Echeq 2 ($)':'Adelanto 2 ($)');
+  set('lbl-a3', isEcheq?'Echeq 3 ($)':'Adelanto 3 ($)');
+  set('lbl-at', isEcheq?'Total echeqs':'Total adelantos');
 }
 function addEcheqRow(){
   if(inlineEcheqCount>=6){toast('Máximo 6 echeqs','err');return;}
