@@ -561,8 +561,14 @@ tr:hover td{background:var(--prl);}
         <div class="tn-node" id="fn4"><div class="nn">Entrega refinado<br>envasadora</div><div class="nv" id="fnv4">—</div></div>
       </div>
       <div class="box bxn" style="margin-top:9px">
-        <div class="bx-title"><i class="ti ti-scale"></i>Balance</div>
+        <div class="bx-title"><i class="ti ti-scale"></i>Balance de toneladas</div>
         <div class="g4" id="bal-box"></div>
+        <div class="g4" style="margin-top:10px">
+          <div class="field"><label>🟡→🟢 Crudo entrado vs refinado salido</label><input type="text" id="f-dif-proceso" readonly><div class="hint">Diferencia en el proceso de refinado (tn2 vs tn3)</div></div>
+          <div class="field"><label>Rendimiento refinado (%)</label><input type="text" id="f-rend-refin" readonly></div>
+          <div class="field"><label>🔵→🔴 Crudo origen vs entrega final</label><input type="text" id="f-dif-total" readonly><div class="hint">Diferencia total operación (tn1 vs tn4)</div></div>
+          <div class="field"><label>Merma total operación (%)</label><input type="text" id="f-merma-total" readonly></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1145,6 +1151,24 @@ function liveCalc(){
   const d1=tn1&&tn2?tn2-tn1:null,d2=tn3&&tn4?tn4-tn3:null;
   if(d1!==null)document.getElementById('f-dif1').value=DS(d1)+' ('+(Math.abs(d1)/(tn1||1)*100).toFixed(3)+'%)';
   if(d2!==null)document.getElementById('f-dif2').value=DS(d2)+' ('+(Math.abs(d2)/(tn3||1)*100).toFixed(3)+'%)';
+  // Diferencia proceso refinado: crudo entrado (tn2) vs refinado salido (tn3)
+  if(tn2&&tn3){
+    const dProc=tn3-tn2;
+    const rendPct=(tn3/tn2*100).toFixed(3);
+    const el=document.getElementById('f-dif-proceso');
+    if(el){el.value=DS(dProc)+' tn ('+Math.abs(dProc/tn2*100).toFixed(3)+'%)';el.style.color=dProc>=0?'var(--suc)':'var(--dan)';}
+    const re=document.getElementById('f-rend-refin');
+    if(re){re.value=rendPct+'%';re.style.color=parseFloat(rendPct)>=99?'var(--suc)':'var(--warn)';}
+  }
+  // Diferencia total: carga origen (tn1) vs entrega final (tn4)
+  if(tn1&&tn4){
+    const dTot=tn4-tn1;
+    const mermaPct=(Math.abs(dTot)/tn1*100).toFixed(3);
+    const et=document.getElementById('f-dif-total');
+    if(et){et.value=DS(dTot)+' tn ('+mermaPct+'%)';et.style.color=dTot>=0?'var(--suc)':'var(--dan)';}
+    const em=document.getElementById('f-merma-total');
+    if(em){em.value=mermaPct+'%';em.style.color=parseFloat(mermaPct)<=0.5?'var(--suc)':'var(--warn)';}
+  }
   const hasFlow=tn1||tn2||tn3||tn4;
   document.getElementById('tn-flow-box').style.display=hasFlow?'block':'none';
   if(hasFlow){
