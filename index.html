@@ -1235,44 +1235,84 @@ function clearForm(){
 function cancelEdit(){clearForm();}
 function editOp(id){
   const o=ops.find(x=>x.id===id);if(!o)return;
-  editingId=id;T('op');
+  // First clear form completely, then switch to op tab
+  clearForm();
+  T('op');
+  // Mark as editing
+  editingId=id;
   document.getElementById('edit-id').value=id;
   document.getElementById('edit-banner').style.display='block';
   document.getElementById('edit-num').textContent='#'+id;
   document.getElementById('save-lbl').textContent='Actualizar operación';
-  const s=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined&&v!==null)e.value=v;};
-  s('f-prov',o.proveedor);s('f-comp',o.comprador);s('f-transp',o.transportista);
-  s('f-ref-nombre',o.refinador);s('f-com-nombre',o.comisionista);
-  s('f-remito',o.remito);s('f-factura',o.factura);s('f-fop',o.fOp);s('f-fcob',o.fCob);
-  s('f-f1sal',o.fSalCrudo);s('f-f1lle',o.fLleCrudo);s('f-f2sal',o.fSalRef);s('f-f2lle',o.fLleEnv);
-  document.getElementById('f-est-ent').value=o.estEntrega||'Pendiente';
-  document.getElementById('f-est-cob').value=o.estCobro||'Pendiente';
-  document.getElementById('f-est-gen').value=o.estGen||'En curso';
-  document.getElementById('f-pago').value=o.pago||'Transferencia';
+  // Helper: set input value safely
+  const sv=(fid,v)=>{const e=document.getElementById(fid);if(e&&v!==undefined&&v!==null)e.value=v;};
+  // Helper: set select value safely
+  const ss=(fid,v,def)=>{const e=document.getElementById(fid);if(e)e.value=v||def||e.options[0]?.value||'';};
+  // ── Identificación ──
+  sv('f-fop',o.fOp);sv('f-fcob',o.fCob);sv('f-remito',o.remito);sv('f-factura',o.factura);
+  ss('f-pago',o.pago,'Transferencia');
+  ss('f-est-ent',o.estEntrega,'Pendiente');
+  ss('f-est-cob',o.estCobro,'Pendiente');
+  ss('f-est-gen',o.estGen,'En curso');
+  sv('f-notas',o.notas);
   toggleEcheqInline();
-  s('f-notas',o.notas);
+  // ── Tipo y producto ──
   const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
-  setTipo(o.tipo,tipBtn);
-  if(o.tipo==='granel'){s('f-acg',o.producto);s('f-pc',o.pcompra);s('f-pv',o.pventa);}
-  else{s('f-ace',o.producto);s('f-pres',o.presentacion);s('f-marca',o.marca);s('f-plt',o.pallets);s('f-uni',o.unidades);s('f-pcos',o.pcompra);s('f-pve',o.pventa);}
-  s('f-tn1',o.tn1);s('f-tn2',o.tn2);s('f-tn3',o.tn3);s('f-tn4',o.tn4);s('f-tnv',o.tnVendidas);
-  s('f-desc1',o.descuento);
-  document.getElementById('f-dol1').value=o.dolarTipo1||'divisa';s('f-dv1',o.dolarVal1);
-  document.getElementById('f-dol2').value=o.dolarTipo2||'divisa';s('f-dv2',o.dolarVal2);
-  s('f-a1',o.adel1);s('f-a2',o.adel2);s('f-a3',o.adel3);
-  s('f-ref-costo',o.refServicio);s('f-com-pct',o.comPct);
-  s('f-flete1',o.flete1);s('f-flete2',o.flete2);
-  document.getElementById('f-prov-dol').value=o.provDolTipo||'divisa';s('f-prov-dv',o.provDolVal);s('f-prov-pagado',o.provPagado);s('f-prov-notas',o.provNotas);
-  document.getElementById('f-ref-dol').value=o.refDolTipo||'divisa';s('f-ref-dv',o.refDolVal);s('f-ref-pagado',o.refPagado);document.getElementById('f-ref-est').value=o.refEst||'Pendiente';s('f-ref-notas',o.refNotas);
-  document.getElementById('f-transp-dol').value=o.transpDolTipo||'pesos';s('f-transp-dv',o.transpDolVal);s('f-transp-pag1',o.transpPag1);s('f-transp-pag2',o.transpPag2);document.getElementById('f-transp-est').value=o.transpEst||'Pendiente';s('f-transp-notas',o.transpNotas);
-  document.getElementById('f-com-dol').value=o.comDolTipo||'divisa';s('f-com-pagado',o.comPagado);document.getElementById('f-com-est').value=o.comEst||'Pendiente';s('f-com-notas',o.comNotas);
-  document.getElementById('f-comp-dol').value=o.compDolTipo||'divisa';s('f-comp-dv',o.compDolVal);s('f-comp-cobrado',o.compCobrado);document.getElementById('f-comp-est').value=o.compEst||'Pendiente';s('f-comp-notas',o.compNotas);
-  ['prov','ref','transp','com','comp'].forEach(actor=>{
-    const sel=document.getElementById('f-'+actor+'-pago')||document.getElementById('f-comp-pago');
-    const el=actor==='comp'?document.getElementById('f-comp-pago'):document.getElementById('f-'+actor+'-pago');
-    if(el)toggleActorEcheq(actor,el.value);
-  });
-  tix1=[...(o.tickets1||[])];tix2=[...(o.tickets2||[])];renderTix('tix1');renderTix('tix2');clearActorEcheqs();restoreActorEcheqs(id);
+  setTipo(o.tipo||'granel',tipBtn);
+  if(o.tipo==='envase'){
+    ss('f-ace',o.producto);ss('f-pres',o.presentacion);
+    sv('f-marca',o.marca);sv('f-plt',o.pallets);sv('f-uni',o.unidades);
+    sv('f-pcos',o.pcompra);sv('f-pve',o.pventa);
+  }else{
+    ss('f-acg',o.producto);
+    sv('f-pc',o.pcompra);sv('f-pv',o.pventa);
+  }
+  sv('f-tnv',o.tnVendidas);
+  // ── Actores ──
+  ss('f-prov',o.proveedor);sv('f-comp',o.comprador);sv('f-transp',o.transportista);
+  sv('f-ref-nombre',o.refinador);sv('f-com-nombre',o.comisionista);
+  // ── Viajes y toneladas ──
+  sv('f-f1sal',o.fSalCrudo);sv('f-f1lle',o.fLleCrudo);
+  sv('f-f2sal',o.fSalRef);sv('f-f2lle',o.fLleEnv);
+  sv('f-tn1',o.tn1);sv('f-tn2',o.tn2);sv('f-tn3',o.tn3);sv('f-tn4',o.tn4);
+  sv('f-desc1',o.descuento);
+  ss('f-dol1',o.dolarTipo1,'divisa');sv('f-dv1',o.dolarVal1);
+  ss('f-dol2',o.dolarTipo2,'divisa');sv('f-dv2',o.dolarVal2);
+  // ── Condiciones económicas ──
+  sv('f-a1',o.adel1);sv('f-a2',o.adel2);sv('f-a3',o.adel3);
+  sv('f-ref-costo',o.refServicio);sv('f-com-pct',o.comPct);
+  sv('f-flete1',o.flete1);sv('f-flete2',o.flete2);
+  // ── Proveedor ──
+  ss('f-prov-pago',o.provPago,'Transferencia total');
+  ss('f-prov-dol',o.provDolTipo,'divisa');sv('f-prov-dv',o.provDolVal);
+  sv('f-prov-pagado',o.provPagado);sv('f-prov-notas',o.provNotas);
+  toggleActorEcheq('prov',o.provPago||'');
+  // ── Refinador ──
+  ss('f-ref-pago',o.refPago,'Pendiente');
+  ss('f-ref-dol',o.refDolTipo,'divisa');sv('f-ref-dv',o.refDolVal);
+  sv('f-ref-pagado',o.refPagado);ss('f-ref-est',o.refEst,'Pendiente');sv('f-ref-notas',o.refNotas);
+  toggleActorEcheq('ref',o.refPago||'');
+  // ── Transportista ──
+  ss('f-transp-pago',o.transpPago,'Efectivo');
+  ss('f-transp-dol',o.transpDolTipo,'pesos');sv('f-transp-dv',o.transpDolVal);
+  sv('f-transp-pag1',o.transpPag1);sv('f-transp-pag2',o.transpPag2);
+  ss('f-transp-est',o.transpEst,'Pendiente');sv('f-transp-notas',o.transpNotas);
+  toggleActorEcheq('transp',o.transpPago||'');
+  // ── Comisionista ──
+  ss('f-com-pago',o.comPago,'Transferencia');
+  ss('f-com-dol',o.comDolTipo,'divisa');sv('f-com-pagado',o.comPagado);
+  ss('f-com-est',o.comEst,'Pendiente');sv('f-com-notas',o.comNotas);
+  toggleActorEcheq('com',o.comPago||'');
+  // ── Comprador ──
+  ss('f-comp-pago',o.compPago,'Transferencia total');
+  ss('f-comp-dol',o.compDolTipo,'divisa');sv('f-comp-dv',o.compDolVal);
+  sv('f-comp-cobrado',o.compCobrado);ss('f-comp-est',o.compEst,'Pendiente');sv('f-comp-notas',o.compNotas);
+  toggleActorEcheq('comp',o.compPago||'');
+  // ── Tickets y echeqs ──
+  tix1=[...(o.tickets1||[])];tix2=[...(o.tickets2||[])];
+  renderTix('tix1');renderTix('tix2');
+  restoreActorEcheqs(id);
+  // ── Recalcular ──
   calcAdel();liveCalc();
   window.scrollTo({top:0,behavior:'smooth'});
 }
