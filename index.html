@@ -381,7 +381,7 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-ref-dv" placeholder="ej: 1391"></div>
       </div>
       <div class="g4" style="margin-top:8px">
-        <div class="field"><label>Costo servicio neto ($)</label><input type="number" id="f-ref-costo" placeholder="ej: 6500000" oninput="liveCalc()"></div>
+        <div class="field"><label>Costo servicio neto ($)</label><input type="text" inputmode="numeric" id="f-ref-costo" placeholder="ej: 6.500.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Costo c/IVA ($)</label><input type="text" id="f-ref-civa" readonly></div>
         <div class="field"><label id="lbl-ref-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-ref-pagado" oninput="calcSaldo('ref')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo ($)</label><input type="text" id="f-ref-saldo" readonly></div>
@@ -414,8 +414,8 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-transp-dv" placeholder="ej: 1391"></div>
       </div>
       <div class="g4" style="margin-top:8px">
-        <div class="field"><label>Flete tramo 1 — crudo ($)</label><input type="number" id="f-flete1" placeholder="ej: 850000" oninput="liveCalc()"><div class="hint">Origen → Refinería</div></div>
-        <div class="field"><label>Flete tramo 2 — refinado ($)</label><input type="number" id="f-flete2" placeholder="ej: 900000" oninput="liveCalc()"><div class="hint">Refinería → Envasadora</div></div>
+        <div class="field"><label>Flete tramo 1 — crudo ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
+        <div class="field"><label>Flete tramo 2 — refinado ($)</label><input type="text" inputmode="numeric" id="f-flete2" placeholder="ej: 900.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Refinería → Envasadora</div></div>
         <div class="field"><label id="lbl-transp-pag1">Pagado tramo 1 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag1" oninput="calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label id="lbl-transp-pag2">Pagado tramo 2 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag2" oninput="calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
@@ -874,7 +874,7 @@ function addActorEcheq(actor){
     <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}"></div>
     <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}"></div>
     <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}"></div>
-    <div class="field"><label>Importe ($)</label><input type="number" id="aei-imp-${actor}-${i}" placeholder="ej: 7000000"></div>
+    <div class="field"><label>Importe ($)</label><input type="number" id="aei-imp-${actor}-${i}" placeholder="ej: 7000000" oninput="calcSaldo('${actor}')"></div>
     <div class="field"><label>Estado</label>
       <select id="aei-est-${actor}-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
     <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
@@ -1073,18 +1073,32 @@ function getInlineEcheqs(opId){
   }
   return result;
 }
+function sumActorEcheqs(actor){
+  // Suma los importes de los echeqs del panel parcial de ese actor
+  let total=0;
+  for(let i=1;i<=6;i++){
+    const imp=document.getElementById('aei-imp-'+actor+'-'+i);
+    if(imp)total+=parseFloat(imp.value)||0;
+  }
+  return total;
+}
 function calcSaldo(actor){
+  const echeqSum=sumActorEcheqs(actor);
   if(actor==='prov'){
-    const tv=N('f-tv');const p=Np('f-prov-pagado');
+    const tv=N('f-tv');
+    const p=(Np('f-prov-pagado')||0)+echeqSum;
     if(tv)document.getElementById('f-prov-saldo').value=MF(tv-p);
   }else if(actor==='ref'){
-    const c=N('f-ref-costo');const p=Np('f-ref-pagado');
+    const c=Np('f-ref-costo');
+    const p=(Np('f-ref-pagado')||0)+echeqSum;
     if(c)document.getElementById('f-ref-saldo').value=MF(IVA(c)-p);
   }else if(actor==='transp'){
-    const t=N('f-flete1')+N('f-flete2'),p=Np('f-transp-pag1')+Np('f-transp-pag2');
+    const t=Np('f-flete1')+Np('f-flete2');
+    const p=Np('f-transp-pag1')+Np('f-transp-pag2')+echeqSum;
     if(t)document.getElementById('f-transp-saldo').value=MF(t-p);
   }else if(actor==='comp'){
-    const tv=N('f-tv');const c=Np('f-comp-cobrado');
+    const tv=N('f-tv');
+    const c=(Np('f-comp-cobrado')||0)+echeqSum;
     if(tv)document.getElementById('f-comp-saldo').value=MF(tv-c);
   }
 }
@@ -1125,7 +1139,7 @@ function liveCalc(){
     document.getElementById('f-com-monto').value=MF(cm);
     document.getElementById('f-com-iva').value=MF(IVA(cm));
   }
-  const refC=N('f-ref-costo');
+  const refC=Np('f-ref-costo');
   if(refC){document.getElementById('f-ref-civa').value=MF(IVA(refC));calcSaldo('ref');}
   const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4');
   const d1=tn1&&tn2?tn2-tn1:null,d2=tn3&&tn4?tn4-tn3:null;
@@ -1147,7 +1161,7 @@ function liveCalc(){
       <div><div style="font-size:9px;color:var(--t2)">Tn vendidas</div><div style="font-weight:800;color:var(--acc)">${Tn(tnv||rE)}</div></div>
       <div><div style="font-size:9px;color:var(--t2)">Dif.entregado/vendido</div><div style="font-weight:800;color:${DC((tnv||rE)-rE)}">${tnv&&rE?DS(tnv-rE):'—'}</div></div>`;
   }
-  const flete=N('f-flete1')+N('f-flete2');
+  const flete=Np('f-flete1')+Np('f-flete2');
   const comMonto=tv>0&&comPct?tv*comPct/100:0;
   const costoTotal=tc+flete+IVA(comMonto)+IVA(refC||0);
   const resultado=tv-costoTotal;
@@ -1186,8 +1200,8 @@ function saveOp(){
   const tnv=N('f-tnv'),uni=N('f-uni'),tnventa=N('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
   const tc=pc*base,tv=pv*basev;
   const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
-  const refC=N('f-ref-costo');
-  const flete=N('f-flete1')+N('f-flete2');
+  const refC=Np('f-ref-costo');
+  const flete=Np('f-flete1')+Np('f-flete2');
   const costoTotal=tc+flete+IVA(comMonto)+IVA(refC);
   const resultado=tv-costoTotal;
   const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
@@ -1218,7 +1232,7 @@ function saveOp(){
     adel1:a1,adel2:a2,adel3:a3,adelTotal:a1+a2+a3,
     totalCompra:tc,totalVenta:tv,
     refServicio:refC,refServIva:IVA(refC),
-    flete1:N('f-flete1'),flete2:N('f-flete2'),fleteTotal:flete,
+    flete1:Np('f-flete1'),flete2:Np('f-flete2'),fleteTotal:flete,
     comPct,comMonto,comIva:IVA(comMonto),
     costoTotal,resultado,profitMay,profitBlue,
     pctMargen:costoTotal>0?(resultado/costoTotal*100):0,
