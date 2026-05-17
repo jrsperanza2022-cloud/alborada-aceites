@@ -219,8 +219,8 @@ tr:hover td{background:var(--prl);}
   <div class="sec" style="margin-top:14px"><span><i class="ti ti-credit-card"></i>Echeqs próximos a vencer</span></div>
   <div id="d-echeqs"><div style="color:var(--t3);font-size:12px;padding:5px 0">Sin echeqs próximos ✓</div></div>
   <div class="sec" style="margin-top:14px"><span><i class="ti ti-clock"></i>Últimas operaciones</span></div>
-  <div class="tw"><table><thead><tr><th>#</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Tn vend.</th><th>Resultado</th><th>Entrega</th><th>Cobro</th></tr></thead>
-  <tbody id="d-recent"><tr class="empty"><td colspan="8">Sin operaciones</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th>#</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Tn vend.</th><th>Resultado</th><th>Entrega</th><th>Cobro</th><th></th></tr></thead>
+  <tbody id="d-recent"><tr class="empty"><td colspan="9">Sin operaciones</td></tr></tbody></table></div>
 </div>
 
 <!-- NUEVA OP -->
@@ -593,7 +593,7 @@ tr:hover td{background:var(--prl);}
       <th>Adelantos</th><th>Dól.V1</th><th>Dól.V2</th>
       <th>Pago prov.</th><th>Pago refin.</th><th>Pago transp.</th><th>Pago com.</th><th>Cobro comp.</th>
       <th>Entrega</th><th>Cobro</th><th>Pago gral.</th>
-      <th>Remito</th><th>Factura</th><th>Tickets</th><th>Notas</th><th></th>
+      <th>Remito</th><th>Factura</th><th>Tickets</th><th>Notas</th><th style="position:sticky;right:0;background:var(--surf3);z-index:2;min-width:64px">Acc.</th>
     </tr></thead>
     <tbody id="tb-planilla"><tr class="empty"><td colspan="52">Sin operaciones</td></tr></tbody>
   </table></div>
@@ -1235,10 +1235,9 @@ function clearForm(){
 function cancelEdit(){clearForm();}
 function editOp(id){
   const o=ops.find(x=>x.id===id);if(!o)return;
-  // First clear form completely, then switch to op tab
-  clearForm();
+  // Switch to op tab FIRST so panel is visible, then clear and populate
   T('op');
-  // Mark as editing
+  clearForm();
   editingId=id;
   document.getElementById('edit-id').value=id;
   document.getElementById('edit-banner').style.display='block';
@@ -1465,7 +1464,7 @@ function renderPlanilla(){
       <td>${o.remito||'—'}</td><td>${o.factura||'—'}</td>
       <td>${tHtml}</td>
       <td style="max-width:90px;overflow:hidden;text-overflow:ellipsis;color:var(--t2);font-size:10px">${o.notas||'—'}</td>
-      <td style="white-space:nowrap">
+      <td style="white-space:nowrap;position:sticky;right:0;background:var(--surf);z-index:1;box-shadow:-2px 0 6px rgba(0,0,0,.15)">
         <button class="bi" onclick="editOp(${o.id})" title="Editar"><i class="ti ti-pencil" style="font-size:11px"></i></button>
         <button class="bi del" onclick="deleteOp(${o.id})" title="Eliminar"><i class="ti ti-trash" style="font-size:11px"></i></button>
       </td>
@@ -1524,7 +1523,8 @@ function renderDash(){
     <td><span class="badge ${(o.resultado||0)>=0?'bwin':'blose'}">${(o.resultado||0)>=0?'✓ ':'✗ '}${MF(Math.abs(o.resultado||0))}</span></td>
     <td><span class="badge ${be2[o.estEntrega||'']||'bpend'}">${o.estEntrega||'—'}</span></td>
     <td><span class="badge ${be2[o.estCobro||'']||'bpend'}">${o.estCobro||'—'}</span></td>
-  </tr>`).join('')||'<tr class="empty"><td colspan="8">Sin operaciones</td></tr>';
+    <td><button class="bi" onclick="editOp(${o.id})" title="Editar"><i class="ti ti-pencil" style="font-size:11px"></i></button></td>
+  </tr>`).join('')||'<tr class="empty"><td colspan="9">Sin operaciones</td></tr>';
 }
 let editProvId=null;
 function renderProvs(){
