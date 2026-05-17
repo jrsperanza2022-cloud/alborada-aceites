@@ -274,7 +274,7 @@ tr:hover td{background:var(--prl);}
             <optgroup label="MAÍZ"><option>Maíz crudo a granel</option></optgroup>
             <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Speller</option><option>Otro crudo</option></optgroup>
           </select></div>
-        <div class="field"><label>P. compra neto ($/tn)</label><input type="number" id="f-pc" placeholder="ej: 990" oninput="liveCalc()"></div>
+        <div class="field"><label>P. compra neto ($/tn)</label><input type="text" inputmode="numeric" id="f-pc"  placeholder="ej: 990" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>P. compra c/IVA ($/tn)</label><input type="text" id="f-pc-iva" readonly><div class="hint">IVA 21% incluido</div></div>
         <div class="field"><label>Tn a pagar al proveedor</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.310" oninput="liveCalc()"><div class="hint">Peso descarga en refinería (tn2)</div></div>
       </div>
@@ -289,7 +289,7 @@ tr:hover td{background:var(--prl);}
             <optgroup label="MAÍZ"><option>Maíz refinado a granel</option></optgroup>
             <optgroup label="OTROS"><option>Aceite Mezcla refinado</option><option>Otro refinado</option></optgroup>
           </select></div>
-        <div class="field"><label>P. venta neto ($/tn)</label><input type="number" id="f-pv" placeholder="ej: 2050" oninput="liveCalc()"></div>
+        <div class="field"><label>P. venta neto ($/tn)</label><input type="text" inputmode="numeric" id="f-pv"  placeholder="ej: 2050" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly><div class="hint">IVA 21% incluido</div></div>
         <div class="field"><label>Tn a cobrar al comprador</label><input type="number" step="0.001" id="f-tnventa" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Peso descarga en destino (tn4)</div></div>
       </div>
@@ -346,7 +346,7 @@ tr:hover td{background:var(--prl);}
           <select id="f-prov-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-prov-dv" placeholder="ej: 1391"></div>
+        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-prov-dv"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label id="lbl-a1">Adelanto 1 ($)</label><input type="text" inputmode="numeric" id="f-a1" placeholder="ej: 20.000.000" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -378,7 +378,7 @@ tr:hover td{background:var(--prl);}
           <select id="f-ref-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-ref-dv" placeholder="ej: 1391"></div>
+        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-ref-dv"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Costo servicio neto ($)</label><input type="text" inputmode="numeric" id="f-ref-costo" placeholder="ej: 6.500.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -411,7 +411,7 @@ tr:hover td{background:var(--prl);}
           <select id="f-transp-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="pesos">En pesos</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-transp-dv" placeholder="ej: 1391"></div>
+        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-transp-dv"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Flete tramo 1 — crudo ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
@@ -474,7 +474,7 @@ tr:hover td{background:var(--prl);}
           <select id="f-comp-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="number" id="f-comp-dv" placeholder="ej: 1391" oninput="liveCalc()"></div>
+        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-comp-dv"  placeholder="ej: 1391" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label id="lbl-comp-cobrado">Cobrado al comprador ($)</label><input type="text" inputmode="numeric" id="f-comp-cobrado" oninput="calcSaldo('comp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -651,9 +651,9 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>Op. asociada (N°)</label><input type="number" id="e-opref" placeholder="ej: 5"></div>
     </div>
     <div class="g4" style="margin-top:10px">
-      <div class="field"><label>Importe bruto ($) *</label><input type="number" id="e-imp" placeholder="ej: 42000000" oninput="calcEcheq()"></div>
+      <div class="field"><label>Importe bruto ($) *</label><input type="text" inputmode="numeric" id="e-imp"  placeholder="ej: 42000000" oninput="calcEcheq()" onkeypress="return /[\d.,]/.test(event.key)"></div>
       <div class="field"><label>Descuento endoso (%)</label><input type="number" step="0.01" id="e-desc-pct" placeholder="ej: 2.5" oninput="calcEcheq()"></div>
-      <div class="field"><label>Gastos acreditación ($)</label><input type="number" id="e-gasto-acred" placeholder="ej: 15000" oninput="calcEcheq()"></div>
+      <div class="field"><label>Gastos acreditación ($)</label><input type="text" inputmode="numeric" id="e-gasto-acred"  placeholder="ej: 15000" oninput="calcEcheq()" onkeypress="return /[\d.,]/.test(event.key)"></div>
       <div class="field"><label>Cantidad echeqs</label>
         <select id="e-cant"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
     </div>
@@ -662,7 +662,7 @@ tr:hover td{background:var(--prl);}
       <div class="g4">
         <div class="field"><label>Monto descuento ($)</label><input type="text" id="e-desc-monto" readonly></div>
         <div class="field"><label>Importe neto ($)</label><input type="text" id="e-imp-neto" readonly style="font-weight:700"></div>
-        <div class="field"><label>Importe pagado/cobrado ($)</label><input type="number" id="e-imp-pagado" placeholder="ej: 20000000" oninput="calcEcheq()"></div>
+        <div class="field"><label>Importe pagado/cobrado ($)</label><input type="text" inputmode="numeric" id="e-imp-pagado"  placeholder="ej: 20000000" oninput="calcEcheq()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="e-saldo-pend" readonly></div>
       </div>
       <div class="g4" style="margin-top:8px">
@@ -722,7 +722,7 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>Categoría</label>
         <select id="g-cat"><option>Flete</option><option>Laboratorio</option><option>Almacenaje</option>
           <option>Administración</option><option>Impuestos</option><option>Gasto financiero</option><option>Otro</option></select></div>
-      <div class="field"><label>Importe neto ($)</label><input type="number" id="g-imp" placeholder="ej: 150000" oninput="calcGastoIVA()"></div>
+      <div class="field"><label>Importe neto ($)</label><input type="text" inputmode="numeric" id="g-imp"  placeholder="ej: 150000" oninput="calcGastoIVA()" onkeypress="return /[\d.,]/.test(event.key)"></div>
       <div class="field"><label>Importe c/IVA ($)</label><input type="text" id="g-imp-iva" readonly></div>
     </div>
     <div class="g2" style="margin-top:10px">
@@ -751,9 +751,9 @@ tr:hover td{background:var(--prl);}
   <div class="card">
     <div class="sec"><span><i class="ti ti-currency-dollar"></i>Cotización dólar manual</span></div>
     <div class="g3">
-      <div class="field"><label>Dólar Divisa ($)</label><input type="number" id="cfg-div" oninput="saveDolarManual()"></div>
-      <div class="field"><label>Dólar Mayorista ($)</label><input type="number" id="cfg-may" oninput="saveDolarManual()"></div>
-      <div class="field"><label>Dólar Blue ($)</label><input type="number" id="cfg-blue" oninput="saveDolarManual()"></div>
+      <div class="field"><label>Dólar Divisa ($)</label><input type="text" inputmode="numeric" id="cfg-div"  oninput="saveDolarManual()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      <div class="field"><label>Dólar Mayorista ($)</label><input type="text" inputmode="numeric" id="cfg-may"  oninput="saveDolarManual()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      <div class="field"><label>Dólar Blue ($)</label><input type="text" inputmode="numeric" id="cfg-blue"  oninput="saveDolarManual()" onkeypress="return /[\d.,]/.test(event.key)"></div>
     </div>
     <div class="act"><button class="btn bs" onclick="fetchDolar()"><i class="ti ti-refresh"></i>Actualizar online</button></div>
   </div>
@@ -880,7 +880,7 @@ function addActorEcheq(actor){
     <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}"></div>
     <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}"></div>
     <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}"></div>
-    <div class="field"><label>Importe ($)</label><input type="number" id="aei-imp-${actor}-${i}" placeholder="ej: 7000000" oninput="calcSaldo('${actor}')"></div>
+    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" placeholder="ej: 7.000.000" oninput="calcSaldo('${actor}')" onkeypress="return /[\d.,]/.test(event.key)"></div>
     <div class="field"><label>Estado</label>
       <select id="aei-est-${actor}-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
     <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
@@ -934,7 +934,7 @@ function restoreActorEcheqs(opId){
         <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}" value="${e.num||''}"></div>
         <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}" value="${e.fr||''}"></div>
         <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}" value="${e.fc||''}"></div>
-        <div class="field"><label>Importe ($)</label><input type="number" id="aei-imp-${actor}-${i}" value="${e.imp||''}"></div>
+        <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" value="${e.imp||''}"></div>
         <div class="field"><label>Estado</label>
           <select id="aei-est-${actor}-${i}">
             ${['Pendiente','Al cobro','Cobrado total','Endosado','Rechazado'].map(opt=>`<option${opt===e.estado?' selected':''}>${opt}</option>`).join('')}
@@ -986,7 +986,7 @@ function updateWidget(){
   if(cfg.dolarBlue)document.getElementById('cfg-blue').value=cfg.dolarBlue;
 }
 function saveDolarManual(){
-  cfg.dolarDiv=N('cfg-div')||cfg.dolarDiv;cfg.dolarMay=N('cfg-may')||cfg.dolarMay;cfg.dolarBlue=N('cfg-blue')||cfg.dolarBlue;
+  cfg.dolarDiv=Np('cfg-div')||cfg.dolarDiv;cfg.dolarMay=Np('cfg-may')||cfg.dolarMay;cfg.dolarBlue=Np('cfg-blue')||cfg.dolarBlue;
   dolar.divisa=cfg.dolarDiv;dolar.mayorista=cfg.dolarMay;dolar.blue=cfg.dolarBlue;
   updateWidget();save();
 }
@@ -1061,7 +1061,7 @@ function addEcheqRow(){
     <div class="field"><label>N° cheque</label><input type="text" id="ei-num-${i}"></div>
     <div class="field"><label>F. realizado</label><input type="date" id="ei-fr-${i}"></div>
     <div class="field"><label>F. cobro</label><input type="date" id="ei-fc-${i}"></div>
-    <div class="field"><label>Importe ($)</label><input type="number" id="ei-imp-${i}" placeholder="ej: 7000000"></div>
+    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="ei-imp-${i}" placeholder="ej: 7.000.000" onkeypress="return /[\d.,]/.test(event.key)"></div>
     <div class="field"><label>Estado</label>
       <select id="ei-est-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
     <button class="bi del" onclick="document.getElementById('er-${i}').remove()" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
@@ -1113,20 +1113,20 @@ function calcAdel(){
   document.getElementById('f-at').value=a?MF(a):'';
 }
 function calcEcheq(){
-  const imp=N('e-imp'),pct=N('e-desc-pct'),gasto=N('e-gasto-acred'),pagado=N('e-imp-pagado');
+  const imp=Np('e-imp'),pct=N('e-desc-pct'),gasto=Np('e-gasto-acred'),pagado=Np('e-imp-pagado');
   const desc=imp*pct/100,neto=imp-desc-gasto;
   document.getElementById('e-desc-monto').value=desc?MF(desc):'';
   document.getElementById('e-imp-neto').value=imp?MF(neto):'';
   document.getElementById('e-saldo-pend').value=pagado&&neto?MF(neto-pagado):'';
 }
 function calcGastoIVA(){
-  const imp=N('g-imp');
+  const imp=Np('g-imp');
   document.getElementById('g-imp-iva').value=imp?MF(IVA(imp)):'';
 }
 function liveCalc(){
   const tipo=V('f-tipo');
-  const pc=tipo==='granel'?N('f-pc'):N('f-pcos');
-  const pv=tipo==='granel'?N('f-pv'):N('f-pve');
+  const pc=tipo==='granel'?Np('f-pc'):N('f-pcos');
+  const pv=tipo==='granel'?Np('f-pv'):N('f-pve');
   const tnv=N('f-tnv'),uni=N('f-uni');
   if(tipo==='granel'){
     if(pc){document.getElementById('f-pc-iva').value=MF(IVA(pc));}
@@ -1219,8 +1219,8 @@ function saveOp(){
   const prov=V('f-prov'),fop=V('f-fop');
   const tipo=V('f-tipo'),prod=tipo==='granel'?V('f-acg'):V('f-ace');
   if(!prov||!fop||!prod){toast('Completá proveedor, fecha y producto','err');return;}
-  const pc=tipo==='granel'?N('f-pc'):N('f-pcos');
-  const pv=tipo==='granel'?N('f-pv'):N('f-pve');
+  const pc=tipo==='granel'?Np('f-pc'):N('f-pcos');
+  const pv=tipo==='granel'?Np('f-pv'):N('f-pve');
   const tnv=N('f-tnv'),uni=N('f-uni'),tnventa=N('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
   const tc=pc*base,tv=pv*basev;
   const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
@@ -1260,16 +1260,16 @@ function saveOp(){
     comPct,comMonto,comIva:IVA(comMonto),
     costoTotal,resultado,profitMay,profitBlue,
     pctMargen:costoTotal>0?(resultado/costoTotal*100):0,
-    provPago:V('f-prov-pago'),provDolTipo:V('f-prov-dol'),provDolVal:N('f-prov-dv'),
+    provPago:V('f-prov-pago'),provDolTipo:V('f-prov-dol'),provDolVal:Np('f-prov-dv'),
     provPagado:Np('f-prov-pagado'),provNotas:V('f-prov-notas'),
-    refPago:V('f-ref-pago'),refDolTipo:V('f-ref-dol'),refDolVal:N('f-ref-dv'),
+    refPago:V('f-ref-pago'),refDolTipo:V('f-ref-dol'),refDolVal:Np('f-ref-dv'),
     refPagado:Np('f-ref-pagado'),refEst:V('f-ref-est'),refNotas:V('f-ref-notas'),
-    transpPago:V('f-transp-pago'),transpDolTipo:V('f-transp-dol'),transpDolVal:N('f-transp-dv'),
+    transpPago:V('f-transp-pago'),transpDolTipo:V('f-transp-dol'),transpDolVal:Np('f-transp-dv'),
     transpPag1:Np('f-transp-pag1'),transpPag2:Np('f-transp-pag2'),
     transpEst:V('f-transp-est'),transpNotas:V('f-transp-notas'),
     comPago:V('f-com-pago'),comDolTipo:V('f-com-dol'),comPagado:Np('f-com-pagado'),
     comEst:V('f-com-est'),comNombre:V('f-com-nombre'),comNotas:V('f-com-notas'),
-    compPago:V('f-comp-pago'),compDolTipo:V('f-comp-dol'),compDolVal:N('f-comp-dv'),
+    compPago:V('f-comp-pago'),compDolTipo:V('f-comp-dol'),compDolVal:Np('f-comp-dv'),
     compCobrado:Np('f-comp-cobrado'),compEst:V('f-comp-est'),compNotas:V('f-comp-notas'),
     tickets1:[...tix1],tickets2:[...tix2]
   };
@@ -1321,7 +1321,7 @@ function clearForm(){
   editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');clearActorEcheqs();
   document.getElementById('f-fop').value=new Date().toISOString().split('T')[0];
   setTipo('granel',document.querySelector('#tipo-tog button:first-child'));
-  if(dolar.divisa)['f-dv1','f-dv2','f-prov-dv','f-comp-dv','f-ref-dv'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=dolar.divisa;});
+  if(dolar.divisa)['f-dv1','f-dv2','f-prov-dv','f-comp-dv','f-ref-dv','f-transp-dv','f-com-dv'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=dolar.divisa;});
 }
 function cancelEdit(){clearForm();}
 function editOp(id){
@@ -1415,9 +1415,9 @@ function deleteOp(id){
 function saveEcheq(){
   const fr=V('e-fr'),fc=V('e-fc'),empresa=V('e-empresa'),banco=V('e-banco'),imp=V('e-imp');
   if(!fr||!empresa||!banco||!imp){toast('Completá los campos requeridos','err');return;}
-  const impN=Number(imp),descPct=N('e-desc-pct'),gasto=N('e-gasto-acred');
+  const impN=Number(imp),descPct=N('e-desc-pct'),gasto=Np('e-gasto-acred');
   const descMonto=impN*descPct/100,impNeto=impN-descMonto-gasto;
-  const impPagado=N('e-imp-pagado');
+  const impPagado=Np('e-imp-pagado');
   echeqs.push({id:Date.now(),fr,fc,fEnd:V('e-fend'),empresa,banco,num:V('e-num'),imp:impN,
     descPct,descMonto,gastoAcred:gasto,impNeto,impPagado,saldoPend:impNeto-impPagado,
     fechaPago:V('e-fecha-pago'),formaCobro:V('e-forma-cobro'),
