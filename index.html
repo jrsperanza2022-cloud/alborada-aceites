@@ -326,7 +326,7 @@ tr:hover td{background:var(--prl);}
             <option>Profat</option><option>Miguel Kihn</option><option>San Jeronimo</option>
             <option>Ruta 12</option><option>Cañada Rosquin</option><option>Pilar</option><option>Laruso</option><option>Otro</option></select></div>
         <div class="field"><label>Forma de pago</label>
-          <select id="f-prov-pago">
+          <select id="f-prov-pago" onchange="toggleActorEcheq('prov',this.value)">
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Efectivo</option><option>A cuenta</option><option>Saldo pendiente</option><option>Mixto</option></select></div>
@@ -347,13 +347,17 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-prov-saldo" readonly></div>
         <div class="field"><label>Notas</label><input type="text" id="f-prov-notas" placeholder="ej: saldo a 30 días"></div>
       </div>
+      <div id="actor-echeqs-prov" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al proveedor <button class="btn bsm bs" onclick="addActorEcheq('prov')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-prov"></div>
+      </div>
     </div>
     <div class="actor-card a-ref">
       <div class="at"><i class="ti ti-building-factory"></i>Refinador</div>
       <div class="g4">
         <div class="field"><label>Refinador</label><input type="text" id="f-ref-nombre" placeholder="ej: Refinería del Norte SA"></div>
         <div class="field"><label>Forma de pago</label>
-          <select id="f-ref-pago">
+          <select id="f-ref-pago" onchange="toggleActorEcheq('ref',this.value)">
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq</option><option>Efectivo</option><option>A cuenta</option><option>Pendiente</option></select></div>
         <div class="field"><label>Tipo de dólar</label>
@@ -374,13 +378,17 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Notas</label><input type="text" id="f-ref-notas" placeholder="ej: pago a 15 días"></div>
         <div></div>
       </div>
+      <div id="actor-echeqs-ref" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al refinador <button class="btn bsm bs" onclick="addActorEcheq('ref')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-ref"></div>
+      </div>
     </div>
     <div class="actor-card a-transp">
       <div class="at"><i class="ti ti-truck"></i>Transportista</div>
       <div class="g4">
         <div class="field"><label>Transportista</label><input type="text" id="f-transp" placeholder="ej: Juan Pérez"></div>
         <div class="field"><label>Forma de pago</label>
-          <select id="f-transp-pago">
+          <select id="f-transp-pago" onchange="toggleActorEcheq('transp',this.value)">
             <option>Efectivo</option><option>Transferencia</option>
             <option>A cuenta (tramo 1)</option><option>Saldo al finalizar</option>
             <option>Cheque</option><option>Mixto</option></select></div>
@@ -402,6 +410,10 @@ tr:hover td{background:var(--prl);}
           <select id="f-transp-est"><option>Pendiente</option><option>Tramo 1 pago</option><option>Tramo 2 pago</option><option>Total pago</option></select></div>
         <div class="field"><label>Notas</label><input type="text" id="f-transp-notas" placeholder="ej: cheque rechazado"></div>
       </div>
+      <div id="actor-echeqs-transp" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al transportista <button class="btn bsm bs" onclick="addActorEcheq('transp')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-transp"></div>
+      </div>
     </div>
     <div class="actor-card a-com">
       <div class="at"><i class="ti ti-user-check"></i>Comisionista</div>
@@ -413,7 +425,7 @@ tr:hover td{background:var(--prl);}
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Forma de pago</label>
-          <select id="f-com-pago">
+          <select id="f-com-pago" onchange="toggleActorEcheq('com',this.value)">
             <option>Transferencia</option><option>Echeq</option>
             <option>Efectivo</option><option>A cuenta</option><option>Pendiente</option></select></div>
         <div class="field"><label>Tipo de dólar</label>
@@ -424,6 +436,10 @@ tr:hover td{background:var(--prl);}
           <select id="f-com-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option><option>Echeq rechazado</option></select></div>
       </div>
       <div class="field" style="margin-top:8px"><label>Notas</label><input type="text" id="f-com-notas" placeholder="ej: echeq rechazado — pendiente regularización"></div>
+      <div id="actor-echeqs-com" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al comisionista <button class="btn bsm bs" onclick="addActorEcheq('com')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-com"></div>
+      </div>
     </div>
     <div class="actor-card a-comp" style="margin-bottom:0">
       <div class="at"><i class="ti ti-shopping-cart"></i>Comprador</div>
@@ -432,7 +448,7 @@ tr:hover td{background:var(--prl);}
           <select id="f-comp"><option value="">— seleccionar —</option>
             <option>Javier</option><option>Andres</option><option>Fabian</option><option>Matías</option></select></div>
         <div class="field"><label>Forma de cobro</label>
-          <select id="f-comp-pago">
+          <select id="f-comp-pago" onchange="toggleActorEcheq('comp',this.value)">
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Efectivo</option><option>A cuenta</option><option>Saldo pendiente</option><option>Mixto</option></select></div>
@@ -448,6 +464,10 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Estado cobro</label>
           <select id="f-comp-est"><option>Pendiente</option><option>Parcial</option><option>A cuenta</option><option>Cobrado</option></select></div>
         <div class="field"><label>Notas</label><input type="text" id="f-comp-notas" placeholder="ej: 2 vencimientos pactados"></div>
+      </div>
+      <div id="actor-echeqs-comp" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs del comprador <button class="btn bsm bs" onclick="addActorEcheq('comp')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-comp"></div>
       </div>
     </div>
   </div>
@@ -795,6 +815,94 @@ const N=id=>parseFloat(document.getElementById(id)?.value)||0;
 const V=id=>document.getElementById(id)?.value||'';
 const IVA=n=>n?Math.round(n*1.105):0;
 
+
+// ── Actor echeq counters ──
+const actorEcheqCount={prov:0,ref:0,transp:0,com:0,comp:0};
+
+function toggleActorEcheq(actor,val){
+  const show=(val||'').toLowerCase().includes('echeq');
+  document.getElementById('actor-echeqs-'+actor).style.display=show?'block':'none';
+}
+
+function addActorEcheq(actor){
+  if(actorEcheqCount[actor]>=6){toast('Máximo 6 echeqs por actor','err');return;}
+  actorEcheqCount[actor]++;
+  const i=actorEcheqCount[actor];
+  const row=document.createElement('div');
+  row.id='aer-'+actor+'-'+i;
+  row.className='echeq-row';
+  row.style.cssText='grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 1.5fr 1.5fr 32px;';
+  row.innerHTML=`
+    <div class="field"><label>#${i} Empresa/Persona</label><input type="text" id="aei-emp-${actor}-${i}" placeholder="García SA"></div>
+    <div class="field"><label>Banco</label><input type="text" id="aei-banco-${actor}-${i}" placeholder="Galicia"></div>
+    <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}"></div>
+    <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}"></div>
+    <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}"></div>
+    <div class="field"><label>Importe ($)</label><input type="number" id="aei-imp-${actor}-${i}" placeholder="ej: 7000000"></div>
+    <div class="field"><label>Estado</label>
+      <select id="aei-est-${actor}-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
+    <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+  document.getElementById('actor-echeq-rows-'+actor).appendChild(row);
+}
+
+function getActorEcheqs(actor,opId){
+  const result=[];
+  for(let i=1;i<=6;i++){
+    const el=document.getElementById('aer-'+actor+'-'+i);if(!el)continue;
+    const imp=parseFloat(document.getElementById('aei-imp-'+actor+'-'+i)?.value)||0;if(!imp)continue;
+    result.push({id:Date.now()+Math.random(),
+      fr:document.getElementById('aei-fr-'+actor+'-'+i)?.value||'',
+      fc:document.getElementById('aei-fc-'+actor+'-'+i)?.value||'',
+      empresa:document.getElementById('aei-emp-'+actor+'-'+i)?.value||'',
+      banco:document.getElementById('aei-banco-'+actor+'-'+i)?.value||'',
+      num:document.getElementById('aei-num-'+actor+'-'+i)?.value||'',
+      imp,impNeto:imp,descPct:0,descMonto:0,gastoAcred:0,cant:'1',
+      opRef:opId,actor,obs:'',
+      estado:document.getElementById('aei-est-'+actor+'-'+i)?.value||'Pendiente',
+      fromOp:true});
+  }
+  return result;
+}
+
+function clearActorEcheqs(){
+  ['prov','ref','transp','com','comp'].forEach(actor=>{
+    actorEcheqCount[actor]=0;
+    const c=document.getElementById('actor-echeq-rows-'+actor);if(c)c.innerHTML='';
+    const p=document.getElementById('actor-echeqs-'+actor);if(p)p.style.display='none';
+  });
+}
+
+function restoreActorEcheqs(opId){
+  // Re-populate echeq rows for each actor from saved echeqs linked to this op
+  ['prov','ref','transp','com','comp'].forEach(actor=>{
+    const saved=echeqs.filter(e=>e.opRef==opId&&e.actor===actor&&e.fromOp);
+    if(!saved.length)return;
+    const pago=document.getElementById('f-'+actor+'-pago')||document.getElementById('f-comp-pago');
+    const pagoVal=(actor==='comp'?document.getElementById('f-comp-pago'):document.getElementById('f-'+actor+'-pago'))?.value||'';
+    document.getElementById('actor-echeqs-'+actor).style.display='block';
+    saved.forEach(e=>{
+      actorEcheqCount[actor]++;
+      const i=actorEcheqCount[actor];
+      const row=document.createElement('div');
+      row.id='aer-'+actor+'-'+i;row.className='echeq-row';
+      row.style.cssText='grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 1.5fr 1.5fr 32px;';
+      row.innerHTML=`
+        <div class="field"><label>#${i} Empresa/Persona</label><input type="text" id="aei-emp-${actor}-${i}" value="${e.empresa||''}"></div>
+        <div class="field"><label>Banco</label><input type="text" id="aei-banco-${actor}-${i}" value="${e.banco||''}"></div>
+        <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}" value="${e.num||''}"></div>
+        <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}" value="${e.fr||''}"></div>
+        <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}" value="${e.fc||''}"></div>
+        <div class="field"><label>Importe ($)</label><input type="number" id="aei-imp-${actor}-${i}" value="${e.imp||''}"></div>
+        <div class="field"><label>Estado</label>
+          <select id="aei-est-${actor}-${i}">
+            ${['Pendiente','Al cobro','Cobrado total','Endosado','Rechazado'].map(opt=>`<option${opt===e.estado?' selected':''}>${opt}</option>`).join('')}
+          </select></div>
+        <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+      document.getElementById('actor-echeq-rows-'+actor).appendChild(row);
+    });
+  });
+}
+
 function toast(msg,type=''){
   const c=document.getElementById('toasts'),t=document.createElement('div');
   t.className='toast'+(type?' '+type:'');t.textContent=msg;c.appendChild(t);
@@ -1085,6 +1193,12 @@ function saveOp(){
     ie.forEach(e=>echeqs.push(e));
     toast('✓ Op #'+cnt+' guardada'+(ie.length?' con '+ie.length+' echeq(s)':''));
   }
+  // Collect actor echeqs (only on new op; edit updates inline)
+  if(editingId===null){
+    ['prov','ref','transp','com','comp'].forEach(actor=>{
+      getActorEcheqs(actor,cnt).forEach(e=>echeqs.push(e));
+    });
+  }
   save();clearForm();renderDash();
 }
 function clearForm(){
@@ -1113,7 +1227,7 @@ function clearForm(){
   document.getElementById('card-echeqs-inline').style.display='none';
   document.getElementById('echeqs-inline-container').innerHTML='';
   inlineEcheqCount=0;
-  editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');
+  editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');clearActorEcheqs();
   document.getElementById('f-fop').value=new Date().toISOString().split('T')[0];
   setTipo('granel',document.querySelector('#tipo-tog button:first-child'));
   if(dolar.divisa)['f-dv1','f-dv2','f-prov-dv','f-comp-dv','f-ref-dv'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=dolar.divisa;});
@@ -1133,7 +1247,9 @@ function editOp(id){
   s('f-f1sal',o.fSalCrudo);s('f-f1lle',o.fLleCrudo);s('f-f2sal',o.fSalRef);s('f-f2lle',o.fLleEnv);
   document.getElementById('f-est-ent').value=o.estEntrega||'Pendiente';
   document.getElementById('f-est-cob').value=o.estCobro||'Pendiente';
+  document.getElementById('f-est-gen').value=o.estGen||'En curso';
   document.getElementById('f-pago').value=o.pago||'Transferencia';
+  toggleEcheqInline();
   s('f-notas',o.notas);
   const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
   setTipo(o.tipo,tipBtn);
@@ -1151,7 +1267,12 @@ function editOp(id){
   document.getElementById('f-transp-dol').value=o.transpDolTipo||'pesos';s('f-transp-dv',o.transpDolVal);s('f-transp-pag1',o.transpPag1);s('f-transp-pag2',o.transpPag2);document.getElementById('f-transp-est').value=o.transpEst||'Pendiente';s('f-transp-notas',o.transpNotas);
   document.getElementById('f-com-dol').value=o.comDolTipo||'divisa';s('f-com-pagado',o.comPagado);document.getElementById('f-com-est').value=o.comEst||'Pendiente';s('f-com-notas',o.comNotas);
   document.getElementById('f-comp-dol').value=o.compDolTipo||'divisa';s('f-comp-dv',o.compDolVal);s('f-comp-cobrado',o.compCobrado);document.getElementById('f-comp-est').value=o.compEst||'Pendiente';s('f-comp-notas',o.compNotas);
-  tix1=[...(o.tickets1||[])];tix2=[...(o.tickets2||[])];renderTix('tix1');renderTix('tix2');
+  ['prov','ref','transp','com','comp'].forEach(actor=>{
+    const sel=document.getElementById('f-'+actor+'-pago')||document.getElementById('f-comp-pago');
+    const el=actor==='comp'?document.getElementById('f-comp-pago'):document.getElementById('f-'+actor+'-pago');
+    if(el)toggleActorEcheq(actor,el.value);
+  });
+  tix1=[...(o.tickets1||[])];tix2=[...(o.tickets2||[])];renderTix('tix1');renderTix('tix2');clearActorEcheqs();restoreActorEcheqs(id);
   calcAdel();liveCalc();
   window.scrollTo({top:0,behavior:'smooth'});
 }
