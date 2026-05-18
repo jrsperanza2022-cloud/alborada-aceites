@@ -414,8 +414,14 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-transp-dv"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
-        <div class="field"><label>Flete tramo 1 — crudo ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
-        <div class="field"><label>Flete tramo 2 — refinado ($)</label><input type="text" inputmode="numeric" id="f-flete2" placeholder="ej: 900.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Refinería → Envasadora</div></div>
+        <div class="field"><label>Flete tramo 1 neto ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
+        <div class="field"><label>Flete tramo 1 c/IVA ($)</label><input type="text" id="f-flete1-iva" readonly></div>
+        <div class="field"><label>Flete tramo 2 neto ($)</label><input type="text" inputmode="numeric" id="f-flete2" placeholder="ej: 900.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Refinería → Envasadora</div></div>
+        <div class="field"><label>Flete tramo 2 c/IVA ($)</label><input type="text" id="f-flete2-iva" readonly></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label>Total flete neto ($)</label><input type="text" id="f-flete-total" readonly></div>
+        <div class="field"><label>Total flete c/IVA ($)</label><input type="text" id="f-flete-total-iva" readonly></div>
         <div class="field"><label id="lbl-transp-pag1">Pagado tramo 1 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag1" oninput="calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label id="lbl-transp-pag2">Pagado tramo 2 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag2" oninput="calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
@@ -576,11 +582,34 @@ tr:hover td{background:var(--prl);}
   <!-- RESULTADO -->
   <div class="card accent">
     <div class="sec"><span><i class="ti ti-trending-up"></i>Resultado financiero — resumen automático</span></div>
+    <!-- Desglose de costos -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--dan);margin-bottom:6px;letter-spacing:.5px">▼ Costos</div>
+    <div class="g4" style="margin-bottom:8px">
+      <div class="field"><label>Compra crudo neto ($)</label><input type="text" id="f-costo-compra" readonly></div>
+      <div class="field"><label>Compra crudo c/IVA ($)</label><input type="text" id="f-costo-compra-iva" readonly></div>
+      <div class="field"><label>Servicio refinado neto ($)</label><input type="text" id="f-costo-refin" readonly></div>
+      <div class="field"><label>Servicio refinado c/IVA ($)</label><input type="text" id="f-costo-refin-iva" readonly></div>
+    </div>
+    <div class="g4" style="margin-bottom:10px">
+      <div class="field"><label>Flete total neto ($)</label><input type="text" id="f-costo-flete" readonly></div>
+      <div class="field"><label>Flete total c/IVA ($)</label><input type="text" id="f-costo-flete-iva" readonly></div>
+      <div class="field"><label>Comisión neta ($)</label><input type="text" id="f-costo-com" readonly></div>
+      <div class="field"><label>Comisión c/IVA ($)</label><input type="text" id="f-costo-com-iva" readonly></div>
+      <div class="field"><label>Costo total neto ($)</label><input type="text" id="f-costo-total" readonly style="font-weight:700;color:var(--dan)"></div>
+    </div>
+    <!-- Ingreso y resultado -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--suc);margin-bottom:6px;letter-spacing:.5px">▲ Ingreso y resultado</div>
     <div class="g4">
-      <div class="field"><label>Costo total (compra+refin+flete+com)</label><input type="text" id="f-costo-total" readonly style="font-weight:700;color:var(--dan)"></div>
-      <div class="field"><label>Ingreso total neto (venta)</label><input type="text" id="f-ingreso-total" readonly style="font-weight:700;color:var(--suc)"></div>
+      <div class="field"><label>Ingreso venta neto ($)</label><input type="text" id="f-ingreso-total" readonly style="font-weight:700;color:var(--suc)"></div>
+      <div class="field"><label>Ingreso venta c/IVA ($)</label><input type="text" id="f-ingreso-total-iva" readonly style="font-weight:700;color:var(--suc)"></div>
       <div class="field"><label>Resultado neto ($)</label><input type="text" id="f-resultado" readonly style="font-weight:800"></div>
-      <div class="field"><label>Margen (%)</label><input type="text" id="f-margen-pct" readonly></div>
+      <div class="field"><label>Resultado c/IVA ($)</label><input type="text" id="f-resultado-iva" readonly style="font-weight:800"></div>
+    </div>
+    <div class="g4" style="margin-top:8px">
+      <div class="field"><label>Costo total c/IVA ($)</label><input type="text" id="f-costo-total-iva" readonly style="font-weight:700;color:var(--dan)"></div>
+      <div class="field"><label>Margen sobre costos (%)</label><input type="text" id="f-margen-pct" readonly></div>
+      <div class="field"></div>
+      <div class="field"></div>
     </div>
     <div id="scenario-box" class="scenario-grid" style="display:none"></div>
   </div>
@@ -1185,18 +1214,50 @@ function liveCalc(){
       <div><div style="font-size:9px;color:var(--t2)">Tn vendidas</div><div style="font-weight:800;color:var(--acc)">${Tn(tnv||rE)}</div></div>
       <div><div style="font-size:9px;color:var(--t2)">Dif.entregado/vendido</div><div style="font-weight:800;color:${DC((tnv||rE)-rE)}">${tnv&&rE?DS(tnv-rE):'—'}</div></div>`;
   }
-  const flete=Np('f-flete1')+Np('f-flete2');
+  const f1=Np('f-flete1'),f2=Np('f-flete2');
+  const flete=f1+f2;
+  const fleteIva=IVA(f1)+IVA(f2);
+  if(f1){const e=document.getElementById('f-flete1-iva');if(e)e.value=MF(IVA(f1));}
+  if(f2){const e=document.getElementById('f-flete2-iva');if(e)e.value=MF(IVA(f2));}
+  if(flete){
+    const et=document.getElementById('f-flete-total');if(et)et.value=MF(flete);
+    const eti=document.getElementById('f-flete-total-iva');if(eti)eti.value=MF(fleteIva);
+  }
   const comMonto=tv>0&&comPct?tv*comPct/100:0;
-  const costoTotal=tc+flete+IVA(comMonto)+IVA(refC||0);
-  const resultado=tv-costoTotal;
-  const margenPct=costoTotal>0?(resultado/costoTotal*100):0;
-  if(costoTotal){document.getElementById('f-costo-total').value=MF(costoTotal);document.getElementById('f-costo-total').style.color='var(--dan)';}
-  if(tv){document.getElementById('f-ingreso-total').value=MF(tv);document.getElementById('f-ingreso-total').style.color='var(--suc)';}
-  if(costoTotal||tv){
+  // ── Costos netos (sin IVA) ──
+  const costoCompra=tc;             // precio crudo neto × tn proveedor
+  const costoRefin=refC||0;         // servicio refinado neto
+  const costoFlete=flete;           // flete (sin IVA, es gasto operativo)
+  const costoComision=comMonto;     // comisión neta
+  const costoNetoTotal=costoCompra+costoRefin+costoFlete+costoComision;
+  // ── Costos con IVA ──
+  const costoIvaTotal=IVA(costoCompra)+IVA(costoRefin)+costoFlete+IVA(costoComision);
+  // ── Resultado ──
+  const resultadoNeto=tv-costoNetoTotal;      // venta neta − costos netos
+  const resultadoCiva=IVA(tv)-costoIvaTotal;  // venta c/IVA − costos c/IVA
+  const margenPct=costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0;
+  // ── Mostrar desglose ──
+  const setCosto=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--dan)';}};
+  const setIngreso=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--suc)';}};
+  setCosto('f-costo-compra')(costoCompra);
+  setCosto('f-costo-compra-iva')(IVA(costoCompra));
+  setCosto('f-costo-refin')(costoRefin);
+  setCosto('f-costo-refin-iva')(IVA(costoRefin));
+  setCosto('f-costo-flete')(costoFlete);
+  setCosto('f-costo-flete-iva')(typeof fleteIva!=='undefined'?fleteIva:IVA(costoFlete));
+  setCosto('f-costo-com')(costoComision);
+  setCosto('f-costo-com-iva')(IVA(costoComision));
+  setCosto('f-costo-total')(costoNetoTotal);
+  setCosto('f-costo-total-iva')(costoIvaTotal);
+  setIngreso('f-ingreso-total')(tv);
+  setIngreso('f-ingreso-total-iva')(IVA(tv));
+  if(costoNetoTotal||tv){
     const re=document.getElementById('f-resultado');
-    re.value=MF(resultado);
-    re.style.color=resultado>0?'var(--suc)':resultado<0?'var(--dan)':'var(--t2)';
-    document.getElementById('f-margen-pct').value=costoTotal?margenPct.toFixed(2)+'%':'—';
+    const reiva=document.getElementById('f-resultado-iva');
+    re.value=MF(resultadoNeto);
+    re.style.color=resultadoNeto>0?'var(--suc)':resultadoNeto<0?'var(--dan)':'var(--t2)';
+    if(reiva){reiva.value=MF(resultadoCiva);reiva.style.color=resultadoCiva>0?'var(--suc)':resultadoCiva<0?'var(--dan)':'var(--t2)';}
+    document.getElementById('f-margen-pct').value=costoNetoTotal?margenPct.toFixed(2)+'%':'—';
   }
   const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
   const showS=resultado!==0&&(dolar.mayorista||dolar.blue);
@@ -1225,12 +1286,14 @@ function saveOp(){
   const tc=pc*base,tv=pv*basev;
   const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
   const refC=Np('f-ref-costo');
-  const flete=Np('f-flete1')+Np('f-flete2');
-  const costoTotal=tc+flete+IVA(comMonto)+IVA(refC);
-  const resultado=tv-costoTotal;
+  const f1=Np('f-flete1'),f2=Np('f-flete2'),flete=f1+f2,fleteIva=IVA(f1)+IVA(f2);
+  const costoNetoTotal=tc+(refC||0)+flete+comMonto;
+  const costoIvaTotal=IVA(tc)+IVA(refC||0)+(typeof fleteIva!=='undefined'?fleteIva:IVA(flete))+IVA(comMonto);
+  const resultadoNeto=tv-costoNetoTotal;
+  const resultadoCiva=IVA(tv)-costoIvaTotal;
   const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
-  const profitMay=dolar.mayorista?resultado*(dolar.mayorista/baseR):0;
-  const profitBlue=dolar.blue?resultado*(dolar.blue/baseR):0;
+  const profitMay=dolar.mayorista?resultadoNeto*(dolar.mayorista/baseR):0;
+  const profitBlue=dolar.blue?resultadoNeto*(dolar.blue/baseR):0;
   const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4');
   const a1=Np('f-a1'),a2=Np('f-a2'),a3=Np('f-a3');
   const data={
@@ -1256,7 +1319,7 @@ function saveOp(){
     adel1:a1,adel2:a2,adel3:a3,adelTotal:a1+a2+a3,
     totalCompra:tc,totalVenta:tv,
     refServicio:refC,refServIva:IVA(refC),
-    flete1:Np('f-flete1'),flete2:Np('f-flete2'),fleteTotal:flete,
+    flete1:Np('f-flete1'),flete2:Np('f-flete2'),fleteTotal:flete,fleteIvaTotal:fleteIva,
     comPct,comMonto,comIva:IVA(comMonto),
     costoTotal,resultado,profitMay,profitBlue,
     pctMargen:costoTotal>0?(resultado/costoTotal*100):0,
@@ -1275,20 +1338,26 @@ function saveOp(){
   };
   if(editingId!==null){
     const idx=ops.findIndex(o=>o.id===editingId);
-    if(idx>=0){ops[idx]={...ops[idx],...data};toast('✓ Op #'+editingId+' actualizada');}
+    if(idx>=0){
+      ops[idx]={...ops[idx],...data};
+      // Al editar: borrar echeqs de actor anteriores vinculados a esta op y recargar
+      const eid=editingId;
+      echeqs=echeqs.filter(e=>!(e.fromOp&&e.opRef===eid));
+      ['prov','ref','transp','com','comp'].forEach(actor=>{
+        getActorEcheqs(actor,eid).forEach(e=>echeqs.push(e));
+      });
+      toast('✓ Op #'+eid+' actualizada');
+    }
     editingId=null;
   }else{
     cnt++;data.id=cnt;data.fechaCreacion=new Date().toISOString();
     ops.push(data);
     const ie=getInlineEcheqs(cnt);
     ie.forEach(e=>echeqs.push(e));
-    toast('✓ Op #'+cnt+' guardada'+(ie.length?' con '+ie.length+' echeq(s)':''));
-  }
-  // Collect actor echeqs (only on new op; edit updates inline)
-  if(editingId===null){
     ['prov','ref','transp','com','comp'].forEach(actor=>{
       getActorEcheqs(actor,cnt).forEach(e=>echeqs.push(e));
     });
+    toast('✓ Op #'+cnt+' guardada'+(ie.length?' con '+ie.length+' echeq(s)':''));
   }
   save();clearForm();renderDash();
 }
@@ -1300,7 +1369,7 @@ function clearForm(){
    'f-prov-dv','f-prov-pagado','f-prov-saldo','f-prov-notas',
    'f-ref-nombre','f-ref-costo','f-ref-civa','f-ref-pagado','f-ref-saldo','f-ref-notas',
    'f-transp','f-transp-dv','f-transp-pag1','f-transp-pag2','f-transp-saldo','f-transp-notas',
-   'f-flete1','f-flete2','f-com-nombre','f-com-pct','f-com-monto','f-com-iva','f-com-pagado','f-com-notas',
+   'f-flete1','f-flete1-iva','f-flete2','f-flete2-iva','f-flete-total','f-flete-total-iva','f-com-nombre','f-com-pct','f-com-monto','f-com-iva','f-com-pagado','f-com-notas',
    'f-comp-dv','f-comp-cobrado','f-comp-saldo','f-comp-notas',
    'f-costo-total','f-ingreso-total','f-resultado','f-margen-pct',
    'f-pcos','f-pve','f-pcos-iva','f-pve-iva','f-uni','f-plt','f-marca']
