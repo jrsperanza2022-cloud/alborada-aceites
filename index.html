@@ -991,12 +991,12 @@ function restoreActorEcheqs(opId){
 
 function fixEcheqs(){
   const antes=echeqs.length;
-  // 1. Reparar importes mal guardados (ej: 49.067661 guardado como 49.067661)
+  // 1. Reparar importes mal guardados
   echeqs=echeqs.map(e=>{
-    if(e.imp){e.imp=NpV(e.imp+'');e.impNeto=NpV((e.impNeto||e.imp)+'');}
+    if(e.imp!==undefined){e.imp=NpV(e.imp+'');e.impNeto=NpV((e.impNeto||e.imp)+'');}
     return e;
   });
-  // 2. Eliminar duplicados por combinación única: opRef + actor + empresa + fc + imp
+  // 2. Eliminar duplicados: mismo opRef + actor + empresa + fc + importe redondeado
   const seen=new Set();
   echeqs=echeqs.filter(e=>{
     const key=`${e.opRef||''}-${e.actor||''}-${e.empresa||''}-${e.fc||''}-${Math.round(e.imp||0)}`;
@@ -1005,9 +1005,29 @@ function fixEcheqs(){
     return true;
   });
   const despues=echeqs.length;
+  // 3. Reparar resultado de cada op usando los datos guardados
+  ops=ops.map(o=>{
+    if(o.resultadoNeto!==undefined)return o; // ya tiene el correcto
+    // Recalcular desde los datos guardados
+    const pc=NpV(o.pcompra+''),pv=NpV(o.pventa+'');
+    const tnv=o.tnVendidas||0,tnventa=o.tnVenta||tnv;
+    const tc=pc*tnv,tv=pv*tnventa;
+    const refC=NpV(o.refServicio+'');
+    const comPct=parseFloat(o.comPct)||0;
+    const comMonto=tv>0&&comPct?tv*comPct/100:0;
+    const f1=NpV(o.flete1+''),f2=NpV(o.flete2+'');
+    const flete=f1+f2;
+    const costoNeto=tc+refC+flete+comMonto;
+    const costoIva=Math.round(tc*1.21)+Math.round(refC*1.21)+Math.round(flete*1.21)+Math.round(comMonto*1.21);
+    o.resultadoNeto=tv-costoNeto;
+    o.resultadoCiva=Math.round(tv*1.21)-costoIva;
+    o.resultado=o.resultadoNeto;
+    return o;
+  });
   save();
   renderDash();
-  toast(`✓ Reparado: ${antes-despues} duplicados eliminados, importes corregidos`,'ok');
+  const msg=`✓ ${antes-despues} duplicados eliminados, resultados recalculados`;
+  toast(msg,'ok');
 }
 
 function toast(msg,type=''){
@@ -1296,13 +1316,13 @@ function liveCalc(){
     document.getElementById('f-margen-pct').value=costoNetoTotal?margenPct.toFixed(2)+'%':'—';
   }
   const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
-  const showS=resultado!==0&&(dolar.mayorista||dolar.blue);
+  const showS=resultadoNeto!==0&&(dolar.mayorista||dolar.blue);
   document.getElementById('scenario-box').style.display=showS?'grid':'none';
   if(showS){
     const scens=[
-      {name:'Dólar Divisa',val:dolar.divisa||baseR,r:resultado},
-      {name:'Dólar Mayorista',val:dolar.mayorista,r:dolar.mayorista?resultado*(dolar.mayorista/baseR):0},
-      {name:'Dólar Blue',val:dolar.blue,r:dolar.blue?resultado*(dolar.blue/baseR):0}
+      {name:'Dólar Divisa',val:dolar.divisa||baseR,r:resultadoNeto},
+      {name:'Dólar Mayorista',val:dolar.mayorista,r:dolar.mayorista?resultadoNeto*(dolar.mayorista/baseR):0},
+      {name:'Dólar Blue',val:dolar.blue,r:dolar.blue?resultadoNeto*(dolar.blue/baseR):0}
     ];
     document.getElementById('scenario-box').innerHTML=scens.map(s=>{
       const cls=s.r>100?'win':s.r<-100?'lose':'neutral';
@@ -1341,10 +1361,10 @@ function saveOp(){
     fOp:fop,fCob:V('f-fcob'),
     fSalCrudo:V('f-f1sal'),fLleCrudo:V('f-f1lle'),
     fSalRef:V('f-f2sal'),fLleEnv:V('f-f2lle'),
-    tipo,producto:prod,
+    tipo,producto:prod,productoVenta:V('f-acv')||prod,
     presentacion:tipo==='envase'?V('f-pres'):'',
     marca:tipo==='envase'?V('f-marca'):'',pallets:tipo==='envase'?V('f-plt'):'',unidades:uni,
-    pcompra:pc,pventa:pv,pcIva:IVA(pc),pvIva:IVA(pv),
+    tnVenta:N('f-tnventa')||N('f-tnv'),pcompra:pc,pventa:pv,pcIva:IVA(pc),pvIva:IVA(pv),
     tn1,tn2,tn3,tn4,tnVendidas:tnv,
     dif1:tn1&&tn2?tn2-tn1:0,dif2:tn3&&tn4?tn4-tn3:0,
     pctMerma1:tn1>0?Math.abs((tn2-tn1)/tn1*100):0,
@@ -1357,8 +1377,8 @@ function saveOp(){
     refServicio:refC,refServIva:IVA(refC),
     flete1:Np('f-flete1'),flete2:Np('f-flete2'),fleteTotal:flete,fleteIvaTotal:fleteIva,
     comPct,comMonto,comIva:IVA(comMonto),
-    costoTotal,resultado,profitMay,profitBlue,
-    pctMargen:costoTotal>0?(resultado/costoTotal*100):0,
+    costoTotal:costoNetoTotal,resultado:resultadoNeto,profitMay,profitBlue,
+    pctMargen:costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0,
     provPago:V('f-prov-pago'),provDolTipo:V('f-prov-dol'),provDolVal:Np('f-prov-dv'),
     provPagado:Np('f-prov-pagado'),provNotas:V('f-prov-notas'),
     refPago:V('f-ref-pago'),refDolTipo:V('f-ref-dol'),refDolVal:Np('f-ref-dv'),
@@ -1440,7 +1460,16 @@ function editOp(id){
   document.getElementById('edit-num').textContent='#'+id;
   document.getElementById('save-lbl').textContent='Actualizar operación';
   // Helper: set input value safely
-  const sv=(fid,v)=>{const e=document.getElementById(fid);if(e&&v!==undefined&&v!==null)e.value=v;};
+  const sv=(fid,v)=>{
+    const e=document.getElementById(fid);
+    if(!e||v===undefined||v===null)return;
+    if(e.tagName==='SELECT'){
+      // If value not in options, add it temporarily
+      const exists=[...e.options].some(o=>o.value===v||o.text===v);
+      if(!exists&&v){const o=document.createElement('option');o.value=v;o.text=v;e.appendChild(o);}
+    }
+    e.value=v;
+  };
   // Helper: set select value safely
   const ss=(fid,v,def)=>{const e=document.getElementById(fid);if(e)e.value=v||def||e.options[0]?.value||'';};
   // ── Identificación ──
