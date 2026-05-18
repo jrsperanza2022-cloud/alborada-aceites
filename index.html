@@ -792,7 +792,6 @@ tr:hover td{background:var(--prl);}
       <button class="btn bs" onclick="backupData()"><i class="ti ti-download"></i>Exportar backup JSON</button>
       <label class="btn bs" style="cursor:pointer"><i class="ti ti-upload"></i>Importar backup
         <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreData(this)"></label>
-      <button class="btn bw" onclick="fixEcheqs()" style="background:#1a3a1a;border-color:#2a6a2a;color:#5dc45d"><i class="ti ti-tool"></i>Reparar echeqs duplicados</button>
       <button class="btn br" onclick="confirmClear()"><i class="ti ti-trash"></i>Borrar todo</button>
     </div>
     <div class="alert ainfo" style="margin-top:10px"><i class="ti ti-info-circle"></i>Los datos se guardan en este navegador. Exportá el backup regularmente para no perder información.</div>
@@ -870,14 +869,10 @@ const Np=id=>{const e=document.getElementById(id);if(!e)return 0;return NpV(e.va
 const NpV=v=>{
   if(v===null||v===undefined||v==='')return 0;
   let s=(v+'').trim();
-  // Coma presente → separador decimal AR: quitar puntos de miles, coma→punto
   if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');return parseFloat(s)||0;}
-  // 2+ puntos → todos separadores de miles
-  const dots=s.split('.').length-1;
-  if(dots>=2){s=s.replace(/\./g,'');return parseFloat(s)||0;}
-  // 1 punto: si hay 3 o más dígitos después → separador de miles
-  if(dots===1){const parts=s.split('.');if(parts[1].length>=3){s=s.replace('.','');return parseFloat(s)||0;}}
-  // Sino: punto decimal normal (ej: 7.45 → 7.45)
+  const d=s.split('.').length-1;
+  if(d>=2){s=s.replace(/\./g,'');return parseFloat(s)||0;}
+  if(d===1){const p=s.split('.');if(p[1].length>=3){s=s.replace('.','');return parseFloat(s)||0;}}
   return parseFloat(s)||0;
 };
 const V=id=>document.getElementById(id)?.value||'';
@@ -990,44 +985,13 @@ function restoreActorEcheqs(opId){
 
 
 function fixEcheqs(){
-  const antes=echeqs.length;
-  // 1. Reparar importes mal guardados
-  echeqs=echeqs.map(e=>{
-    if(e.imp!==undefined){e.imp=NpV(e.imp+'');e.impNeto=NpV((e.impNeto||e.imp)+'');}
-    return e;
-  });
-  // 2. Eliminar duplicados: mismo opRef + actor + empresa + fc + importe redondeado
+  echeqs=echeqs.map(e=>{if(e.imp!==undefined){e.imp=NpV(e.imp+'');e.impNeto=NpV((e.impNeto||e.imp)+'');}return e;});
   const seen=new Set();
   echeqs=echeqs.filter(e=>{
-    const key=`${e.opRef||''}-${e.actor||''}-${e.empresa||''}-${e.fc||''}-${Math.round(e.imp||0)}`;
-    if(seen.has(key))return false;
-    seen.add(key);
-    return true;
-  });
-  const despues=echeqs.length;
-  // 3. Reparar resultado de cada op usando los datos guardados
-  ops=ops.map(o=>{
-    if(o.resultadoNeto!==undefined)return o; // ya tiene el correcto
-    // Recalcular desde los datos guardados
-    const pc=NpV(o.pcompra+''),pv=NpV(o.pventa+'');
-    const tnv=o.tnVendidas||0,tnventa=o.tnVenta||tnv;
-    const tc=pc*tnv,tv=pv*tnventa;
-    const refC=NpV(o.refServicio+'');
-    const comPct=parseFloat(o.comPct)||0;
-    const comMonto=tv>0&&comPct?tv*comPct/100:0;
-    const f1=NpV(o.flete1+''),f2=NpV(o.flete2+'');
-    const flete=f1+f2;
-    const costoNeto=tc+refC+flete+comMonto;
-    const costoIva=Math.round(tc*1.21)+Math.round(refC*1.21)+Math.round(flete*1.21)+Math.round(comMonto*1.21);
-    o.resultadoNeto=tv-costoNeto;
-    o.resultadoCiva=Math.round(tv*1.21)-costoIva;
-    o.resultado=o.resultadoNeto;
-    return o;
+    const k=`${e.opRef||''}-${e.actor||''}-${e.empresa||''}-${e.fc||''}-${Math.round(e.imp||0)}`;
+    if(seen.has(k))return false;seen.add(k);return true;
   });
   save();
-  renderDash();
-  const msg=`✓ ${antes-despues} duplicados eliminados, resultados recalculados`;
-  toast(msg,'ok');
 }
 
 function toast(msg,type=''){
@@ -1364,7 +1328,7 @@ function saveOp(){
     tipo,producto:prod,productoVenta:V('f-acv')||prod,
     presentacion:tipo==='envase'?V('f-pres'):'',
     marca:tipo==='envase'?V('f-marca'):'',pallets:tipo==='envase'?V('f-plt'):'',unidades:uni,
-    tnVenta:N('f-tnventa')||N('f-tnv'),pcompra:pc,pventa:pv,pcIva:IVA(pc),pvIva:IVA(pv),
+    pcompra:pc,pventa:pv,pcIva:IVA(pc),pvIva:IVA(pv),
     tn1,tn2,tn3,tn4,tnVendidas:tnv,
     dif1:tn1&&tn2?tn2-tn1:0,dif2:tn3&&tn4?tn4-tn3:0,
     pctMerma1:tn1>0?Math.abs((tn2-tn1)/tn1*100):0,
@@ -1460,16 +1424,7 @@ function editOp(id){
   document.getElementById('edit-num').textContent='#'+id;
   document.getElementById('save-lbl').textContent='Actualizar operación';
   // Helper: set input value safely
-  const sv=(fid,v)=>{
-    const e=document.getElementById(fid);
-    if(!e||v===undefined||v===null)return;
-    if(e.tagName==='SELECT'){
-      // If value not in options, add it temporarily
-      const exists=[...e.options].some(o=>o.value===v||o.text===v);
-      if(!exists&&v){const o=document.createElement('option');o.value=v;o.text=v;e.appendChild(o);}
-    }
-    e.value=v;
-  };
+  const sv=(fid,v)=>{const e=document.getElementById(fid);if(e&&v!==undefined&&v!==null)e.value=v;};
   // Helper: set select value safely
   const ss=(fid,v,def)=>{const e=document.getElementById(fid);if(e)e.value=v||def||e.options[0]?.value||'';};
   // ── Identificación ──
@@ -1882,7 +1837,6 @@ document.getElementById('g-fecha').value=hoy.toISOString().split('T')[0];
 document.getElementById('e-fr').value=hoy.toISOString().split('T')[0];
 loadCfg();
 fetchDolar();
-fixEcheqs();
 renderDash();
 renderEcheqs();
 fillOpFilter();
