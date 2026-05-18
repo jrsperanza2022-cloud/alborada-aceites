@@ -792,6 +792,7 @@ tr:hover td{background:var(--prl);}
       <button class="btn bs" onclick="backupData()"><i class="ti ti-download"></i>Exportar backup JSON</button>
       <label class="btn bs" style="cursor:pointer"><i class="ti ti-upload"></i>Importar backup
         <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreData(this)"></label>
+      <button class="btn bw" onclick="fixEcheqs()" style="background:#1a3a1a;border-color:#2a6a2a;color:#5dc45d"><i class="ti ti-tool"></i>Reparar echeqs duplicados</button>
       <button class="btn br" onclick="confirmClear()"><i class="ti ti-trash"></i>Borrar todo</button>
     </div>
     <div class="alert ainfo" style="margin-top:10px"><i class="ti ti-info-circle"></i>Los datos se guardan en este navegador. Exportá el backup regularmente para no perder información.</div>
@@ -985,6 +986,28 @@ function restoreActorEcheqs(opId){
       document.getElementById('actor-echeq-rows-'+actor).appendChild(row);
     });
   });
+}
+
+
+function fixEcheqs(){
+  const antes=echeqs.length;
+  // 1. Reparar importes mal guardados (ej: 49.067661 guardado como 49.067661)
+  echeqs=echeqs.map(e=>{
+    if(e.imp){e.imp=NpV(e.imp+'');e.impNeto=NpV((e.impNeto||e.imp)+'');}
+    return e;
+  });
+  // 2. Eliminar duplicados por combinación única: opRef + actor + empresa + fc + imp
+  const seen=new Set();
+  echeqs=echeqs.filter(e=>{
+    const key=`${e.opRef||''}-${e.actor||''}-${e.empresa||''}-${e.fc||''}-${Math.round(e.imp||0)}`;
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
+  const despues=echeqs.length;
+  save();
+  renderDash();
+  toast(`✓ Reparado: ${antes-despues} duplicados eliminados, importes corregidos`,'ok');
 }
 
 function toast(msg,type=''){
@@ -1830,6 +1853,7 @@ document.getElementById('g-fecha').value=hoy.toISOString().split('T')[0];
 document.getElementById('e-fr').value=hoy.toISOString().split('T')[0];
 loadCfg();
 fetchDolar();
+fixEcheqs();
 renderDash();
 renderEcheqs();
 fillOpFilter();
