@@ -865,7 +865,20 @@ const Dt=d=>{if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0
 const DC=v=>v>0?'var(--dan)':v<0?'var(--suc)':'var(--t3)';
 const DS=v=>(v>0?'+':'')+Number(v).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn';
 const N=id=>parseFloat(document.getElementById(id)?.value)||0;
-const Np=id=>{const e=document.getElementById(id);if(!e)return 0;const v=(e.value||'').replace(/\./g,'').replace(',','.');return parseFloat(v)||0;};
+const Np=id=>{const e=document.getElementById(id);if(!e)return 0;return NpV(e.value);};
+const NpV=v=>{
+  if(v===null||v===undefined||v==='')return 0;
+  let s=(v+'').trim();
+  // Coma presente → separador decimal AR: quitar puntos de miles, coma→punto
+  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');return parseFloat(s)||0;}
+  // 2+ puntos → todos separadores de miles
+  const dots=s.split('.').length-1;
+  if(dots>=2){s=s.replace(/\./g,'');return parseFloat(s)||0;}
+  // 1 punto: si hay 3 o más dígitos después → separador de miles
+  if(dots===1){const parts=s.split('.');if(parts[1].length>=3){s=s.replace('.','');return parseFloat(s)||0;}}
+  // Sino: punto decimal normal (ej: 7.45 → 7.45)
+  return parseFloat(s)||0;
+};
 const V=id=>document.getElementById(id)?.value||'';
 const IVA=n=>n?Math.round(n*1.21):0;
 
@@ -920,7 +933,7 @@ function getActorEcheqs(actor,opId){
   const result=[];
   for(let i=1;i<=6;i++){
     const el=document.getElementById('aer-'+actor+'-'+i);if(!el)continue;
-    const imp=parseFloat(document.getElementById('aei-imp-'+actor+'-'+i)?.value)||0;if(!imp)continue;
+    const raw=document.getElementById('aei-imp-'+actor+'-'+i)?.value||'';const imp=NpV(raw);if(!imp)continue;
     result.push({id:Date.now()+Math.random(),
       fr:document.getElementById('aei-fr-'+actor+'-'+i)?.value||'',
       fc:document.getElementById('aei-fc-'+actor+'-'+i)?.value||'',
@@ -1100,7 +1113,7 @@ function getInlineEcheqs(opId){
   const result=[];
   for(let i=1;i<=inlineEcheqCount;i++){
     const el=document.getElementById('er-'+i);if(!el)continue;
-    const imp=parseFloat(document.getElementById('ei-imp-'+i)?.value)||0;if(!imp)continue;
+    const raw=document.getElementById('ei-imp-'+i)?.value||'';const imp=NpV(raw);if(!imp)continue;
     result.push({id:Date.now()+i,fr:V('ei-fr-'+i),fc:V('ei-fc-'+i),
       empresa:V('ei-emp-'+i),banco:V('ei-banco-'+i),num:V('ei-num-'+i),
       imp,impNeto:imp,descPct:0,descMonto:0,gastoAcred:0,cant:'1',opRef:opId,
@@ -1113,7 +1126,7 @@ function sumActorEcheqs(actor){
   let total=0;
   for(let i=1;i<=6;i++){
     const imp=document.getElementById('aei-imp-'+actor+'-'+i);
-    if(imp)total+=parseFloat(imp.value)||0;
+    if(imp)total+=NpV(imp.value);
   }
   return total;
 }
@@ -1673,7 +1686,8 @@ function renderDash(){
     const h=Math.round(Math.abs(p)/maxP*70)+2;
     return`<div class="chart-col"><div class="chart-bar" style="height:${h}px;background:${p<0?'var(--dan)':'var(--pri)'};opacity:.7" title="${m}: ${MF(p)}"></div><div class="chart-lbl">${m.slice(5)+'/'+m.slice(2,4)}</div></div>`;
   }).join(''):'<div style="color:var(--t3);font-size:12px">Sin datos</div>';
-  const prox=echeqs.filter(e=>{if(e.estado!=='Pendiente'||!e.fc)return false;return Math.ceil((new Date(e.fc)-new Date())/864e5)<=14;});
+  const echeqsUniq=[...new Map(echeqs.map(e=>[e.id,e])).values()];
+  const prox=echeqsUniq.filter(e=>{if(e.estado!=='Pendiente'||!e.fc)return false;return Math.ceil((new Date(e.fc)-new Date())/864e5)<=14;});
   document.getElementById('d-echeqs').innerHTML=prox.length
     ?prox.map(e=>{const d=Math.ceil((new Date(e.fc)-new Date())/864e5);return`<div class="alert ${d<0?'aerr':d<=3?'aerr':'awarn'}"><i class="ti ti-credit-card"></i><strong>${e.empresa||''}</strong> — ${MF(e.imp)} — ${Dt(e.fc)} (${d<0?Math.abs(d)+'d vencido':d+'d'})</div>`;}).join('')
     :'<div style="color:var(--t3);font-size:12px;padding:5px 0">Sin echeqs próximos ✓</div>';
