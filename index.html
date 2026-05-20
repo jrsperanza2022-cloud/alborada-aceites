@@ -266,13 +266,13 @@ tr:hover td{background:var(--prl);}
       <!-- COMPRA (crudo) -->
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sec);margin:8px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-down-circle"></i>Compra — aceite crudo</div>
       <div class="g4">
-        <div class="field"><label>Aceite comprado *</label>
+        <div class="field"><label>Producto comprado *</label>
           <select id="f-acg">
             <option value="">— seleccionar —</option>
-            <optgroup label="SOJA"><option>Soja crudo a granel</option></optgroup>
-            <optgroup label="GIRASOL"><option>Girasol crudo a granel</option></optgroup>
-            <optgroup label="MAÍZ"><option>Maíz crudo a granel</option></optgroup>
-            <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Speller</option><option>Otro crudo</option></optgroup>
+            <optgroup label="SOJA"><option>Soja crudo a granel</option><option>Soja refinado a granel</option></optgroup>
+            <optgroup label="GIRASOL"><option>Girasol crudo a granel</option><option>Girasol refinado a granel</option></optgroup>
+            <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
+            <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
           </select></div>
         <div class="field"><label>P. compra neto ($/tn)</label><input type="text" inputmode="numeric" id="f-pc"  placeholder="ej: 990" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>P. compra c/IVA ($/tn)</label><input type="text" id="f-pc-iva" readonly><div class="hint">IVA 21% incluido</div></div>
@@ -281,13 +281,13 @@ tr:hover td{background:var(--prl);}
       <!-- VENTA (refinado) -->
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin:14px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-up-circle"></i>Venta — aceite refinado</div>
       <div class="g4">
-        <div class="field"><label>Aceite vendido *</label>
+        <div class="field"><label>Producto vendido *</label>
           <select id="f-acv">
             <option value="">— seleccionar —</option>
-            <optgroup label="SOJA"><option>Soja refinado a granel</option></optgroup>
-            <optgroup label="GIRASOL"><option>Girasol refinado a granel</option></optgroup>
-            <optgroup label="MAÍZ"><option>Maíz refinado a granel</option></optgroup>
-            <optgroup label="OTROS"><option>Aceite Mezcla refinado</option><option>Otro refinado</option></optgroup>
+            <optgroup label="SOJA"><option>Soja crudo a granel</option><option>Soja refinado a granel</option></optgroup>
+            <optgroup label="GIRASOL"><option>Girasol crudo a granel</option><option>Girasol refinado a granel</option></optgroup>
+            <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
+            <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
           </select></div>
         <div class="field"><label>P. venta neto ($/tn)</label><input type="text" inputmode="numeric" id="f-pv"  placeholder="ej: 2050" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly><div class="hint">IVA 21% incluido</div></div>
