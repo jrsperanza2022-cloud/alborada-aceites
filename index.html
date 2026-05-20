@@ -331,8 +331,9 @@ tr:hover td{background:var(--prl);}
     <div class="actor-card a-prov">
       <div class="at"><i class="ti ti-building-store"></i>Proveedor</div>
       <div class="g4">
-        <div class="field"><label>Proveedor *</label>
-          <select id="f-prov"><option value="">— seleccionar —</option>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Proveedor *</label>
+            <select id="f-prov"><option value="">— seleccionar —</option>
             <option>María Elena</option><option>Mauro</option><option>Martin Grande</option>
             <option>Profat</option><option>Miguel Kihn</option><option>San Jeronimo</option>
             <option>Ruta 12</option><option>Cañada Rosquin</option><option>Pilar</option><option>Laruso</option><option>Otro</option></select></div>
@@ -367,7 +368,11 @@ tr:hover td{background:var(--prl);}
     <div class="actor-card a-ref">
       <div class="at"><i class="ti ti-building-factory"></i>Refinador</div>
       <div class="g4">
-        <div class="field"><label>Refinador</label><input type="text" id="f-ref-nombre" placeholder="ej: Refinería del Norte SA"></div>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Refinador</label>
+            <select id="f-ref-nombre"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'refinador')" title="Agregar refinador"><i class="ti ti-plus"></i></button>
+        </div>
         <div class="field"><label>Forma de pago</label>
           <select id="f-ref-pago" onchange="toggleActorEcheq('ref',this.value)">
             <option>Efectivo total</option><option>Efectivo parcial</option>
@@ -400,7 +405,11 @@ tr:hover td{background:var(--prl);}
     <div class="actor-card a-transp">
       <div class="at"><i class="ti ti-truck"></i>Transportista</div>
       <div class="g4">
-        <div class="field"><label>Transportista</label><input type="text" id="f-transp" placeholder="ej: Juan Pérez"></div>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Transportista</label>
+            <select id="f-transp"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'transportista')" title="Agregar transportista"><i class="ti ti-plus"></i></button>
+        </div>
         <div class="field"><label>Forma de pago</label>
           <select id="f-transp-pago" onchange="toggleActorEcheq('transp',this.value)">
             <option>Efectivo total</option><option>Efectivo parcial</option>
@@ -439,7 +448,11 @@ tr:hover td{background:var(--prl);}
     <div class="actor-card a-com">
       <div class="at"><i class="ti ti-user-check"></i>Comisionista</div>
       <div class="g4">
-        <div class="field"><label>Nombre</label><input type="text" id="f-com-nombre" placeholder="ej: Broker Aceites SA"></div>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Comisionista</label>
+            <select id="f-com-nombre"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'comisionista')" title="Agregar comisionista"><i class="ti ti-plus"></i></button>
+        </div>
         <div class="field"><label>Comisión (%)</label><input type="number" step="0.01" id="f-com-pct" placeholder="ej: 1.5" oninput="liveCalc()"></div>
         <div class="field"><label>Comisión calculada neto ($)</label><input type="text" id="f-com-monto" readonly></div>
         <div class="field"><label>Comisión c/IVA ($)</label><input type="text" id="f-com-iva" readonly></div>
@@ -467,8 +480,9 @@ tr:hover td{background:var(--prl);}
     <div class="actor-card a-comp" style="margin-bottom:0">
       <div class="at"><i class="ti ti-shopping-cart"></i>Comprador</div>
       <div class="g4">
-        <div class="field"><label>Comprador</label>
-          <select id="f-comp"><option value="">— seleccionar —</option>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Comprador</label>
+            <select id="f-comp"><option value="">— seleccionar —</option>
             <option>Javier</option><option>Andres</option><option>Fabian</option><option>Matías</option></select></div>
         <div class="field"><label>Forma de cobro</label>
           <select id="f-comp-pago" onchange="toggleActorEcheq('comp',this.value)">
@@ -1438,6 +1452,7 @@ function editOp(id){
   // ── Tipo y producto ──
   const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
   setTipo(o.tipo||'granel',tipBtn);
+  fillActorSelects();
   sv('f-acv',o.productoVenta);
   sv('f-tnventa',o.tnVenta||o.tnVendidas);
   if(o.tipo==='envase'){
@@ -1524,6 +1539,25 @@ function deleteEcheq(id){
   if(!confirm('¿Eliminar?'))return;
   echeqs=echeqs.filter(e=>e.id!==id);save();renderEcheqs();renderDash();
 }
+
+function fillActorSelects(keepVal){
+  const map={
+    'f-prov':'proveedor','f-comp':'comprador',
+    'f-ref-nombre':'refinador','f-transp':'transportista','f-com-nombre':'comisionista'
+  };
+  Object.entries(map).forEach(([fid,rol])=>{
+    const el=document.getElementById(fid);if(!el)return;
+    const cur=keepVal?el.value:'';
+    el.innerHTML='<option value="">— seleccionar —</option>';
+    proveedores.filter(p=>p.rol===rol).sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||'')).forEach(p=>{
+      const o=document.createElement('option');
+      o.value=p.nombre;o.textContent=p.nombre+(p.rs?' ('+p.rs+')':'');
+      el.appendChild(o);
+    });
+    if(cur)el.value=cur;
+  });
+}
+
 function fillOpFilter(){
   const sel=document.getElementById('ef-op');
   const cur=sel.value;
@@ -1731,7 +1765,7 @@ function renderProvs(){
     </div>`;
   }).join('');
 }
-function openProvModal(id){
+function openProvModal(id,rolInicial){
   editProvId=id||null;
   document.getElementById('prov-modal-title').textContent=id?'Editar actor':'Nuevo actor';
   if(id){const p=proveedores.find(x=>x.id===id);if(p){['nombre','rs','cuit','tel','email','loc','notas'].forEach(k=>{const e=document.getElementById('pm-'+k);if(e)e.value=p[k]||'';});document.getElementById('pm-rol').value=p.rol||'proveedor';}}
@@ -1745,7 +1779,7 @@ function saveProv(){
   const data={nombre,rol:V('pm-rol'),rs:V('pm-rs'),cuit:V('pm-cuit'),tel:V('pm-tel'),email:V('pm-email'),loc:V('pm-loc'),notas:V('pm-notas')};
   if(editProvId){const idx=proveedores.findIndex(p=>p.id===editProvId);if(idx>=0)proveedores[idx]={...proveedores[idx],...data};toast('✓ Actor actualizado');}
   else{data.id='p'+Date.now();proveedores.push(data);toast('✓ Actor agregado');}
-  save();closeProvModal();renderProvs();
+  save();closeProvModal();renderProvs();fillActorSelects(true);
 }
 function deleteProv(id){if(!confirm('¿Eliminar?'))return;proveedores=proveedores.filter(p=>p.id!==id);save();renderProvs();}
 function saveGasto(){
@@ -1837,6 +1871,7 @@ document.getElementById('g-fecha').value=hoy.toISOString().split('T')[0];
 document.getElementById('e-fr').value=hoy.toISOString().split('T')[0];
 loadCfg();
 fetchDolar();
+fillActorSelects();
 renderDash();
 renderEcheqs();
 fillOpFilter();
