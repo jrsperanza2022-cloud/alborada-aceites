@@ -347,10 +347,9 @@ tr:hover td{background:var(--prl);}
       <div class="g4">
         <div style="display:flex;gap:6px;align-items:flex-end">
           <div class="field" style="flex:1"><label>Proveedor *</label>
-            <select id="f-prov"><option value="">— seleccionar —</option>
-            <option>María Elena</option><option>Mauro</option><option>Martin Grande</option>
-            <option>Profat</option><option>Miguel Kihn</option><option>San Jeronimo</option>
-            <option>Ruta 12</option><option>Cañada Rosquin</option><option>Pilar</option><option>Laruso</option><option>Otro</option></select></div>
+            <select id="f-prov"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'proveedor')" title="Agregar proveedor"><i class="ti ti-plus"></i></button>
+        </div>
         <div class="field"><label>Forma de pago</label>
           <select id="f-prov-pago" onchange="toggleActorEcheq('prov',this.value);toggleAdelantos(this.value)">
             <option>Efectivo total</option><option>Efectivo parcial</option>
