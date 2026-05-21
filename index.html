@@ -1816,8 +1816,16 @@ function renderProvs(){
 function openProvModal(id,rolInicial){
   editProvId=id||null;
   document.getElementById('prov-modal-title').textContent=id?'Editar actor':'Nuevo actor';
-  if(id){const p=proveedores.find(x=>x.id===id);if(p){['nombre','rs','cuit','tel','email','loc','notas'].forEach(k=>{const e=document.getElementById('pm-'+k);if(e)e.value=p[k]||'';});document.getElementById('pm-rol').value=p.rol||'proveedor';}}
-  else['nombre','rs','cuit','tel','email','loc','notas'].forEach(k=>{const e=document.getElementById('pm-'+k);if(e)e.value='';});
+  ['nombre','rs','cuit','tel','email','loc','notas'].forEach(k=>{const e=document.getElementById('pm-'+k);if(e)e.value='';});
+  if(id){
+    const p=proveedores.find(x=>x.id===id);
+    if(p){
+      ['nombre','rs','cuit','tel','email','loc','notas'].forEach(k=>{const e=document.getElementById('pm-'+k);if(e)e.value=p[k]||'';});
+      document.getElementById('pm-rol').value=p.rol||'proveedor';
+    }
+  } else if(rolInicial){
+    document.getElementById('pm-rol').value=rolInicial;
+  }
   document.getElementById('prov-modal').style.display='flex';
 }
 function editProv(id){openProvModal(id);}
@@ -1825,8 +1833,14 @@ function closeProvModal(){document.getElementById('prov-modal').style.display='n
 function saveProv(){
   const nombre=V('pm-nombre');if(!nombre){toast('Nombre requerido','err');return;}
   const data={nombre,rol:V('pm-rol'),rs:V('pm-rs'),cuit:V('pm-cuit'),tel:V('pm-tel'),email:V('pm-email'),loc:V('pm-loc'),notas:V('pm-notas')};
-  if(editProvId){const idx=proveedores.findIndex(p=>p.id===editProvId);if(idx>=0)proveedores[idx]={...proveedores[idx],...data};toast('✓ Actor actualizado');}
-  else{data.id='p'+Date.now();proveedores.push(data);toast('✓ Actor agregado');}
+  if(editProvId){
+    const idx=proveedores.findIndex(p=>p.id===editProvId);
+    if(idx>=0){proveedores[idx]={...proveedores[idx],...data};toast('✓ Actor actualizado');}
+  } else {
+    data.id='p'+Date.now();
+    proveedores.push(data);
+    toast('✓ '+data.nombre+' guardado');
+  }
   save();closeProvModal();renderProvs();fillActorSelects(true);
 }
 function deleteProv(id){if(!confirm('¿Eliminar?'))return;proveedores=proveedores.filter(p=>p.id!==id);save();renderProvs();}
