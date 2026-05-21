@@ -1053,15 +1053,23 @@ async function fetchDolar(){
   try{
     const r=await fetch('https://dolarapi.com/v1/dolares');
     const arr=await r.json();
-    const of=arr.find(x=>x.casa==='oficial'),my=arr.find(x=>x.casa==='mayorista'),bl=arr.find(x=>x.casa==='blue');
-    if(of)dolar.divisa=of.venta||0;
-    if(my)dolar.mayorista=my.venta||0;
-    if(bl)dolar.blue=bl.venta||0;
+    const of=arr.find(x=>x.casa==='oficial');
+    const my=arr.find(x=>x.casa==='mayorista');
+    const bl=arr.find(x=>x.casa==='blue');
+    // Usar promedio entre compra y venta para mayor precisión
+    const avg=(x)=>x?(Math.round(((x.compra||0)+(x.venta||0))/2*100)/100):0;
+    if(of)dolar.divisa=avg(of);
+    if(my)dolar.mayorista=avg(my);
+    if(bl)dolar.blue=avg(bl);
     cfg.dolarDiv=dolar.divisa;cfg.dolarMay=dolar.mayorista;cfg.dolarBlue=dolar.blue;
-    save();updateWidget();toast('✓ Cotización actualizada');
+    const now=new Date();
+    const ts=now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    save();updateWidget();
+    toast('✓ Cotización actualizada — '+ts);
   }catch(e){
     dolar.divisa=cfg.dolarDiv||0;dolar.mayorista=cfg.dolarMay||0;dolar.blue=cfg.dolarBlue||0;
     updateWidget();
+    toast('⚠ Sin conexión — usando última cotización','err');
   }
 }
 function updateWidget(){
@@ -1933,6 +1941,7 @@ document.getElementById('g-fecha').value=hoy.toISOString().split('T')[0];
 document.getElementById('e-fr').value=hoy.toISOString().split('T')[0];
 loadCfg();
 fetchDolar();
+setInterval(fetchDolar,15*60*1000);
 fillActorSelects();
 renderDash();
 renderEcheqs();
