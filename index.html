@@ -276,12 +276,14 @@ tr:hover td{background:var(--prl);}
           </select></div>
         <div class="field"><label>P. compra ($/tn)</label>
           <div style="display:flex;gap:6px">
-            <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 990" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1">
+            <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 44.500 o 44,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1">
+            <div class="hint" style="margin-top:2px">Usá <b>,</b> para decimales: 44.500,50</div>
             <select id="f-pc-iva-mode" onchange="liveCalc()" style="width:110px;font-size:11px">
               <option value="neto">Sin IVA</option>
               <option value="civa">Con IVA 21%</option>
             </select>
           </div></div>
+        <div id="warn-pc" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ El precio por tn supera $500.000 — ¿usaste punto como separador de miles? Usá coma para decimales: ej <b>44.648,50</b></div>
         <div class="field"><label id="lbl-pc-iva">P. compra c/IVA ($/tn)</label><input type="text" id="f-pc-iva" readonly></div>
         <div class="field"><label>Tn a pagar al proveedor</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.310" oninput="liveCalc()"><div class="hint">Peso descarga en refinería (tn2)</div></div>
       </div>
@@ -298,12 +300,14 @@ tr:hover td{background:var(--prl);}
           </select></div>
         <div class="field"><label>P. venta ($/tn)</label>
           <div style="display:flex;gap:6px">
-            <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 2050" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1">
+            <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 45.000 o 45,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1">
+            <div class="hint" style="margin-top:2px">Usá <b>,</b> para decimales: 45.000,75</div>
             <select id="f-pv-iva-mode" onchange="liveCalc()" style="width:110px;font-size:11px">
               <option value="neto">Sin IVA</option>
               <option value="civa">Con IVA 21%</option>
             </select>
           </div></div>
+        <div id="warn-pv" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ El precio por tn supera $500.000 — ¿usaste punto como separador de miles? Usá coma para decimales: ej <b>45.000,75</b></div>
         <div class="field"><label id="lbl-pv-iva">P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly></div>
         <div class="field"><label>Tn a cobrar al comprador</label><input type="number" step="0.001" id="f-tnventa" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Peso descarga en destino (tn4)</div></div>
       </div>
@@ -1127,6 +1131,16 @@ function renderTix(key){
 }
 function openLB(src,info){document.getElementById('lb-img').src=src;document.getElementById('lb-txt').textContent=info;document.getElementById('lb').style.display='flex';}
 function closeLB(){document.getElementById('lb').style.display='none';}
+
+function checkPrecioRazonable(){
+  const pc=NpV(document.getElementById('f-pc')?.value||'');
+  const pv=NpV(document.getElementById('f-pv')?.value||'');
+  const wpc=document.getElementById('warn-pc');
+  const wpv=document.getElementById('warn-pv');
+  if(wpc)wpc.style.display=pc>500000&&pc<1e10?'block':'none';
+  if(wpv)wpv.style.display=pv>500000&&pv<1e10?'block':'none';
+}
+
 function toggleAdelantos(val){
   const v=(val||'').toLowerCase();
   const isEcheq=v.includes('echeq');
@@ -1223,6 +1237,7 @@ function calcGastoIVA(){
   document.getElementById('g-imp-iva').value=imp?MF(IVA(imp)):'';
 }
 function liveCalc(){
+  checkPrecioRazonable();
   const tipo=V('f-tipo');
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
@@ -1947,5 +1962,114 @@ renderDash();
 renderEcheqs();
 fillOpFilter();
 </script>
+
+<!-- CALCULADORA FLOTANTE -->
+<div id="calc-fab" onclick="toggleCalc()" title="Calculadora" style="position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.4);font-size:20px;transition:transform .15s">
+  <i class="ti ti-calculator"></i>
+</div>
+<div id="calc-panel" style="display:none;position:fixed;bottom:82px;right:24px;width:260px;background:var(--surf2);border:1.5px solid var(--brd);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:998;overflow:hidden">
+  <div style="background:var(--surf3);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px"><i class="ti ti-calculator"></i> Calculadora</span>
+    <button onclick="toggleCalc()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;line-height:1"><i class="ti ti-x"></i></button>
+  </div>
+  <div style="padding:12px">
+    <div id="calc-expr" style="font-size:11px;color:var(--t3);min-height:16px;text-align:right;padding:0 4px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+    <div id="calc-display" style="font-size:26px;font-weight:700;color:var(--t1);text-align:right;padding:4px 4px 10px;border-bottom:1px solid var(--brd);margin-bottom:10px;min-height:42px;word-break:break-all">0</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+      <button class="cb cbf" onclick="calcPct()">%</button>
+      <button class="cb cbf" onclick="calcClear()">C</button>
+      <button class="cb cbf" onclick="calcDel()">⌫</button>
+      <button class="cb cbo" onclick="calcOp('/')">÷</button>
+      <button class="cb" onclick="calcNum('7')">7</button>
+      <button class="cb" onclick="calcNum('8')">8</button>
+      <button class="cb" onclick="calcNum('9')">9</button>
+      <button class="cb cbo" onclick="calcOp('*')">×</button>
+      <button class="cb" onclick="calcNum('4')">4</button>
+      <button class="cb" onclick="calcNum('5')">5</button>
+      <button class="cb" onclick="calcNum('6')">6</button>
+      <button class="cb cbo" onclick="calcOp('-')">−</button>
+      <button class="cb" onclick="calcNum('1')">1</button>
+      <button class="cb" onclick="calcNum('2')">2</button>
+      <button class="cb" onclick="calcNum('3')">3</button>
+      <button class="cb cbo" onclick="calcOp('+')">+</button>
+      <button class="cb" onclick="calcSign()">+/−</button>
+      <button class="cb" onclick="calcNum('0')">0</button>
+      <button class="cb" onclick="calcDot()">,</button>
+      <button class="cb cbeq" onclick="calcEq()">=</button>
+    </div>
+  </div>
+</div>
+<style>
+.cb{background:var(--surf3);border:1px solid var(--brd);border-radius:8px;color:var(--t1);font-size:15px;font-weight:600;padding:10px 0;cursor:pointer;transition:background .1s}
+.cb:hover{background:var(--surf)}
+.cbf{color:var(--sec)}
+.cbo{color:var(--pri);background:var(--prl)}
+.cbeq{background:var(--pri);color:#fff;border-color:var(--pri)}
+.cbeq:hover{opacity:.9}
+</style>
+<script>
+let calcVal='0',calcPrev='',calcOper='',calcNewNum=true,calcExpr='';
+function toggleCalc(){
+  const p=document.getElementById('calc-panel');
+  const f=document.getElementById('calc-fab');
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  f.style.transform=open?'rotate(15deg)':'';
+}
+function calcShow(){
+  document.getElementById('calc-display').textContent=parseFloat(calcVal).toLocaleString('es-AR',{maximumFractionDigits:8});
+  document.getElementById('calc-expr').textContent=calcExpr;
+}
+function calcNum(n){
+  if(calcNewNum){calcVal=n==='0'&&calcVal==='0'?'0':n;calcNewNum=false;}
+  else calcVal=calcVal==='0'?n:calcVal+n;
+  calcShow();
+}
+function calcDot(){
+  if(calcNewNum){calcVal='0,';calcNewNum=false;}
+  else if(!calcVal.includes(','))calcVal+=',';
+  calcShow();
+}
+function calcSign(){calcVal=(parseFloat(calcVal.replace(',','.'))*-1)+'';calcVal=calcVal.replace('.',',');calcShow();}
+function calcOp(op){
+  const v=parseFloat(calcVal.replace(',','.'));
+  if(calcOper&&!calcNewNum){
+    const r=calcCompute(calcPrev,v,calcOper);
+    calcVal=(r+'').replace('.',',');calcPrev=r;
+  }else{calcPrev=v;}
+  calcOper=op;calcNewNum=true;
+  const sym={'+':('+'),'-':('−'),'*':('×'),'/':('÷')}[op]||op;
+  calcExpr=parseFloat(calcVal.replace(',','.')).toLocaleString('es-AR',{maximumFractionDigits:8})+' '+sym;
+  calcShow();
+}
+function calcCompute(a,b,op){
+  if(op==='+')return a+b;
+  if(op==='-')return a-b;
+  if(op==='*')return a*b;
+  if(op==='/')return b!==0?a/b:0;
+  return b;
+}
+function calcEq(){
+  if(!calcOper)return;
+  const v=parseFloat(calcVal.replace(',','.'));
+  const r=calcCompute(calcPrev,v,calcOper);
+  const sym={'+':('+'),'-':('−'),'*':('×'),'/':('÷')}[calcOper]||calcOper;
+  calcExpr=calcPrev.toLocaleString?calcPrev.toLocaleString('es-AR',{maximumFractionDigits:8})+' '+sym+' '+v.toLocaleString('es-AR',{maximumFractionDigits:8})+' =':'';
+  calcVal=(r+'').replace('.',',');calcOper='';calcPrev='';calcNewNum=true;
+  calcShow();
+}
+function calcPct(){
+  const v=parseFloat(calcVal.replace(',','.'));
+  const r=calcPrev&&calcOper?calcCompute(calcPrev,calcPrev*v/100,calcOper):v/100;
+  calcVal=(r+'').replace('.',',');calcShow();
+}
+function calcClear(){calcVal='0';calcPrev='';calcOper='';calcNewNum=true;calcExpr='';calcShow();}
+function calcDel(){
+  if(calcNewNum){calcVal='0';return;}
+  calcVal=calcVal.length>1?calcVal.slice(0,-1):'0';
+  calcShow();
+}
+</script>
+
 </body>
 </html>
