@@ -276,9 +276,8 @@ tr:hover td{background:var(--prl);}
           </select></div>
         <div class="field"><label>P. compra ($/tn)</label>
           <div style="display:flex;gap:6px">
-            <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 44.500 o 44,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1">
-            <div class="hint" style="margin-top:2px">Usá <b>,</b> para decimales: 44.500,50</div>
-            <select id="f-pc-iva-mode" onchange="liveCalc()" style="width:110px;font-size:11px">
+            <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 44.500,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1;min-width:0">
+            <select id="f-pc-iva-mode" onchange="liveCalc()" style="width:100px;font-size:11px;flex-shrink:0">
               <option value="neto">Sin IVA</option>
               <option value="civa">Con IVA 21%</option>
             </select>
@@ -300,9 +299,8 @@ tr:hover td{background:var(--prl);}
           </select></div>
         <div class="field"><label>P. venta ($/tn)</label>
           <div style="display:flex;gap:6px">
-            <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 45.000 o 45,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1">
-            <div class="hint" style="margin-top:2px">Usá <b>,</b> para decimales: 45.000,75</div>
-            <select id="f-pv-iva-mode" onchange="liveCalc()" style="width:110px;font-size:11px">
+            <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 45.000,75" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1;min-width:0">
+            <select id="f-pv-iva-mode" onchange="liveCalc()" style="width:100px;font-size:11px;flex-shrink:0">
               <option value="neto">Sin IVA</option>
               <option value="civa">Con IVA 21%</option>
             </select>
