@@ -281,7 +281,7 @@ tr:hover td{background:var(--prl);}
             <option value="neto">Sin IVA</option>
             <option value="civa">Con IVA 21%</option>
           </select></div>
-        <div id="warn-pc" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ Precio muy alto — ¿usaste punto en vez de coma para decimales? Ej: <b>44.500,50</b></div>
+        
         <div class="field"><label id="lbl-pc-iva">P. compra c/IVA ($/tn)</label><input type="text" id="f-pc-iva" readonly></div>
         <div class="field"><label>Tn a pagar al proveedor</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.310" oninput="liveCalc()"><div class="hint">Peso descarga en refinería (tn2)</div></div>
       </div>
@@ -303,7 +303,7 @@ tr:hover td{background:var(--prl);}
             <option value="neto">Sin IVA</option>
             <option value="civa">Con IVA 21%</option>
           </select></div>
-        <div id="warn-pv" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ Precio muy alto — ¿usaste punto en vez de coma para decimales? Ej: <b>45.000,75</b></div>
+        
         <div class="field"><label id="lbl-pv-iva">P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly></div>
         <div class="field"><label>Tn a cobrar al comprador</label><input type="number" step="0.001" id="f-tnventa" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Peso descarga en destino (tn4)</div></div>
       </div>
@@ -360,7 +360,7 @@ tr:hover td{background:var(--prl);}
           <select id="f-prov-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-prov-dv"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-prov-dv" oninput="fmtNum(this)"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label id="lbl-a1">Adelanto 1 ($)</label><input type="text" inputmode="numeric" id="f-a1" placeholder="ej: 20.000.000" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -369,7 +369,7 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label id="lbl-at">Total adelantos</label><input type="text" id="f-at" readonly></div>
       </div>
       <div class="g3" style="margin-top:8px">
-        <div class="field"><label id="lbl-prov-pagado">Importe pagado ($)</label><input type="text" inputmode="numeric" id="f-prov-pagado" oninput="calcSaldo('prov')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-prov-pagado">Importe pagado ($)</label><input type="text" inputmode="numeric" id="f-prov-pagado" oninput="fmtNum(this);calcSaldo('prov')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-prov-saldo" readonly></div>
         <div class="field"><label>Notas</label><input type="text" id="f-prov-notas" placeholder="ej: saldo a 30 días"></div>
       </div>
@@ -396,12 +396,12 @@ tr:hover td{background:var(--prl);}
           <select id="f-ref-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-ref-dv"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-ref-dv" oninput="fmtNum(this)"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Costo servicio neto ($)</label><input type="text" inputmode="numeric" id="f-ref-costo" placeholder="ej: 6.500.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Costo c/IVA ($)</label><input type="text" id="f-ref-civa" readonly></div>
-        <div class="field"><label id="lbl-ref-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-ref-pagado" oninput="calcSaldo('ref')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-ref-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-ref-pagado" oninput="fmtNum(this);calcSaldo('ref')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo ($)</label><input type="text" id="f-ref-saldo" readonly></div>
       </div>
       <div class="g3" style="margin-top:8px">
@@ -433,7 +433,7 @@ tr:hover td{background:var(--prl);}
           <select id="f-transp-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="pesos">En pesos</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-transp-dv"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-transp-dv" oninput="fmtNum(this)"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Flete tramo 1 neto ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
@@ -444,8 +444,8 @@ tr:hover td{background:var(--prl);}
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Total flete neto ($)</label><input type="text" id="f-flete-total" readonly></div>
         <div class="field"><label>Total flete c/IVA ($)</label><input type="text" id="f-flete-total-iva" readonly></div>
-        <div class="field"><label id="lbl-transp-pag1">Pagado tramo 1 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag1" oninput="calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
-        <div class="field"><label id="lbl-transp-pag2">Pagado tramo 2 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag2" oninput="calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-transp-pag1">Pagado tramo 1 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag1" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-transp-pag2">Pagado tramo 2 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag2" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g3" style="margin-top:8px">
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-transp-saldo" readonly></div>
@@ -480,7 +480,7 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Tipo de dólar</label>
           <select id="f-com-dol">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option><option value="blue">Blue</option></select></div>
-        <div class="field"><label id="lbl-com-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-com-pagado" oninput="calcSaldo('com')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-com-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-com-pagado" oninput="fmtNum(this);calcSaldo('com')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Estado</label>
           <select id="f-com-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option><option>Echeq rechazado</option></select></div>
       </div>
@@ -515,7 +515,7 @@ tr:hover td{background:var(--prl);}
         <div class="field" id="f-comp-dv-wrap" style="display:none"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-comp-dv" placeholder="ej: 1391" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
-        <div class="field"><label id="lbl-comp-cobrado">Cobrado al comprador ($)</label><input type="text" inputmode="numeric" id="f-comp-cobrado" oninput="calcSaldo('comp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-comp-cobrado">Cobrado al comprador ($)</label><input type="text" inputmode="numeric" id="f-comp-cobrado" oninput="fmtNum(this);calcSaldo('comp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo a cobrar ($)</label><input type="text" id="f-comp-saldo" readonly></div>
         <div class="field"><label>Estado cobro</label>
           <select id="f-comp-est"><option>Pendiente</option><option>Parcial</option><option>A cuenta</option><option>Cobrado</option></select></div>
@@ -900,11 +900,9 @@ const N=id=>parseFloat(document.getElementById(id)?.value)||0;
 const Np=id=>{const e=document.getElementById(id);if(!e)return 0;return NpV(e.value);};
 const NpV=v=>{
   if(v===null||v===undefined||v==='')return 0;
-  let s=(v+'').trim();
-  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');return parseFloat(s)||0;}
-  const d=s.split('.').length-1;
-  if(d>=2){s=s.replace(/\./g,'');return parseFloat(s)||0;}
-  if(d===1){const p=s.split('.');if(p[1].length>=3){s=s.replace('.','');return parseFloat(s)||0;}}
+  let s=(v+'').trim().replace(/\s+/g,'');
+  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
+  else{s=s.replace(/\./g,'');}
   return parseFloat(s)||0;
 };
 const V=id=>document.getElementById(id)?.value||'';
@@ -914,6 +912,16 @@ const IVA=n=>n?Math.round(n*1.21):0;
 // ── Actor echeq counters ──
 const actorEcheqCount={prov:0,ref:0,transp:0,com:0,comp:0};
 
+
+
+function fmtNum(el){
+  const v=el.value;
+  const hasComma=v.includes(',');
+  const parts=v.replace(/[^\d,]/g,'').split(',');
+  const intPart=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  el.value=hasComma?(intPart+','+(parts[1]||'')):intPart;
+  try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}
+}
 
 function toggleCompMoneda(){
   const m=document.getElementById('f-comp-moneda')?.value||'pesos';
@@ -1233,7 +1241,6 @@ function calcGastoIVA(){
   document.getElementById('g-imp-iva').value=imp?MF(IVA(imp)):'';
 }
 function liveCalc(){
-  checkPrecioRazonable();
   const tipo=V('f-tipo');
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
