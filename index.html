@@ -1250,17 +1250,23 @@ function liveCalc(){
   const pv=pvMode==='civa'?Math.round(pvRaw/1.21*100)/100:pvRaw;
   const tnv=N('f-tnv'),uni=N('f-uni');
   if(tipo==='granel'){
-    if(pcRaw){
-      const pcIvaVal=pcMode==='civa'?pcRaw:IVA(pc);
-      document.getElementById('f-pc-iva').value=MF(pcIvaVal);
-      const lpc=document.getElementById('lbl-pc-iva');
-      if(lpc)lpc.textContent=pcMode==='civa'?'P. compra neto ($/tn)':'P. compra c/IVA ($/tn)';
+    const elPcIva=document.getElementById('f-pc-iva');
+    const elPvIva=document.getElementById('f-pv-iva');
+    const elPcIvaWrap=elPcIva?.closest('.field');
+    const elPvIvaWrap=elPvIva?.closest('.field');
+    if(pcMode==='neto'){
+      if(elPcIva)elPcIva.value='';
+      if(elPcIvaWrap)elPcIvaWrap.style.display='none';
+    } else {
+      if(elPcIvaWrap)elPcIvaWrap.style.display='';
+      if(pcRaw&&elPcIva){elPcIva.value=MF(pcRaw);const l=document.getElementById('lbl-pc-iva');if(l)l.textContent='P. compra neto ($/tn)';}
     }
-    if(pvRaw){
-      const pvIvaVal=pvMode==='civa'?pvRaw:IVA(pv);
-      document.getElementById('f-pv-iva').value=MF(pvIvaVal);
-      const lpv=document.getElementById('lbl-pv-iva');
-      if(lpv)lpv.textContent=pvMode==='civa'?'P. venta neto ($/tn)':'P. venta c/IVA ($/tn)';
+    if(pvMode==='neto'){
+      if(elPvIva)elPvIva.value='';
+      if(elPvIvaWrap)elPvIvaWrap.style.display='none';
+    } else {
+      if(elPvIvaWrap)elPvIvaWrap.style.display='';
+      if(pvRaw&&elPvIva){elPvIva.value=MF(pvRaw);const l=document.getElementById('lbl-pv-iva');if(l)l.textContent='P. venta neto ($/tn)';}
     }
   }else{
     if(N('f-pcos'))document.getElementById('f-pcos-iva').value=MF(IVA(N('f-pcos')));
@@ -1468,7 +1474,7 @@ function saveOp(){
   save();clearForm();renderDash();
 }
 function clearForm(){
-  ['f-pc','f-pv','f-pc-iva','f-pv-iva','f-tnv','f-tc','f-tv',
+  ['f-pc','f-pv','f-pc-iva','f-pv-iva','f-tnv','f-tc','f-tv','f-tc-iva','f-tv-iva',
    'f-tn1','f-tn2','f-tn3','f-tn4','f-dif1','f-dif2','f-desc1','f-dv1','f-dv2',
    'f-fcob','f-f1sal','f-f1lle','f-f2sal','f-f2lle','f-remito','f-factura','f-notas',
    'f-a1','f-a2','f-a3','f-at',
@@ -1494,6 +1500,11 @@ function clearForm(){
   document.getElementById('echeqs-inline-container').innerHTML='';
   inlineEcheqCount=0;
   editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');clearActorEcheqs();
+  // Reset IVA mode selects
+  const pcm=document.getElementById('f-pc-iva-mode');if(pcm)pcm.value='neto';
+  const pvm=document.getElementById('f-pv-iva-mode');if(pvm)pvm.value='neto';
+  // Show all hidden IVA fields
+  ['f-pc-iva','f-pv-iva'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';const w=e.closest('.field');if(w)w.style.display='none';}});
   document.getElementById('f-fop').value=new Date().toISOString().split('T')[0];
   setTipo('granel',document.querySelector('#tipo-tog button:first-child'));
   if(dolar.divisa)['f-dv1','f-dv2','f-prov-dv','f-comp-dv','f-ref-dv','f-transp-dv','f-com-dv'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=dolar.divisa;});
@@ -1510,7 +1521,18 @@ function editOp(id){
   document.getElementById('edit-num').textContent='#'+id;
   document.getElementById('save-lbl').textContent='Actualizar operación';
   // Helper: set input value safely
-  const sv=(fid,v)=>{const e=document.getElementById(fid);if(e&&v!==undefined&&v!==null)e.value=v;};
+  const sv=(fid,v)=>{
+    const e=document.getElementById(fid);
+    if(!e||v===undefined||v===null)return;
+    if(e.tagName==='SELECT'){
+      const exists=[...e.options].some(o=>o.value==v||o.text==v);
+      if(!exists&&v){const o=document.createElement('option');o.value=v;o.text=v;e.appendChild(o);}
+      e.value=v;
+    } else if(e.getAttribute('inputmode')==='numeric'&&v!==''&&v!==0){
+      e.value=typeof v==='number'?v.toLocaleString('es-AR',{maximumFractionDigits:2}):v;
+      fmtNum(e);
+    } else {e.value=v;}
+  };
   // Helper: set select value safely
   const ss=(fid,v,def)=>{const e=document.getElementById(fid);if(e)e.value=v||def||e.options[0]?.value||'';};
   // ── Identificación ──
