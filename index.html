@@ -274,15 +274,14 @@ tr:hover td{background:var(--prl);}
             <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
             <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
           </select></div>
-        <div class="field"><label>P. compra ($/tn)</label>
-          <div style="display:flex;gap:6px">
-            <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 44.500,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1;min-width:0">
-            <select id="f-pc-iva-mode" onchange="liveCalc()" style="width:100px;font-size:11px;flex-shrink:0">
-              <option value="neto">Sin IVA</option>
-              <option value="civa">Con IVA 21%</option>
-            </select>
-          </div></div>
-        <div id="warn-pc" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ El precio por tn supera $500.000 — ¿usaste punto como separador de miles? Usá coma para decimales: ej <b>44.648,50</b></div>
+        <div class="field"><label>P. compra neto ($/tn)</label>
+          <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 44.500,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>IVA compra</label>
+          <select id="f-pc-iva-mode" onchange="liveCalc()">
+            <option value="neto">Sin IVA</option>
+            <option value="civa">Con IVA 21%</option>
+          </select></div>
+        <div id="warn-pc" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ Precio muy alto — ¿usaste punto en vez de coma para decimales? Ej: <b>44.500,50</b></div>
         <div class="field"><label id="lbl-pc-iva">P. compra c/IVA ($/tn)</label><input type="text" id="f-pc-iva" readonly></div>
         <div class="field"><label>Tn a pagar al proveedor</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.310" oninput="liveCalc()"><div class="hint">Peso descarga en refinería (tn2)</div></div>
       </div>
@@ -297,15 +296,14 @@ tr:hover td{background:var(--prl);}
             <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
             <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
           </select></div>
-        <div class="field"><label>P. venta ($/tn)</label>
-          <div style="display:flex;gap:6px">
-            <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 45.000,75" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)" style="flex:1;min-width:0">
-            <select id="f-pv-iva-mode" onchange="liveCalc()" style="width:100px;font-size:11px;flex-shrink:0">
-              <option value="neto">Sin IVA</option>
-              <option value="civa">Con IVA 21%</option>
-            </select>
-          </div></div>
-        <div id="warn-pv" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ El precio por tn supera $500.000 — ¿usaste punto como separador de miles? Usá coma para decimales: ej <b>45.000,75</b></div>
+        <div class="field"><label>P. venta neto ($/tn)</label>
+          <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 45.000,75" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>IVA venta</label>
+          <select id="f-pv-iva-mode" onchange="liveCalc()">
+            <option value="neto">Sin IVA</option>
+            <option value="civa">Con IVA 21%</option>
+          </select></div>
+        <div id="warn-pv" style="display:none;color:#e67e22;font-size:10px;grid-column:1/-1;margin-top:-6px">⚠ Precio muy alto — ¿usaste punto en vez de coma para decimales? Ej: <b>45.000,75</b></div>
         <div class="field"><label id="lbl-pv-iva">P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly></div>
         <div class="field"><label>Tn a cobrar al comprador</label><input type="number" step="0.001" id="f-tnventa" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Peso descarga en destino (tn4)</div></div>
       </div>
@@ -1962,9 +1960,7 @@ fillOpFilter();
 </script>
 
 <!-- CALCULADORA FLOTANTE -->
-<div id="calc-fab" onclick="toggleCalc()" title="Calculadora" style="position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.4);font-size:20px;transition:transform .15s">
-  <i class="ti ti-calculator"></i>
-</div>
+<div id="calc-fab" onclick="toggleCalc()" title="Calculadora" style="position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.4);font-size:22px;transition:transform .15s">🧮</div>
 <div id="calc-panel" style="display:none;position:fixed;bottom:82px;right:24px;width:260px;background:var(--surf2);border:1.5px solid var(--brd);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:998;overflow:hidden">
   <div style="background:var(--surf3);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
     <span style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px"><i class="ti ti-calculator"></i> Calculadora</span>
