@@ -376,11 +376,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-        <div class="field"><label>Tipo de dólar</label>
+<div class="field"><label>Moneda pago</label>
+          <select id="f-prov-moneda" onchange="toggleActorMoneda('prov')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-prov-dol-wrap" style="display:none"><label>Tipo de dólar</label>
           <select id="f-prov-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-prov-dv" oninput="fmtNum(this)"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="f-prov-dv-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-prov-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label id="lbl-a1">Adelanto 1 ($)</label><input type="text" inputmode="numeric" id="f-a1" placeholder="ej: 20.000.000" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -412,11 +417,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-        <div class="field"><label>Tipo de dólar</label>
-          <select id="f-ref-dol">
+<div class="field"><label>Moneda pago</label>
+          <select id="f-ref-moneda" onchange="toggleActorMoneda('ref')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-ref-dol-wrap" style="display:none"><label>Tipo de dólar</label>
+          <select id="f-ref-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-ref-dv" oninput="fmtNum(this)"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="f-ref-dv-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-ref-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Costo servicio neto ($)</label><input type="text" inputmode="numeric" id="f-ref-costo" placeholder="ej: 6.500.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -449,11 +459,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-        <div class="field"><label>Tipo de dólar</label>
-          <select id="f-transp-dol">
+<div class="field"><label>Moneda pago</label>
+          <select id="f-transp-moneda" onchange="toggleActorMoneda('transp')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-transp-dol-wrap" style="display:none"><label>Tipo de dólar</label>
+          <select id="f-transp-dol" onchange="liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
-            <option value="blue">Blue</option><option value="pesos">En pesos</option></select></div>
-        <div class="field"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-transp-dv" oninput="fmtNum(this)"  placeholder="ej: 1391" onkeypress="return /[\d.,]/.test(event.key)"></div>
+            <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+        <div class="field" id="f-transp-dv-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-transp-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Flete tramo 1 neto ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
@@ -497,9 +512,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-        <div class="field"><label>Tipo de dólar</label>
-          <select id="f-com-dol">
-            <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option><option value="blue">Blue</option></select></div>
+<div class="field"><label>Moneda pago</label>
+          <select id="f-com-moneda" onchange="toggleActorMoneda('com')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-com-dol-wrap" style="display:none"><label>Tipo de dólar</label>
+          <select id="f-com-dol" onchange="liveCalc()">
+            <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+        <div class="field" id="f-com-dv-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-com-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label id="lbl-com-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-com-pagado" oninput="fmtNum(this);calcSaldo('com')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Estado</label>
           <select id="f-com-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option><option>Echeq rechazado</option></select></div>
@@ -943,6 +965,21 @@ function fmtNum(el){
   try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}
 }
 
+
+
+function toggleActorMoneda(actor){
+  const m=document.getElementById('f-'+actor+'-moneda')?.value||'pesos';
+  const isDol=m==='dolares';
+  ['dol-wrap','dv-wrap'].forEach(s=>{
+    const el=document.getElementById('f-'+actor+'-'+s);
+    if(el)el.style.display=isDol?'':'none';
+  });
+  if(isDol){
+    const tipo=document.getElementById('f-'+actor+'-dol')?.value||'divisa';
+    const val=tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:dolar.blue||0;
+    if(val){const e=document.getElementById('f-'+actor+'-dv');if(e&&!e.value){e.value=val.toLocaleString('es-AR');if(typeof fmtNum==='function')fmtNum(e);}}
+  }
+}
 
 function toggleMonedaOp(){
   const m=document.getElementById('f-op-moneda')?.value||'pesos';
@@ -1506,14 +1543,14 @@ function saveOp(){
     comPct,comMonto,comIva:IVA(comMonto),
     costoTotal:costoNetoTotal,resultado:resultadoNeto,profitMay,profitBlue,
     pctMargen:costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0,
-    provPago:V('f-prov-pago'),provDolTipo:V('f-prov-dol'),provDolVal:Np('f-prov-dv'),
+    provPago:V('f-prov-pago'),provMoneda:V('f-prov-moneda')||'pesos',provDolTipo:V('f-prov-dol'),provDolVal:Np('f-prov-dv'),
     provPagado:Np('f-prov-pagado'),provNotas:V('f-prov-notas'),
-    refPago:V('f-ref-pago'),refDolTipo:V('f-ref-dol'),refDolVal:Np('f-ref-dv'),
+    refPago:V('f-ref-pago'),refMoneda:V('f-ref-moneda')||'pesos',refDolTipo:V('f-ref-dol'),refDolVal:Np('f-ref-dv'),
     refPagado:Np('f-ref-pagado'),refEst:V('f-ref-est'),refNotas:V('f-ref-notas'),
-    transpPago:V('f-transp-pago'),transpDolTipo:V('f-transp-dol'),transpDolVal:Np('f-transp-dv'),
+    transpPago:V('f-transp-pago'),transpMoneda:V('f-transp-moneda')||'pesos',transpDolTipo:V('f-transp-dol'),transpDolVal:Np('f-transp-dv'),
     transpPag1:Np('f-transp-pag1'),transpPag2:Np('f-transp-pag2'),
     transpEst:V('f-transp-est'),transpNotas:V('f-transp-notas'),
-    comPago:V('f-com-pago'),comDolTipo:V('f-com-dol'),comPagado:Np('f-com-pagado'),
+    comPago:V('f-com-pago'),comMoneda:V('f-com-moneda')||'pesos',comDolTipo:V('f-com-dol'),comPagado:Np('f-com-pagado'),
     comEst:V('f-com-est'),comNombre:V('f-com-nombre'),comNotas:V('f-com-notas'),
     compPago:V('f-comp-pago'),compMoneda:V('f-comp-moneda')||'pesos',compDolTipo:V('f-comp-dol'),compDolVal:Np('f-comp-dv'),
     compCobrado:Np('f-comp-cobrado'),compEst:V('f-comp-est'),compNotas:V('f-comp-notas'),
@@ -1574,6 +1611,7 @@ function clearForm(){
   // Reset IVA mode selects
   const pcm=document.getElementById('f-pc-iva-mode');if(pcm)pcm.value='neto';
   const opm=document.getElementById('f-op-moneda');if(opm)opm.value='pesos';toggleMonedaOp();
+  ['prov','ref','transp','com'].forEach(a=>{const e=document.getElementById('f-'+a+'-moneda');if(e)e.value='pesos';toggleActorMoneda(a);});
   const pvm=document.getElementById('f-pv-iva-mode');if(pvm)pvm.value='neto';
   // Show all hidden IVA fields
   ['f-pc-iva','f-pv-iva'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';const w=e.closest('.field');if(w)w.style.display='none';}});
@@ -1648,12 +1686,12 @@ function editOp(id){
   sv('f-flete1',o.flete1);sv('f-flete2',o.flete2);
   // ── Proveedor ──
   ss('f-prov-pago',o.provPago,'Transferencia total');
-  ss('f-prov-dol',o.provDolTipo,'divisa');sv('f-prov-dv',o.provDolVal);
+  ss('f-prov-moneda',o.provMoneda||'pesos');toggleActorMoneda('prov');ss('f-prov-dol',o.provDolTipo,'divisa');sv('f-prov-dv',o.provDolVal);
   sv('f-prov-pagado',o.provPagado);sv('f-prov-notas',o.provNotas);
   toggleActorEcheq('prov',o.provPago||'');
   // ── Refinador ──
   ss('f-ref-pago',o.refPago,'Pendiente');
-  ss('f-ref-dol',o.refDolTipo,'divisa');sv('f-ref-dv',o.refDolVal);
+  ss('f-ref-moneda',o.refMoneda||'pesos');toggleActorMoneda('ref');ss('f-ref-dol',o.refDolTipo,'divisa');sv('f-ref-dv',o.refDolVal);
   sv('f-ref-pagado',o.refPagado);ss('f-ref-est',o.refEst,'Pendiente');sv('f-ref-notas',o.refNotas);
   toggleActorEcheq('ref',o.refPago||'');
   // ── Transportista ──
@@ -1664,7 +1702,7 @@ function editOp(id){
   toggleActorEcheq('transp',o.transpPago||'');
   // ── Comisionista ──
   ss('f-com-pago',o.comPago,'Transferencia');
-  ss('f-com-dol',o.comDolTipo,'divisa');sv('f-com-pagado',o.comPagado);
+  ss('f-com-moneda',o.comMoneda||'pesos');toggleActorMoneda('com');ss('f-com-dol',o.comDolTipo,'divisa');sv('f-com-pagado',o.comPagado);
   ss('f-com-est',o.comEst,'Pendiente');sv('f-com-notas',o.comNotas);
   toggleActorEcheq('com',o.comPago||'');
   // ── Comprador ──
