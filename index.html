@@ -263,6 +263,28 @@ tr:hover td{background:var(--prl);}
     </div>
     <input type="hidden" id="f-tipo" value="granel">
     <div id="gf">
+      <!-- TIPO DE CAMBIO OPERACIONAL -->
+      <div style="background:var(--surf3);border:1.5px solid var(--prb);border-radius:8px;padding:10px 14px;margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px"><i class="ti ti-currency-dollar"></i> Tipo de cambio de la operación</div>
+        <div class="g4">
+          <div class="field"><label>Moneda operación</label>
+            <select id="f-op-moneda" onchange="toggleMonedaOp()">
+              <option value="pesos">Pesos ($)</option>
+              <option value="dolares">Dólares (USD)</option>
+            </select></div>
+          <div class="field" id="f-op-tc-wrap" style="display:none"><label>Tipo de cambio</label>
+            <select id="f-op-tc-tipo" onchange="liveCalc()">
+              <option value="divisa">Divisa</option>
+              <option value="mayorista">Mayorista</option>
+              <option value="blue">Blue</option>
+              <option value="manual">Manual</option>
+            </select></div>
+          <div class="field" id="f-op-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+            <input type="text" inputmode="numeric" id="f-op-tc-val" placeholder="ej: 1.385" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+          <div class="field" id="f-op-tc-res-wrap" style="display:none"><label>Resultado en USD</label>
+            <input type="text" id="f-resultado-usd" readonly style="font-weight:700;color:var(--suc)"></div>
+        </div>
+      </div>
       <!-- COMPRA (crudo) -->
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sec);margin:8px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-down-circle"></i>Compra — aceite crudo</div>
       <div class="g4">
@@ -274,16 +296,18 @@ tr:hover td{background:var(--prl);}
             <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
             <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
           </select></div>
-        <div class="field"><label>P. compra neto ($/tn)</label>
-          <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 44.500,50" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-pc">P. compra neto (por tn)</label>
+          <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 32,50" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>IVA compra</label>
           <select id="f-pc-iva-mode" onchange="liveCalc()">
             <option value="neto">Sin IVA</option>
             <option value="civa">Con IVA 21%</option>
           </select></div>
-        
-        <div class="field"><label id="lbl-pc-iva">P. compra c/IVA ($/tn)</label><input type="text" id="f-pc-iva" readonly></div>
+        <div class="field"><label id="lbl-pc-iva">P. compra c/IVA</label><input type="text" id="f-pc-iva" readonly></div>
         <div class="field"><label>Tn a pagar al proveedor</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.310" oninput="liveCalc()"><div class="hint">Peso descarga en refinería (tn2)</div></div>
+        <div class="field"><label id="lbl-tc">Total compra neto</label><input type="text" id="f-tc" readonly></div>
+        <div class="field" id="f-tc-iva-wrap"><label>Total compra c/IVA</label><input type="text" id="f-tc-iva" readonly></div>
+        <div class="field" id="f-tc-usd-wrap" style="display:none"><label>Total compra (USD)</label><input type="text" id="f-tc-usd" readonly style="color:var(--sec)"></div>
       </div>
       <!-- VENTA (refinado) -->
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin:14px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-up-circle"></i>Venta — aceite refinado</div>
@@ -296,22 +320,18 @@ tr:hover td{background:var(--prl);}
             <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
             <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
           </select></div>
-        <div class="field"><label>P. venta neto ($/tn)</label>
-          <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 45.000,75" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-pv">P. venta neto (por tn)</label>
+          <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 33,50" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>IVA venta</label>
           <select id="f-pv-iva-mode" onchange="liveCalc()">
             <option value="neto">Sin IVA</option>
             <option value="civa">Con IVA 21%</option>
           </select></div>
-        
-        <div class="field"><label id="lbl-pv-iva">P. venta c/IVA ($/tn)</label><input type="text" id="f-pv-iva" readonly></div>
+        <div class="field"><label id="lbl-pv-iva">P. venta c/IVA</label><input type="text" id="f-pv-iva" readonly></div>
         <div class="field"><label>Tn a cobrar al comprador</label><input type="number" step="0.001" id="f-tnventa" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Peso descarga en destino (tn4)</div></div>
-      </div>
-      <div class="g4" style="margin-top:10px">
-        <div class="field"><label>Total compra neto ($)</label><input type="text" id="f-tc" readonly></div>
-        <div class="field"><label>Total compra c/IVA ($)</label><input type="text" id="f-tc-iva" readonly></div>
-        <div class="field"><label>Total venta neto ($)</label><input type="text" id="f-tv" readonly></div>
-        <div class="field"><label>Total venta c/IVA ($)</label><input type="text" id="f-tv-iva" readonly></div>
+        <div class="field"><label id="lbl-tv">Total venta neto</label><input type="text" id="f-tv" readonly></div>
+        <div class="field" id="f-tv-iva-wrap"><label>Total venta c/IVA</label><input type="text" id="f-tv-iva" readonly></div>
+        <div class="field" id="f-tv-usd-wrap" style="display:none"><label>Total venta (USD)</label><input type="text" id="f-tv-usd" readonly style="color:var(--pri)"></div>
       </div>
     </div>
     <div id="ef" style="display:none">
@@ -923,6 +943,35 @@ function fmtNum(el){
   try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}
 }
 
+
+function toggleMonedaOp(){
+  const m=document.getElementById('f-op-moneda')?.value||'pesos';
+  const isDol=m==='dolares';
+  const show=id=>document.getElementById(id)&&(document.getElementById(id).style.display=isDol?'':'none');
+  const hide=id=>document.getElementById(id)&&(document.getElementById(id).style.display='none');
+  if(isDol){show('f-op-tc-wrap');show('f-op-tc-val-wrap');show('f-op-tc-res-wrap');
+    show('f-tc-usd-wrap');show('f-tv-usd-wrap');
+    const l1=document.getElementById('lbl-pc');if(l1)l1.textContent='P. compra neto (USD/tn)';
+    const l2=document.getElementById('lbl-pv');if(l2)l2.textContent='P. venta neto (USD/tn)';
+    const l3=document.getElementById('lbl-tc');if(l3)l3.textContent='Total compra neto ($)';
+    const l4=document.getElementById('lbl-tv');if(l4)l4.textContent='Total venta neto ($)';
+  }else{
+    hide('f-op-tc-wrap');hide('f-op-tc-val-wrap');hide('f-op-tc-res-wrap');
+    hide('f-tc-usd-wrap');hide('f-tv-usd-wrap');
+    const l1=document.getElementById('lbl-pc');if(l1)l1.textContent='P. compra neto ($/tn)';
+    const l2=document.getElementById('lbl-pv');if(l2)l2.textContent='P. venta neto ($/tn)';
+    const l3=document.getElementById('lbl-tc');if(l3)l3.textContent='Total compra neto ($)';
+    const l4=document.getElementById('lbl-tv');if(l4)l4.textContent='Total venta neto ($)';
+  }
+  // Auto-fill TC val from dolar cotization
+  if(isDol){
+    const tipo=document.getElementById('f-op-tc-tipo')?.value||'divisa';
+    const val=tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:tipo==='blue'?dolar.blue:0;
+    if(val){const e=document.getElementById('f-op-tc-val');if(e){e.value=val.toLocaleString('es-AR');fmtNum(e);}}
+  }
+  liveCalc();
+}
+
 function toggleCompMoneda(){
   const m=document.getElementById('f-comp-moneda')?.value||'pesos';
   const isDol=m==='dolares';
@@ -1242,12 +1291,20 @@ function calcGastoIVA(){
 }
 function liveCalc(){
   const tipo=V('f-tipo');
+  const opMoneda=document.getElementById('f-op-moneda')?.value||'pesos';
+  const isDolOp=opMoneda==='dolares';
+  const tcTipo=document.getElementById('f-op-tc-tipo')?.value||'divisa';
+  const tcManual=Np('f-op-tc-val');
+  const tcVal=isDolOp?(tcTipo==='manual'?tcManual:tcTipo==='divisa'?dolar.divisa:tcTipo==='mayorista'?dolar.mayorista:dolar.blue)||tcManual:1;
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
   const pcMode=document.getElementById('f-pc-iva-mode')?.value||'neto';
   const pvMode=document.getElementById('f-pv-iva-mode')?.value||'neto';
-  const pc=pcMode==='civa'?Math.round(pcRaw/1.21*100)/100:pcRaw;
-  const pv=pvMode==='civa'?Math.round(pvRaw/1.21*100)/100:pvRaw;
+  // If prices are in USD, convert to pesos for all calculations
+  const pcPesos=isDolOp?Math.round(pcRaw*tcVal*100)/100:pcRaw;
+  const pvPesos=isDolOp?Math.round(pvRaw*tcVal*100)/100:pvRaw;
+  const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
+  const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
   const tnv=N('f-tnv'),uni=N('f-uni');
   if(tipo==='granel'){
     const elPcIva=document.getElementById('f-pc-iva');
@@ -1347,6 +1404,12 @@ function liveCalc(){
   // ── Mostrar desglose ──
   const setCosto=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--dan)';}};
   const setIngreso=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--suc)';}};
+  // USD result
+  if(isDolOp&&tcVal){
+    const resUsd=Math.round(resultadoNeto/tcVal);
+    const elUsd=document.getElementById('f-resultado-usd');
+    if(elUsd){elUsd.value='USD '+resUsd.toLocaleString('es-AR');elUsd.style.color=resUsd>=0?'var(--suc)':'var(--dan)';}
+  }
   setCosto('f-costo-compra')(costoCompra);
   setCosto('f-costo-compra-iva')(IVA(costoCompra));
   setCosto('f-costo-refin')(costoRefin);
@@ -1388,12 +1451,20 @@ function saveOp(){
   const prov=V('f-prov'),fop=V('f-fop');
   const tipo=V('f-tipo'),prod=tipo==='granel'?V('f-acg'):V('f-ace');
   if(!prov||!fop||!prod){toast('Completá proveedor, fecha y producto','err');return;}
+  const opMoneda=document.getElementById('f-op-moneda')?.value||'pesos';
+  const isDolOp=opMoneda==='dolares';
+  const tcTipo=document.getElementById('f-op-tc-tipo')?.value||'divisa';
+  const tcManual=Np('f-op-tc-val');
+  const tcVal=isDolOp?(tcTipo==='manual'?tcManual:tcTipo==='divisa'?dolar.divisa:tcTipo==='mayorista'?dolar.mayorista:dolar.blue)||tcManual:1;
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
   const pcMode=document.getElementById('f-pc-iva-mode')?.value||'neto';
   const pvMode=document.getElementById('f-pv-iva-mode')?.value||'neto';
-  const pc=pcMode==='civa'?Math.round(pcRaw/1.21*100)/100:pcRaw;
-  const pv=pvMode==='civa'?Math.round(pvRaw/1.21*100)/100:pvRaw;
+  // If prices are in USD, convert to pesos for all calculations
+  const pcPesos=isDolOp?Math.round(pcRaw*tcVal*100)/100:pcRaw;
+  const pvPesos=isDolOp?Math.round(pvRaw*tcVal*100)/100:pvRaw;
+  const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
+  const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
   const tnv=N('f-tnv'),uni=N('f-uni'),tnventa=N('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
   const tc=pc*base,tv=pv*basev;
   const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
@@ -1417,7 +1488,7 @@ function saveOp(){
     fOp:fop,fCob:V('f-fcob'),
     fSalCrudo:V('f-f1sal'),fLleCrudo:V('f-f1lle'),
     fSalRef:V('f-f2sal'),fLleEnv:V('f-f2lle'),
-    tipo,producto:prod,productoVenta:V('f-acv')||prod,
+    tipo,producto:prod,productoVenta:V('f-acv')||prod,opMoneda:V('f-op-moneda')||'pesos',opTcTipo:V('f-op-tc-tipo')||'divisa',opTcVal:Np('f-op-tc-val'),
     presentacion:tipo==='envase'?V('f-pres'):'',
     marca:tipo==='envase'?V('f-marca'):'',pallets:tipo==='envase'?V('f-plt'):'',unidades:uni,
     pcompra:pc,pventa:pv,pcIvaMode:pcMode,pvIvaMode:pvMode,pcIva:IVA(pc),pvIva:IVA(pv),
@@ -1502,6 +1573,7 @@ function clearForm(){
   editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');clearActorEcheqs();
   // Reset IVA mode selects
   const pcm=document.getElementById('f-pc-iva-mode');if(pcm)pcm.value='neto';
+  const opm=document.getElementById('f-op-moneda');if(opm)opm.value='pesos';toggleMonedaOp();
   const pvm=document.getElementById('f-pv-iva-mode');if(pvm)pvm.value='neto';
   // Show all hidden IVA fields
   ['f-pc-iva','f-pv-iva'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';const w=e.closest('.field');if(w)w.style.display='none';}});
@@ -1547,6 +1619,7 @@ function editOp(id){
   const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
   setTipo(o.tipo||'granel',tipBtn);
   fillActorSelects();
+  ss('f-op-moneda',o.opMoneda||'pesos');ss('f-op-tc-tipo',o.opTcTipo||'divisa');sv('f-op-tc-val',o.opTcVal||'');toggleMonedaOp();
   sv('f-acv',o.productoVenta);
   sv('f-tnventa',o.tnVenta||o.tnVendidas);
   if(o.tipo==='envase'){
