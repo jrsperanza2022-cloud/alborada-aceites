@@ -1368,8 +1368,32 @@ function liveCalc(){
   }
   const base=tipo==='granel'?tnv:uni;
   const tc=pc*base,tv=pv*base;
-  if(tc){document.getElementById('f-tc').value=MF(tc);document.getElementById('f-tc-iva').value=MF(IVA(tc));}
-  if(tv){document.getElementById('f-tv').value=MF(tv);document.getElementById('f-tv-iva').value=MF(IVA(tv));calcSaldo('prov');calcSaldo('comp');}
+  if(tc){
+    document.getElementById('f-tc').value=MF(tc);
+    const tcIvaEl=document.getElementById('f-tc-iva');
+    const tcIvaWrap=tcIvaEl?.closest('.field');
+    if(pcMode==='neto'){if(tcIvaEl)tcIvaEl.value='';if(tcIvaWrap)tcIvaWrap.style.display='none';}
+    else{if(tcIvaWrap)tcIvaWrap.style.display='';if(tcIvaEl)tcIvaEl.value=MF(IVA(tc));}
+    // USD
+    if(isDolOp&&tcVal){
+      const el=document.getElementById('f-tc-usd');
+      if(el)el.value='USD '+Math.round(pcRaw*tnv).toLocaleString('es-AR');
+    }
+  }
+  if(tv){
+    document.getElementById('f-tv').value=MF(tv);
+    const tvIvaEl=document.getElementById('f-tv-iva');
+    const tvIvaWrap=tvIvaEl?.closest('.field');
+    if(pvMode==='neto'){if(tvIvaEl)tvIvaEl.value='';if(tvIvaWrap)tvIvaWrap.style.display='none';}
+    else{if(tvIvaWrap)tvIvaWrap.style.display='';if(tvIvaEl)tvIvaEl.value=MF(IVA(tv));}
+    // USD
+    if(isDolOp&&tcVal){
+      const tnventa=N('f-tnventa')||tnv;
+      const el=document.getElementById('f-tv-usd');
+      if(el)el.value='USD '+Math.round(pvRaw*tnventa).toLocaleString('es-AR');
+    }
+    calcSaldo('prov');calcSaldo('comp');
+  }
   const comPct=N('f-com-pct');
   if(comPct&&tv){
     const cm=tv*comPct/100;
