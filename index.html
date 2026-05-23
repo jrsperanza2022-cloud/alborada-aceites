@@ -931,7 +931,7 @@ function save(){
   localStorage.setItem('alb_provs',JSON.stringify(proveedores));
   localStorage.setItem('alb_cfg',JSON.stringify(cfg));
   localStorage.setItem('alb_cnt',cnt);
-  document.getElementById('hbadge').textContent=ops.length+' ops';
+  document.getElementById('hbadge').textContent=ops.filter(o=>o.id&&o.proveedor).length+' ops';
 }
 const MF=n=>(n||n===0)?'$'+Math.round(Number(n)).toLocaleString('es-AR'):'—';
 const Tn=n=>n?Number(n).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn':'—';
@@ -2086,7 +2086,7 @@ function exportCSV(){
   a.click();toast('✓ CSV exportado ('+ops.length+' ops)');
 }
 const hoy=new Date();
-document.getElementById('hbadge').textContent=ops.length+' ops';
+document.getElementById('hbadge').textContent=ops.filter(o=>o.id&&o.proveedor).length+' ops';
 document.getElementById('f-fop').value=hoy.toISOString().split('T')[0];
 document.getElementById('g-fecha').value=hoy.toISOString().split('T')[0];
 document.getElementById('e-fr').value=hoy.toISOString().split('T')[0];
