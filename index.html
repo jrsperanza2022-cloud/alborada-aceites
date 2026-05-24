@@ -263,25 +263,22 @@ tr:hover td{background:var(--prl);}
     </div>
     <input type="hidden" id="f-tipo" value="granel">
     <div id="gf">
-      <!-- TIPO DE CAMBIO OPERACIONAL -->
-      <div style="background:var(--surf3);border:1.5px solid var(--prb);border-radius:8px;padding:10px 14px;margin-bottom:12px">
-        <div style="font-size:10px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px"><i class="ti ti-currency-dollar"></i> Tipo de cambio de la operación</div>
-        <div class="g4">
-          <div class="field"><label>Moneda operación</label>
-            <select id="f-op-moneda" onchange="toggleMonedaOp()">
-              <option value="pesos">Pesos ($)</option>
-              <option value="dolares">Dólares (USD)</option>
-            </select></div>
-          <div class="field" id="f-op-tc-val-wrap" style="display:none"><label>Valor dólar del día op. ($)</label>
-            <input type="text" inputmode="numeric" id="f-op-tc-val" placeholder="ej: 1.393" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)">
-            <div class="hint">Ingresá el TC exacto de esa operación</div></div>
-          <div class="field" id="f-op-tc-res-wrap" style="display:none"><label>Resultado en USD</label>
-            <input type="text" id="f-resultado-usd" readonly style="font-weight:700;color:var(--suc)"></div>
-        </div>
-      </div>
+
       <!-- COMPRA (crudo) -->
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sec);margin:8px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-down-circle"></i>Compra — aceite crudo</div>
       <div class="g4">
+        <div class="field"><label>Moneda compra</label>
+          <select id="f-compra-moneda" onchange="toggleSecMoneda('compra')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-compra-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-compra-tc-tipo" onchange="syncTCVal('compra');liveCalc()">
+            <option value="divisa">Divisa</option>
+            <option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option>
+            <option value="manual">Manual</option></select></div>
+        <div class="field" id="f-compra-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-compra-tc-val" placeholder="ej: 1.393" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">TC de esa fecha</div></div>
         <div class="field"><label>Producto comprado *</label>
           <select id="f-acg">
             <option value="">— seleccionar —</option>
@@ -306,6 +303,18 @@ tr:hover td{background:var(--prl);}
       <!-- VENTA (refinado) -->
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin:14px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-up-circle"></i>Venta — aceite refinado</div>
       <div class="g4">
+        <div class="field"><label>Moneda venta</label>
+          <select id="f-venta-moneda" onchange="toggleSecMoneda('venta')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-venta-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-venta-tc-tipo" onchange="syncTCVal('venta');liveCalc()">
+            <option value="divisa">Divisa</option>
+            <option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option>
+            <option value="manual">Manual</option></select></div>
+        <div class="field" id="f-venta-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-venta-tc-val" placeholder="ej: 1.393" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">TC de esa fecha</div></div>
         <div class="field"><label>Producto vendido *</label>
           <select id="f-acv">
             <option value="">— seleccionar —</option>
@@ -370,16 +379,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-<div class="field"><label>Moneda pago</label>
-          <select id="f-prov-moneda" onchange="toggleActorMoneda('prov')">
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-prov-moneda" onchange="toggleSecMoneda('prov')">
             <option value="pesos">Pesos ($)</option>
             <option value="dolares">Dólares (USD)</option></select></div>
-        <div class="field" id="f-prov-dol-wrap" style="display:none"><label>Tipo de dólar</label>
-          <select id="f-prov-dol" onchange="liveCalc()">
+        <div class="field" id="f-prov-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-prov-tc-tipo" onchange="syncTCVal('prov');liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field" id="f-prov-dv-wrap" style="display:none"><label>Valor USD ($)</label>
-          <input type="text" inputmode="numeric" id="f-prov-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="f-prov-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-prov-tc-val" placeholder="ej: 1.393" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">TC de esa fecha</div></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label id="lbl-a1">Adelanto 1 ($)</label><input type="text" inputmode="numeric" id="f-a1" placeholder="ej: 20.000.000" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -411,16 +420,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-<div class="field"><label>Moneda pago</label>
-          <select id="f-ref-moneda" onchange="toggleActorMoneda('ref')">
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-ref-moneda" onchange="toggleSecMoneda('ref')">
             <option value="pesos">Pesos ($)</option>
             <option value="dolares">Dólares (USD)</option></select></div>
-        <div class="field" id="f-ref-dol-wrap" style="display:none"><label>Tipo de dólar</label>
-          <select id="f-ref-dol" onchange="liveCalc()">
+        <div class="field" id="f-ref-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-ref-tc-tipo" onchange="syncTCVal('ref');liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field" id="f-ref-dv-wrap" style="display:none"><label>Valor USD ($)</label>
-          <input type="text" inputmode="numeric" id="f-ref-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="f-ref-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-ref-tc-val" placeholder="ej: 1.393" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">TC de esa fecha</div></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Costo servicio neto ($)</label><input type="text" inputmode="numeric" id="f-ref-costo" placeholder="ej: 6.500.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -453,16 +462,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-<div class="field"><label>Moneda pago</label>
-          <select id="f-transp-moneda" onchange="toggleActorMoneda('transp')">
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-transp-moneda" onchange="toggleSecMoneda('transp')">
             <option value="pesos">Pesos ($)</option>
             <option value="dolares">Dólares (USD)</option></select></div>
-        <div class="field" id="f-transp-dol-wrap" style="display:none"><label>Tipo de dólar</label>
-          <select id="f-transp-dol" onchange="liveCalc()">
+        <div class="field" id="f-transp-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-transp-tc-tipo" onchange="syncTCVal('transp');liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field" id="f-transp-dv-wrap" style="display:none"><label>Valor USD ($)</label>
-          <input type="text" inputmode="numeric" id="f-transp-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="f-transp-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-transp-tc-val" placeholder="ej: 1.393" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">TC de esa fecha</div></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Flete tramo 1 neto ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
@@ -506,16 +515,16 @@ tr:hover td{background:var(--prl);}
             <option>Transferencia total</option><option>Transferencia parcial</option>
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
-<div class="field"><label>Moneda pago</label>
-          <select id="f-com-moneda" onchange="toggleActorMoneda('com')">
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-com-moneda" onchange="toggleSecMoneda('com')">
             <option value="pesos">Pesos ($)</option>
             <option value="dolares">Dólares (USD)</option></select></div>
-        <div class="field" id="f-com-dol-wrap" style="display:none"><label>Tipo de dólar</label>
-          <select id="f-com-dol" onchange="liveCalc()">
+        <div class="field" id="f-com-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-com-tc-tipo" onchange="syncTCVal('com');liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field" id="f-com-dv-wrap" style="display:none"><label>Valor USD ($)</label>
-          <input type="text" inputmode="numeric" id="f-com-dv" oninput="fmtNum(this);liveCalc()" placeholder="ej: 1.385" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="f-com-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-com-tc-val" placeholder="ej: 1.393" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">TC de esa fecha</div></div>
         <div class="field"><label id="lbl-com-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-com-pagado" oninput="fmtNum(this);calcSaldo('com')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Estado</label>
           <select id="f-com-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option><option>Echeq rechazado</option></select></div>
@@ -541,14 +550,14 @@ tr:hover td{background:var(--prl);}
             <option>Echeq total</option><option>Echeq parcial</option>
             <option>Pendiente</option></select></div>
         <div class="field"><label>Moneda cobro</label>
-          <select id="f-comp-moneda" onchange="toggleCompMoneda()">
+          <select id="f-comp-moneda" onchange="toggleSecMoneda('comp')">
             <option value="pesos">Pesos ($)</option>
             <option value="dolares">Dólares (USD)</option></select></div>
-        <div class="field" id="f-comp-dol-wrap" style="display:none"><label>Tipo de dólar</label>
-          <select id="f-comp-dol" onchange="liveCalc()">
+        <div class="field" id="f-comp-tc-tipo-wrap" style="display:none"><label>Tipo de dólar</label>
+          <select id="f-comp-tc-tipo" onchange="syncTCVal('comp');liveCalc()">
             <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
-        <div class="field" id="f-comp-dv-wrap" style="display:none"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-comp-dv" placeholder="ej: 1391" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="f-comp-tc-val-wrap" style="display:none"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-comp-tc-val" placeholder="ej: 1391" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
         <div class="field"><label id="lbl-comp-cobrado">Cobrado al comprador ($)</label><input type="text" inputmode="numeric" id="f-comp-cobrado" oninput="fmtNum(this);calcSaldo('comp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
@@ -963,6 +972,37 @@ function fmtNum(el){
 
 
 
+
+// ── TC por sección ────────────────────────────────────────────────────────
+function getTCVal(prefix){
+  const m=document.getElementById('f-'+prefix+'-moneda')?.value||'pesos';
+  if(m!=='dolares')return {isDol:false,tc:1};
+  const tipo=document.getElementById('f-'+prefix+'-tc-tipo')?.value||'manual';
+  const manual=Np('f-'+prefix+'-tc-val');
+  const tc=(tipo==='manual'?manual:tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:dolar.blue)||manual||1;
+  return {isDol:true,tc};
+}
+function syncTCVal(prefix){
+  const tipo=document.getElementById('f-'+prefix+'-tc-tipo')?.value||'manual';
+  if(tipo==='manual')return;
+  const val=tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:dolar.blue||0;
+  if(val){const e=document.getElementById('f-'+prefix+'-tc-val');if(e){e.value=val.toLocaleString('es-AR');fmtNum(e);}}
+}
+function toggleSecMoneda(prefix){
+  const m=document.getElementById('f-'+prefix+'-moneda')?.value||'pesos';
+  const isDol=m==='dolares';
+  ['tc-tipo-wrap','tc-val-wrap'].forEach(s=>{
+    const el=document.getElementById('f-'+prefix+'-'+s);
+    if(el)el.style.display=isDol?'':'none';
+  });
+  if(isDol)syncTCVal(prefix);
+  liveCalc();
+}
+function toARS(val,prefix){
+  const {isDol,tc}=getTCVal(prefix);
+  return isDol?Math.round(val*tc):val;
+}
+
 function toggleActorMoneda(actor){
   const m=document.getElementById('f-'+actor+'-moneda')?.value||'pesos';
   const isDol=m==='dolares';
@@ -1324,18 +1364,16 @@ function calcGastoIVA(){
 }
 function liveCalc(){
   const tipo=V('f-tipo');
-  const opMoneda=document.getElementById('f-op-moneda')?.value||'pesos';
-  const isDolOp=opMoneda==='dolares';
-  const tcManual=Np('f-op-tc-val');
-  // TC de la operación: siempre el valor ingresado manualmente
-  const tcVal=isDolOp?tcManual||Np('f-op-tc-val')||1:1;
+  // TC por sección independiente
+  const tcCompra=getTCVal('compra');
+  const tcVenta=getTCVal('venta');
+  const isDolOp=tcCompra.isDol||tcVenta.isDol;
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
   const pcMode=document.getElementById('f-pc-iva-mode')?.value||'neto';
   const pvMode=document.getElementById('f-pv-iva-mode')?.value||'neto';
-  // If prices are in USD, convert to pesos for all calculations
-  const pcPesos=isDolOp?Math.round(pcRaw*tcVal*100)/100:pcRaw;
-  const pvPesos=isDolOp?Math.round(pvRaw*tcVal*100)/100:pvRaw;
+  const pcPesos=tcCompra.isDol?Math.round(pcRaw*tcCompra.tc*100)/100:pcRaw;
+  const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
   const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
   const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
   const tnv=N('f-tnv'),uni=N('f-uni');
@@ -1393,8 +1431,9 @@ function liveCalc(){
     document.getElementById('f-com-monto').value=MF(cm);
     document.getElementById('f-com-iva').value=MF(IVA(cm));
   }
-  const refC=Np('f-ref-costo');
-  if(refC){document.getElementById('f-ref-civa').value=MF(IVA(refC));calcSaldo('ref');}
+  // refC-civa display uses raw input value (before TC conversion)
+  const refCdisplay=Np('f-ref-costo');
+  if(refCdisplay){document.getElementById('f-ref-civa').value=MF(IVA(refCdisplay));calcSaldo('ref');}
   const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4');
   const d1=tn1&&tn2?tn2-tn1:null,d2=tn3&&tn4?tn4-tn3:null;
   if(d1!==null)document.getElementById('f-dif1').value=DS(d1)+' ('+(Math.abs(d1)/(tn1||1)*100).toFixed(3)+'%)';
@@ -1433,9 +1472,16 @@ function liveCalc(){
       <div><div style="font-size:9px;color:var(--t2)">Tn vendidas</div><div style="font-weight:800;color:var(--acc)">${Tn(tnv||rE)}</div></div>
       <div><div style="font-size:9px;color:var(--t2)">Dif.entregado/vendido</div><div style="font-weight:800;color:${DC((tnv||rE)-rE)}">${tnv&&rE?DS(tnv-rE):'—'}</div></div>`;
   }
-  const f1=Np('f-flete1'),f2=Np('f-flete2');
+  const tcTransp=getTCVal('transp');
+  const tcRef=getTCVal('ref');
+  const tcCom=getTCVal('com');
+  const f1raw=Np('f-flete1'),f2raw=Np('f-flete2');
+  const f1=tcTransp.isDol?Math.round(f1raw*tcTransp.tc):f1raw;
+  const f2=tcTransp.isDol?Math.round(f2raw*tcTransp.tc):f2raw;
   const flete=f1+f2;
   const fleteIva=IVA(f1)+IVA(f2);
+  const refCraw=Np('f-ref-costo');
+  const refC=tcRef.isDol?Math.round(refCraw*tcRef.tc):refCraw;
   if(f1){const e=document.getElementById('f-flete1-iva');if(e)e.value=MF(IVA(f1));}
   if(f2){const e=document.getElementById('f-flete2-iva');if(e)e.value=MF(IVA(f2));}
   if(flete){
@@ -1517,18 +1563,16 @@ function saveOp(){
   const prov=V('f-prov'),fop=V('f-fop');
   const tipo=V('f-tipo'),prod=tipo==='granel'?V('f-acg'):V('f-ace');
   if(!prov||!fop||!prod){toast('Completá proveedor, fecha y producto','err');return;}
-  const opMoneda=document.getElementById('f-op-moneda')?.value||'pesos';
-  const isDolOp=opMoneda==='dolares';
-  const tcManual=Np('f-op-tc-val');
-  // TC de la operación: siempre el valor ingresado manualmente
-  const tcVal=isDolOp?tcManual||Np('f-op-tc-val')||1:1;
+  // TC por sección independiente
+  const tcCompra=getTCVal('compra');
+  const tcVenta=getTCVal('venta');
+  const isDolOp=tcCompra.isDol||tcVenta.isDol;
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
   const pcMode=document.getElementById('f-pc-iva-mode')?.value||'neto';
   const pvMode=document.getElementById('f-pv-iva-mode')?.value||'neto';
-  // If prices are in USD, convert to pesos for all calculations
-  const pcPesos=isDolOp?Math.round(pcRaw*tcVal*100)/100:pcRaw;
-  const pvPesos=isDolOp?Math.round(pvRaw*tcVal*100)/100:pvRaw;
+  const pcPesos=tcCompra.isDol?Math.round(pcRaw*tcCompra.tc*100)/100:pcRaw;
+  const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
   const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
   const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
   const tnv=N('f-tnv'),uni=N('f-uni'),tnventa=N('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
@@ -1554,7 +1598,7 @@ function saveOp(){
     fOp:fop,fCob:V('f-fcob'),
     fSalCrudo:V('f-f1sal'),fLleCrudo:V('f-f1lle'),
     fSalRef:V('f-f2sal'),fLleEnv:V('f-f2lle'),
-    tipo,producto:prod,productoVenta:V('f-acv')||prod,opMoneda:V('f-op-moneda')||'pesos',opTcTipo:V('f-op-tc-tipo')||'divisa',opTcVal:Np('f-op-tc-val'),
+    tipo,producto:prod,productoVenta:V('f-acv')||prod,compraMoneda:V('f-compra-moneda')||'pesos',compraTcTipo:V('f-compra-tc-tipo')||'manual',compraTcVal:Np('f-compra-tc-val'),ventaMoneda:V('f-venta-moneda')||'pesos',ventaTcTipo:V('f-venta-tc-tipo')||'manual',ventaTcVal:Np('f-venta-tc-val'),provMoneda:V('f-prov-moneda')||'pesos',provTcTipo:V('f-prov-tc-tipo')||'manual',provTcVal:Np('f-prov-tc-val'),refMoneda:V('f-ref-moneda')||'pesos',refTcTipo:V('f-ref-tc-tipo')||'manual',refTcVal:Np('f-ref-tc-val'),transpMoneda:V('f-transp-moneda')||'pesos',transpTcTipo:V('f-transp-tc-tipo')||'manual',transpTcVal:Np('f-transp-tc-val'),comMoneda:V('f-com-moneda')||'pesos',comTcTipo:V('f-com-tc-tipo')||'manual',comTcVal:Np('f-com-tc-val'),compMoneda:V('f-comp-moneda')||'pesos',compTcTipo:V('f-comp-tc-tipo')||'manual',compTcVal:Np('f-comp-tc-val'),
     presentacion:tipo==='envase'?V('f-pres'):'',
     marca:tipo==='envase'?V('f-marca'):'',pallets:tipo==='envase'?V('f-plt'):'',unidades:uni,
     pcompra:pc,pventa:pv,pcIvaMode:pcMode,pvIvaMode:pvMode,pcIva:IVA(pc),pvIva:IVA(pv),
@@ -1639,8 +1683,7 @@ function clearForm(){
   editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');clearActorEcheqs();
   // Reset IVA mode selects
   const pcm=document.getElementById('f-pc-iva-mode');if(pcm)pcm.value='neto';
-  const opm=document.getElementById('f-op-moneda');if(opm)opm.value='pesos';toggleMonedaOp();
-  ['prov','ref','transp','com'].forEach(a=>{const e=document.getElementById('f-'+a+'-moneda');if(e)e.value='pesos';toggleActorMoneda(a);});
+  ['compra','venta','prov','ref','transp','com','comp'].forEach(s=>{const e=document.getElementById('f-'+s+'-moneda');if(e)e.value='pesos';toggleSecMoneda(s);});
   const pvm=document.getElementById('f-pv-iva-mode');if(pvm)pvm.value='neto';
   // Show all hidden IVA fields
   ['f-pc-iva','f-pv-iva'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';const w=e.closest('.field');if(w)w.style.display='none';}});
@@ -1686,7 +1729,13 @@ function editOp(id){
   const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
   setTipo(o.tipo||'granel',tipBtn);
   fillActorSelects();
-  ss('f-op-moneda',o.opMoneda||'pesos');ss('f-op-tc-tipo',o.opTcTipo||'divisa');sv('f-op-tc-val',o.opTcVal||'');toggleMonedaOp();
+  ss('f-compra-moneda',o.compraMoneda||'pesos');ss('f-compra-tc-tipo',o.compraTcTipo||'manual');sv('f-compra-tc-val',o.compraTcVal||'');toggleSecMoneda('compra');
+  ss('f-venta-moneda',o.ventaMoneda||'pesos');ss('f-venta-tc-tipo',o.ventaTcTipo||'manual');sv('f-venta-tc-val',o.ventaTcVal||'');toggleSecMoneda('venta');
+  ss('f-prov-moneda',o.provMoneda||'pesos');ss('f-prov-tc-tipo',o.provTcTipo||'manual');sv('f-prov-tc-val',o.provTcVal||'');toggleSecMoneda('prov');
+  ss('f-ref-moneda',o.refMoneda||'pesos');ss('f-ref-tc-tipo',o.refTcTipo||'manual');sv('f-ref-tc-val',o.refTcVal||'');toggleSecMoneda('ref');
+  ss('f-transp-moneda',o.transpMoneda||'pesos');ss('f-transp-tc-tipo',o.transpTcTipo||'manual');sv('f-transp-tc-val',o.transpTcVal||'');toggleSecMoneda('transp');
+  ss('f-com-moneda',o.comMoneda||'pesos');ss('f-com-tc-tipo',o.comTcTipo||'manual');sv('f-com-tc-val',o.comTcVal||'');toggleSecMoneda('com');
+  ss('f-comp-moneda',o.compMoneda||'pesos');ss('f-comp-tc-tipo',o.compTcTipo||'manual');sv('f-comp-tc-val',o.compTcVal||'');toggleSecMoneda('comp');
   sv('f-acv',o.productoVenta);
   sv('f-tnventa',o.tnVenta||o.tnVendidas);
   if(o.tipo==='envase'){
