@@ -996,6 +996,15 @@ function toggleSecMoneda(prefix){
     if(el)el.style.display=isDol?'':'none';
   });
   if(isDol)syncTCVal(prefix);
+  // Show/hide USD total fields
+  if(prefix==='compra'){
+    const w=document.getElementById('f-tc-usd-wrap');if(w)w.style.display=isDol?'':'none';
+    const lbl=document.getElementById('lbl-pc');if(lbl)lbl.textContent=isDol?'P. compra neto (USD/tn)':'P. compra neto (por tn)';
+  }
+  if(prefix==='venta'){
+    const w=document.getElementById('f-tv-usd-wrap');if(w)w.style.display=isDol?'':'none';
+    const lbl=document.getElementById('lbl-pv');if(lbl)lbl.textContent=isDol?'P. venta neto (USD/tn)':'P. venta neto (por tn)';
+  }
   liveCalc();
 }
 function toARS(val,prefix){
@@ -1406,7 +1415,7 @@ function liveCalc(){
     if(pcMode==='neto'){if(tcIvaEl)tcIvaEl.value='';if(tcIvaWrap)tcIvaWrap.style.display='none';}
     else{if(tcIvaWrap)tcIvaWrap.style.display='';if(tcIvaEl)tcIvaEl.value=MF(IVA(tc));}
     // USD
-    if(isDolOp&&tcVal){
+    if(tcCompra.isDol){
       const el=document.getElementById('f-tc-usd');
       if(el)el.value='USD '+Math.round(pcRaw*tnv).toLocaleString('es-AR');
     }
@@ -1418,7 +1427,7 @@ function liveCalc(){
     if(pvMode==='neto'){if(tvIvaEl)tvIvaEl.value='';if(tvIvaWrap)tvIvaWrap.style.display='none';}
     else{if(tvIvaWrap)tvIvaWrap.style.display='';if(tvIvaEl)tvIvaEl.value=MF(IVA(tv));}
     // USD
-    if(isDolOp&&tcVal){
+    if(tcVenta.isDol){
       const tnventa=N('f-tnventa')||tnv;
       const el=document.getElementById('f-tv-usd');
       if(el)el.value='USD '+Math.round(pvRaw*tnventa).toLocaleString('es-AR');
