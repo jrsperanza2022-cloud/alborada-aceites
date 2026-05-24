@@ -985,9 +985,8 @@ function fmtNum(el){
 function getTCVal(prefix){
   const m=document.getElementById('f-'+prefix+'-moneda')?.value||'pesos';
   if(m!=='dolares')return {isDol:false,tc:1};
-  const tipo=document.getElementById('f-'+prefix+'-tc-tipo')?.value||'manual';
-  const manual=NpTC('f-'+prefix+'-tc-val');
-  const tc=(tipo==='manual'?manual:tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:dolar.blue)||manual||1;
+  // SIEMPRE usar el valor del campo — el tipo solo sirve para autocompletar
+  const tc=NpTC('f-'+prefix+'-tc-val')||1;
   return {isDol:true,tc};
 }
 function syncTCVal(prefix){
