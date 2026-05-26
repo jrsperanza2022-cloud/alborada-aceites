@@ -295,7 +295,7 @@ tr:hover td{background:var(--prl);}
             <option value="civa">Con IVA 21%</option>
           </select></div>
         <div class="field"><label id="lbl-pc-iva">P. compra c/IVA</label><input type="text" id="f-pc-iva" readonly></div>
-        <div class="field"><label>Tn a pagar al proveedor</label><input type="number" step="0.001" id="f-tnv" placeholder="ej: 29.310" oninput="liveCalc()"><div class="hint">Peso descarga en refinería (tn2)</div></div>
+        <div class="field"><label>Tn a pagar al proveedor</label><input type="text" inputmode="decimal" id="f-tnv" placeholder="ej: 28.020 o 28,020" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Peso descarga en refinería (tn2)</div></div>
         <div class="field"><label id="lbl-tc">Total compra neto</label><input type="text" id="f-tc" readonly></div>
         <div class="field" id="f-tc-iva-wrap"><label>Total compra c/IVA</label><input type="text" id="f-tc-iva" readonly></div>
         <div class="field" id="f-tc-usd-wrap" style="display:none"><label>Total compra (USD)</label><input type="text" id="f-tc-usd" readonly style="color:#4fc3f7;font-weight:600"></div>
@@ -331,7 +331,7 @@ tr:hover td{background:var(--prl);}
             <option value="civa">Con IVA 21%</option>
           </select></div>
         <div class="field"><label id="lbl-pv-iva">P. venta c/IVA</label><input type="text" id="f-pv-iva" readonly></div>
-        <div class="field"><label>Tn a cobrar al comprador</label><input type="number" step="0.001" id="f-tnventa" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Peso descarga en destino (tn4)</div></div>
+        <div class="field"><label>Tn a cobrar al comprador</label><input type="text" inputmode="decimal" id="f-tnventa" placeholder="ej: 28.020 o 28,020" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Peso descarga en destino (tn4)</div></div>
         <div class="field"><label id="lbl-tv">Total venta neto</label><input type="text" id="f-tv" readonly></div>
         <div class="field" id="f-tv-iva-wrap"><label>Total venta c/IVA</label><input type="text" id="f-tv-iva" readonly></div>
         <div class="field" id="f-tv-usd-wrap" style="display:none"><label>Total venta (USD)</label><input type="text" id="f-tv-usd" readonly style="color:#81c784;font-weight:600"></div>
@@ -595,8 +595,8 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>Valor dólar viaje 1 ($)</label><input type="number" id="f-dv1" placeholder="ej: 1391" oninput="liveCalc()"></div>
     </div>
     <div class="g4" style="margin-top:10px">
-      <div class="field"><label>🔵 Carga crudo — origen (tn)</label><input type="number" step="0.001" id="f-tn1" placeholder="ej: 30.340" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar el camión</div></div>
-      <div class="field"><label>🟡 Descarga crudo — refinería (tn)</label><input type="number" step="0.001" id="f-tn2" placeholder="ej: 30.310" oninput="liveCalc()"><div class="hint">Ticket balanza al llegar a refinería</div></div>
+      <div class="field"><label>🔵 Carga crudo — origen (tn)</label><input type="text" inputmode="decimal" id="f-tn1" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 30.340" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar el camión</div></div>
+      <div class="field"><label>🟡 Descarga crudo — refinería (tn)</label><input type="text" inputmode="decimal" id="f-tn2" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 30.310" oninput="liveCalc()"><div class="hint">Ticket balanza al llegar a refinería</div></div>
       <div class="field"><label>Diferencia crudo (auto)</label><input type="text" id="f-dif1" readonly></div>
       <div class="field"><label>Descuento / Humedad (kg)</label><input type="number" step="0.001" id="f-desc1" placeholder="ej: 0.547"></div>
     </div>
@@ -621,8 +621,8 @@ tr:hover td{background:var(--prl);}
       <div class="field"><label>Valor dólar viaje 2 ($)</label><input type="number" id="f-dv2" placeholder="ej: 1395" oninput="liveCalc()"></div>
     </div>
     <div class="g4" style="margin-top:10px">
-      <div class="field"><label>🟢 Carga refinado — refinería (tn)</label><input type="number" step="0.001" id="f-tn3" placeholder="ej: 29.280" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar refinado</div></div>
-      <div class="field"><label>🔴 Entrega refinado — envasadora (tn)</label><input type="number" step="0.001" id="f-tn4" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Ticket balanza al entregar</div></div>
+      <div class="field"><label>🟢 Carga refinado — refinería (tn)</label><input type="text" inputmode="decimal" id="f-tn3" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 29.280" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar refinado</div></div>
+      <div class="field"><label>🔴 Entrega refinado — envasadora (tn)</label><input type="text" inputmode="decimal" id="f-tn4" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Ticket balanza al entregar</div></div>
       <div class="field"><label>Diferencia refinado (auto)</label><input type="text" id="f-dif2" readonly></div>
       <div class="field"><label>Fecha cobro / liquidación</label><input type="date" id="f-fcob"></div>
     </div>
@@ -957,6 +957,12 @@ const NpTC=v=>{
   let s=(v+'').trim().replace(/\s/g,'');
   // For TC values: comma = decimal, point = decimal (both treated as decimal separator)
   // Never has thousands separators since values are 1000-2000
+  if(s.includes(','))s=s.replace(',','.');
+  return parseFloat(s)||0;
+};
+const NpTN=v=>{
+  if(!v&&v!==0)return 0;
+  let s=(v+'').trim();
   if(s.includes(','))s=s.replace(',','.');
   return parseFloat(s)||0;
 };
@@ -1396,7 +1402,7 @@ function liveCalc(){
   const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
   const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
   const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
-  const tnv=N('f-tnv'),uni=N('f-uni');
+  const tnv=Np('f-tnv'),uni=N('f-uni');
   if(tipo==='granel'){
     // Si es en dólares o Sin IVA → ocultar campos c/IVA
     const hideIva=pcMode==='neto';
@@ -1439,7 +1445,7 @@ function liveCalc(){
     else{if(tvIvaWrap)tvIvaWrap.style.display='';if(tvIvaEl)tvIvaEl.value=MF(IVA(tv));}
     // USD
     if(tcVenta.isDol){
-      const tnventa=N('f-tnventa')||tnv;
+      const tnventa=Np('f-tnventa')||tnv;
       const el=document.getElementById('f-tv-usd');
       if(el)el.value='USD '+Math.round(pvRaw*tnventa).toLocaleString('es-AR');
     }
@@ -1454,7 +1460,7 @@ function liveCalc(){
   // refC-civa display uses raw input value (before TC conversion)
   const refCdisplay=Np('f-ref-costo');
   if(refCdisplay){document.getElementById('f-ref-civa').value=MF(IVA(refCdisplay));calcSaldo('ref');}
-  const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4');
+  const tn1=Np('f-tn1'),tn2=Np('f-tn2'),tn3=Np('f-tn3'),tn4=Np('f-tn4');
   const d1=tn1&&tn2?tn2-tn1:null,d2=tn3&&tn4?tn4-tn3:null;
   if(d1!==null)document.getElementById('f-dif1').value=DS(d1)+' ('+(Math.abs(d1)/(tn1||1)*100).toFixed(3)+'%)';
   if(d2!==null)document.getElementById('f-dif2').value=DS(d2)+' ('+(Math.abs(d2)/(tn3||1)*100).toFixed(3)+'%)';
@@ -1607,7 +1613,7 @@ function saveOp(){
   const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
   const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
   const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
-  const tnv=N('f-tnv'),uni=N('f-uni'),tnventa=N('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
+  const tnv=Np('f-tnv'),uni=N('f-uni'),tnventa=Np('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
   const tc=pc*base,tv=pv*basev;
   const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
   const refC=Np('f-ref-costo');
@@ -1619,7 +1625,7 @@ function saveOp(){
   const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
   const profitMay=dolar.mayorista?resultadoNeto*(dolar.mayorista/baseR):0;
   const profitBlue=dolar.blue?resultadoNeto*(dolar.blue/baseR):0;
-  const tn1=N('f-tn1'),tn2=N('f-tn2'),tn3=N('f-tn3'),tn4=N('f-tn4');
+  const tn1=Np('f-tn1'),tn2=Np('f-tn2'),tn3=Np('f-tn3'),tn4=Np('f-tn4');
   const a1=Np('f-a1'),a2=Np('f-a2'),a3=Np('f-a3');
   const data={
     proveedor:prov,comprador:V('f-comp'),transportista:V('f-transp'),
