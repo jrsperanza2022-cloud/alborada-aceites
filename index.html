@@ -1012,6 +1012,9 @@ function toggleSecMoneda(prefix){
     const el=document.getElementById('f-'+prefix+'-'+s);
     if(el)el.style.display=isDol?'':'none';
   });
+  // Hide IVA selector when dolares (no IVA in USD transactions)
+  if(prefix==='compra'){const e=document.getElementById('f-pc-iva-mode')?.closest('.field');if(e)e.style.display=isDol?'none':'';}
+  if(prefix==='venta'){const e=document.getElementById('f-pv-iva-mode')?.closest('.field');if(e)e.style.display=isDol?'none':'';}
   if(isDol)syncTCVal(prefix,false);
   // Show/hide USD total fields
   if(prefix==='compra'){
@@ -1402,11 +1405,11 @@ function liveCalc(){
   const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
   const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
   const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
-  const tnv=Np('f-tnv'),uni=N('f-uni');
+  const tnv=NpTN('f-tnv'),uni=N('f-uni');
   if(tipo==='granel'){
     // Si es en dólares o Sin IVA → ocultar campos c/IVA
-    const hideIva=pcMode==='neto';
-    const hideIvaPv=pvMode==='neto';
+    const hideIva=tcCompra.isDol||pcMode==='neto';
+    const hideIvaPv=tcVenta.isDol||pvMode==='neto';
     const elPcIva=document.getElementById('f-pc-iva');
     const elPvIva=document.getElementById('f-pv-iva');
     if(elPcIva?.closest('.field'))elPcIva.closest('.field').style.display=hideIva?'none':'';
@@ -1445,7 +1448,7 @@ function liveCalc(){
     else{if(tvIvaWrap)tvIvaWrap.style.display='';if(tvIvaEl)tvIvaEl.value=MF(IVA(tv));}
     // USD
     if(tcVenta.isDol){
-      const tnventa=Np('f-tnventa')||tnv;
+      const tnventa=NpTN('f-tnventa')||tnv;
       const el=document.getElementById('f-tv-usd');
       if(el)el.value='USD '+Math.round(pvRaw*tnventa).toLocaleString('es-AR');
     }
@@ -1580,7 +1583,13 @@ function liveCalc(){
     if(reiva){reiva.value=MF(resultadoCiva);reiva.style.color=resultadoCiva>0?'var(--suc)':resultadoCiva<0?'var(--dan)':'var(--t2)';}
     document.getElementById('f-margen-pct').value=costoNetoTotal?margenPct.toFixed(2)+'%':'—';
     // Ocultar columnas c/IVA del card resultado cuando operación en dólares
-  // IVA fields always visible — content controlled by IVA mode selectors
+  if(isDolOp){
+      ['f-costo-compra-iva','f-costo-refin-iva','f-costo-flete-iva','f-costo-com-iva',
+       'f-costo-total-iva','f-ingreso-total-iva','f-resultado-iva'].forEach(id=>{
+        const e=document.getElementById(id);if(!e)return;
+        const w=e.closest('.field');if(w)w.style.display='none';e.value='';
+      });
+    }
   }
   const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
   const showS=resultadoNeto!==0&&(dolar.mayorista||dolar.blue);
@@ -1615,7 +1624,7 @@ function saveOp(){
   const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
   const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
   const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
-  const tnv=Np('f-tnv'),uni=N('f-uni'),tnventa=Np('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
+  const tnv=NpTN('f-tnv'),uni=N('f-uni'),tnventa=NpTN('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
   const tc=pc*base,tv=pv*basev;
   const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
   const refC=Np('f-ref-costo');
