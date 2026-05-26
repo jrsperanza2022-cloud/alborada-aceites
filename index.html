@@ -1564,8 +1564,10 @@ function liveCalc(){
       // Resultado en pesos = resultadoNeto (ya calculado al TC de la operación)
       const elPesos=document.getElementById('f-resultado-usd-pesos');
       if(elPesos){
-        elPesos.value=MF(resultadoNeto);
-        elPesos.style.color=resultadoNeto>=0?'var(--suc)':'var(--dan)';
+        // Resultado en pesos = resultado en USD * TC operacion
+        const resPesos=Math.round(resUsd*tcResUsd);
+        elPesos.value=MF(resPesos);
+        elPesos.style.color=resPesos>=0?'var(--suc)':'var(--dan)';
       }
       // Ocultar scenario box (usa cotización actual, no la de la op)
       document.getElementById('scenario-box').style.display='none';
