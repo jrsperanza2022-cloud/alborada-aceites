@@ -1427,7 +1427,14 @@ function liveCalc(){
     if(N('f-pve'))document.getElementById('f-pve-iva').value=MF(IVA(N('f-pve')));
   }
   const base=tipo==='granel'?tnv:uni;
-  const tc=pc*base,tv=pv*base;
+  const basev=tipo==='granel'?(NpTN('f-tnventa')||tnv):uni;
+  const tc=pc*base,tv=pv*basev;
+  // Debug: show calculation values in console
+  if(window._dbg){console.log('liveCalc',{tipo,pcRaw,pvRaw,tcCompra,tcVenta,pc,pv,tnv,base,tc,tv});}
+  if(!tc&&pcRaw&&tnv){
+    const dbg=`tc=0: pcRaw=${pcRaw}, tcCompra=${JSON.stringify(tcCompra)}, tnv=${tnv}, pc=${pc}, base=${base}`;
+    document.getElementById('f-tc').value=dbg.slice(0,40);
+  }
   if(tc){
     document.getElementById('f-tc').value=MF(tc);
     const tcIvaEl=document.getElementById('f-tc-iva');
