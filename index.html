@@ -353,7 +353,10 @@ tr:hover td{background:var(--prl);}
         <div class="field"><label>Unidades</label><input type="number" id="f-uni" oninput="liveCalc()"></div>
         <div class="field"><label>Pallets</label><input type="number" id="f-plt"></div>
       </div>
-      <div class="g4" style="margin-top:10px">
+      <div style="display:flex;justify-content:flex-end;margin:8px 0 4px">
+        <button class="btn bp" onclick="liveCalc()" style="font-size:11px;padding:5px 14px"><i class="ti ti-refresh"></i> Recalcular totales</button>
+      </div>
+      <div class="g4" style="margin-top:4px">
         <div class="field"><label>P. costo neto ($)</label><input type="number" id="f-pcos" oninput="liveCalc()"></div>
         <div class="field"><label>P. costo c/IVA ($)</label><input type="text" id="f-pcos-iva" readonly></div>
         <div class="field"><label>P. venta neto ($)</label><input type="number" id="f-pve" oninput="liveCalc()"></div>
@@ -1205,7 +1208,7 @@ function T(name){
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  const r={dash:renderDash,planilla:renderPlanilla,provs:renderProvs,gastos:renderGastos,echeq:()=>{renderEcheqs();fillOpFilter();}};
+  const r={dash:renderDash,op:()=>setTimeout(liveCalc,50),planilla:renderPlanilla,provs:renderProvs,gastos:renderGastos,echeq:()=>{renderEcheqs();fillOpFilter();}};
   if(r[name])r[name]();
 }
 async function fetchDolar(){
@@ -1393,160 +1396,142 @@ function calcGastoIVA(){
 }
 function liveCalc(){
   const tipo=V('f-tipo');
-  // TC por sección independiente
-  const tcCompra=getTCVal('compra');
-  const tcVenta=getTCVal('venta');
-  const isDolOp=tcCompra.isDol||tcVenta.isDol;
+  // ── Tipo de cambio por sección ──
+  const tcC=getTCVal('compra');   // {isDol, tc}
+  const tcV=getTCVal('venta');
+  // IMMEDIATE DEBUG - show in field
+  const _dbgEl=document.getElementById('f-tc');
+  if(_dbgEl)_dbgEl.value='tc:'+tcC.isDol+'/'+tcC.tc+' tnv:'+NpTN('f-tnv')+' pc:'+Np('f-pc');
+  // ── Precios raw (en la moneda ingresada) ──
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
+  // ── Modo IVA ──
   const pcMode=document.getElementById('f-pc-iva-mode')?.value||'neto';
   const pvMode=document.getElementById('f-pv-iva-mode')?.value||'neto';
-  const pcPesos=tcCompra.isDol?Math.round(pcRaw*tcCompra.tc*100)/100:pcRaw;
-  const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
-  const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
-  const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
-  const tnv=NpTN('f-tnv'),uni=N('f-uni');
+  // ── Convertir a pesos usando TC de la sección ──
+  const pcPesos=tcC.isDol?pcRaw*tcC.tc:pcRaw;
+  const pvPesos=tcV.isDol?pvRaw*tcV.tc:pvRaw;
+  // ── Precio neto en pesos (sin IVA) ──
+  const pc=pcMode==='civa'?pcPesos/1.21:pcPesos;
+  const pv=pvMode==='civa'?pvPesos/1.21:pvPesos;
+  // ── Toneladas ──
+  const tnv=NpTN('f-tnv');
+  const tnventa=NpTN('f-tnventa')||tnv;
+  const uni=N('f-uni');
+  const base=tipo==='granel'?tnv:uni;
+  const basev=tipo==='granel'?tnventa:uni;
+  // ── Totales en pesos ──
+  const tc=Math.round(pc*base);
+  const tv=Math.round(pv*basev);
+  // ── Mostrar precios c/IVA (solo si pesos y Con IVA) ──
   if(tipo==='granel'){
-    // Si es en dólares o Sin IVA → ocultar campos c/IVA
-    const hideIva=tcCompra.isDol||pcMode==='neto';
-    const hideIvaPv=tcVenta.isDol||pvMode==='neto';
-    const elPcIva=document.getElementById('f-pc-iva');
-    const elPvIva=document.getElementById('f-pv-iva');
-    if(elPcIva?.closest('.field'))elPcIva.closest('.field').style.display=hideIva?'none':'';
-    if(elPvIva?.closest('.field'))elPvIva.closest('.field').style.display=hideIvaPv?'none':'';
-    if(!hideIva&&pcRaw&&elPcIva){
-      elPcIva.value=pcMode==='civa'?MF(pcPesos):MF(IVA(pcPesos));
-      const l=document.getElementById('lbl-pc-iva');if(l)l.textContent=pcMode==='civa'?'P. compra neto ($/tn)':'P. compra c/IVA ($/tn)';
-    }
-    if(!hideIvaPv&&pvRaw&&elPvIva){
-      elPvIva.value=pvMode==='civa'?MF(pvPesos):MF(IVA(pvPesos));
-      const l=document.getElementById('lbl-pv-iva');if(l)l.textContent=pvMode==='civa'?'P. venta neto ($/tn)':'P. venta c/IVA ($/tn)';
-    }
-  }else{
+    const showIvaC=!tcC.isDol&&pcMode==='civa';
+    const showIvaV=!tcV.isDol&&pvMode==='civa';
+    const fPcIva=document.getElementById('f-pc-iva');
+    const fPvIva=document.getElementById('f-pv-iva');
+    if(fPcIva){fPcIva.closest('.field').style.display=showIvaC?'':'none';}
+    if(fPvIva){fPvIva.closest('.field').style.display=showIvaV?'':'none';}
+    if(showIvaC&&fPcIva)fPcIva.value=MF(pcPesos);
+    if(showIvaV&&fPvIva)fPvIva.value=MF(pvPesos);
+  } else {
     if(N('f-pcos'))document.getElementById('f-pcos-iva').value=MF(IVA(N('f-pcos')));
     if(N('f-pve'))document.getElementById('f-pve-iva').value=MF(IVA(N('f-pve')));
   }
-  const base=tipo==='granel'?tnv:uni;
-  const basev=tipo==='granel'?(NpTN('f-tnventa')||tnv):uni;
-  const tc=pc*base,tv=pv*basev;
-  // Debug: show calculation values in console
-  if(window._dbg){console.log('liveCalc',{tipo,pcRaw,pvRaw,tcCompra,tcVenta,pc,pv,tnv,base,tc,tv});}
-  if(!tc&&pcRaw&&tnv){
-    const dbg=`tc=0: pcRaw=${pcRaw}, tcCompra=${JSON.stringify(tcCompra)}, tnv=${tnv}, pc=${pc}, base=${base}`;
-    document.getElementById('f-tc').value=dbg.slice(0,40);
+  // ── Mostrar totales ──
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v?MF(v):'';}
+  set('f-tc', tc);
+  set('f-tv', tv);
+  // IVA totales solo si pesos
+  const showTcIva=!tcC.isDol&&pcMode==='civa';
+  const showTvIva=!tcV.isDol&&pvMode==='civa';
+  const tcIvaWrap=document.getElementById('f-tc-iva')?.closest('.field');
+  const tvIvaWrap=document.getElementById('f-tv-iva')?.closest('.field');
+  if(tcIvaWrap)tcIvaWrap.style.display=showTcIva?'':'none';
+  if(tvIvaWrap)tvIvaWrap.style.display=showTvIva?'':'none';
+  if(showTcIva)set('f-tc-iva', IVA(tc));
+  if(showTvIva)set('f-tv-iva', IVA(tv));
+  // ── Totales en USD ──
+  if(tcC.isDol&&tc){
+    const el=document.getElementById('f-tc-usd');
+    const wr=document.getElementById('f-tc-usd-wrap');
+    if(wr)wr.style.display='';
+    if(el)el.value='USD '+Math.round(pcRaw*base).toLocaleString('es-AR');
   }
-  if(tc){
-    document.getElementById('f-tc').value=MF(tc);
-    const tcIvaEl=document.getElementById('f-tc-iva');
-    const tcIvaWrap=tcIvaEl?.closest('.field');
-    if(pcMode==='neto'){if(tcIvaEl)tcIvaEl.value='';if(tcIvaWrap)tcIvaWrap.style.display='none';}
-    else{if(tcIvaWrap)tcIvaWrap.style.display='';if(tcIvaEl)tcIvaEl.value=MF(IVA(tc));}
-    // USD
-    if(tcCompra.isDol){
-      const el=document.getElementById('f-tc-usd');
-      if(el)el.value='USD '+Math.round(pcRaw*tnv).toLocaleString('es-AR');
-    }
+  if(tcV.isDol&&tv){
+    const el=document.getElementById('f-tv-usd');
+    const wr=document.getElementById('f-tv-usd-wrap');
+    if(wr)wr.style.display='';
+    if(el)el.value='USD '+Math.round(pvRaw*basev).toLocaleString('es-AR');
   }
-  if(tv){
-    document.getElementById('f-tv').value=MF(tv);
-    const tvIvaEl=document.getElementById('f-tv-iva');
-    const tvIvaWrap=tvIvaEl?.closest('.field');
-    if(pvMode==='neto'){if(tvIvaEl)tvIvaEl.value='';if(tvIvaWrap)tvIvaWrap.style.display='none';}
-    else{if(tvIvaWrap)tvIvaWrap.style.display='';if(tvIvaEl)tvIvaEl.value=MF(IVA(tv));}
-    // USD
-    if(tcVenta.isDol){
-      const tnventa=NpTN('f-tnventa')||tnv;
-      const el=document.getElementById('f-tv-usd');
-      if(el)el.value='USD '+Math.round(pvRaw*tnventa).toLocaleString('es-AR');
-    }
-    calcSaldo('prov');calcSaldo('comp');
-  }
-  const comPct=N('f-com-pct');
-  if(comPct&&tv){
-    const cm=tv*comPct/100;
-    document.getElementById('f-com-monto').value=MF(cm);
-    document.getElementById('f-com-iva').value=MF(IVA(cm));
-  }
-  // refC-civa display uses raw input value (before TC conversion)
-  const refCdisplay=Np('f-ref-costo');
-  if(refCdisplay){document.getElementById('f-ref-civa').value=MF(IVA(refCdisplay));calcSaldo('ref');}
-  const tn1=Np('f-tn1'),tn2=Np('f-tn2'),tn3=Np('f-tn3'),tn4=Np('f-tn4');
-  const d1=tn1&&tn2?tn2-tn1:null,d2=tn3&&tn4?tn4-tn3:null;
-  if(d1!==null)document.getElementById('f-dif1').value=DS(d1)+' ('+(Math.abs(d1)/(tn1||1)*100).toFixed(3)+'%)';
-  if(d2!==null)document.getElementById('f-dif2').value=DS(d2)+' ('+(Math.abs(d2)/(tn3||1)*100).toFixed(3)+'%)';
-  // Diferencia proceso refinado: crudo entrado (tn2) vs refinado salido (tn3)
-  if(tn2&&tn3){
-    const dProc=tn3-tn2;
-    const rendPct=(tn3/tn2*100).toFixed(3);
-    const el=document.getElementById('f-dif-proceso');
-    if(el){el.value=DS(dProc)+' tn ('+Math.abs(dProc/tn2*100).toFixed(3)+'%)';el.style.color=dProc>=0?'var(--suc)':'var(--dan)';}
-    const re=document.getElementById('f-rend-refin');
-    if(re){re.value=rendPct+'%';re.style.color=parseFloat(rendPct)>=99?'var(--suc)':'var(--warn)';}
-  }
-  // Diferencia total: carga origen (tn1) vs entrega final (tn4)
-  if(tn1&&tn4){
-    const dTot=tn4-tn1;
-    const mermaPct=(Math.abs(dTot)/tn1*100).toFixed(3);
-    const et=document.getElementById('f-dif-total');
-    if(et){et.value=DS(dTot)+' tn ('+mermaPct+'%)';et.style.color=dTot>=0?'var(--suc)':'var(--dan)';}
-    const em=document.getElementById('f-merma-total');
-    if(em){em.value=mermaPct+'%';em.style.color=parseFloat(mermaPct)<=0.5?'var(--suc)':'var(--warn)';}
-  }
-  const hasFlow=tn1||tn2||tn3||tn4;
-  document.getElementById('tn-flow-box').style.display=hasFlow?'block':'none';
-  if(hasFlow){
-    [{id:'fnv1',v:tn1},{id:'fnv2',v:tn2},{id:'fnv3',v:tn3},{id:'fnv4',v:tn4}].forEach((x,i)=>{
-      document.getElementById(x.id).textContent=x.v?x.v.toLocaleString('es-AR',{maximumFractionDigits:3})+' tn':'—';
-      const node=document.getElementById('fn'+(i+1));if(node)node.classList.toggle('filled',!!x.v);
+  // ── Actualizar dólar fields ──
+  if(dolar.divisa){
+    ['f-dv1','f-dv2','f-prov-tc-val','f-comp-tc-val','f-ref-tc-val'].forEach(id=>{
+      const e=document.getElementById(id);if(e&&!e.value){e.value=dolar.divisa.toLocaleString('es-AR');if(typeof fmtNum==='function')fmtNum(e);}
     });
-    if(d1!==null){const e=document.getElementById('fnd1');e.textContent=DS(d1);e.style.color=DC(d1);}
-    if(d2!==null){const e=document.getElementById('fnd3');e.textContent=DS(d2);e.style.color=DC(d2);}
-    const cF=tn2||tn1,rE=tn4||tn3;
-    document.getElementById('bal-box').innerHTML=`
-      <div><div style="font-size:9px;color:var(--t2)">Crudo a refinería</div><div style="font-weight:800;color:var(--pri)">${Tn(cF)}</div></div>
-      <div><div style="font-size:9px;color:var(--t2)">Refinado entregado</div><div style="font-weight:800;color:var(--suc)">${Tn(rE)}</div></div>
-      <div><div style="font-size:9px;color:var(--t2)">Tn vendidas</div><div style="font-weight:800;color:var(--acc)">${Tn(tnv||rE)}</div></div>
-      <div><div style="font-size:9px;color:var(--t2)">Dif.entregado/vendido</div><div style="font-weight:800;color:${DC((tnv||rE)-rE)}">${tnv&&rE?DS(tnv-rE):'—'}</div></div>`;
   }
-  const tcTransp=getTCVal('transp');
-  const tcRef=getTCVal('ref');
-  const tcCom=getTCVal('com');
-  const f1raw=Np('f-flete1'),f2raw=Np('f-flete2');
-  const f1=tcTransp.isDol?Math.round(f1raw*tcTransp.tc):f1raw;
-  const f2=tcTransp.isDol?Math.round(f2raw*tcTransp.tc):f2raw;
-  const flete=f1+f2;
-  const fleteIva=IVA(f1)+IVA(f2);
-  const refCraw=Np('f-ref-costo');
-  const refC=tcRef.isDol?Math.round(refCraw*tcRef.tc):refCraw;
+  // ── Diferencias de toneladas ──
+  const tn1=NpTN('f-tn1'),tn2=NpTN('f-tn2'),tn3=NpTN('f-tn3'),tn4=NpTN('f-tn4');
+  const DS=d=>(d>=0?'+':'')+d.toFixed(3)+' tn';
+  if(tn1&&tn2){const d=tn2-tn1;document.getElementById('f-dif1').value=DS(d)+' ('+(Math.abs(d)/tn1*100).toFixed(3)+'%)';}
+  if(tn3&&tn4){const d=tn4-tn3;document.getElementById('f-dif2').value=DS(d)+' ('+(Math.abs(d)/tn3*100).toFixed(3)+'%)';}
+  if(tn2&&tn3){
+    const dP=tn3-tn2;
+    const eP=document.getElementById('f-dif-proceso');
+    const eR=document.getElementById('f-rend-refin');
+    if(eP){eP.value=DS(dP)+' ('+(Math.abs(dP)/tn2*100).toFixed(3)+'%)';eP.style.color=dP>=0?'var(--suc)':'var(--dan)';}
+    if(eR){const r=(tn3/tn2*100).toFixed(3);eR.value=r+'%';eR.style.color=parseFloat(r)>=99?'var(--suc)':'var(--warn)';}
+  }
+  if(tn1&&tn4){
+    const dT=tn4-tn1;
+    const eT=document.getElementById('f-dif-total');
+    const eM=document.getElementById('f-merma-total');
+    if(eT){eT.value=DS(dT)+' ('+(Math.abs(dT)/tn1*100).toFixed(3)+'%)';eT.style.color=dT>=0?'var(--suc)':'var(--dan)';}
+    if(eM){const m=(Math.abs(dT)/tn1*100).toFixed(3);eM.value=m+'%';eM.style.color=parseFloat(m)<=0.5?'var(--suc)':'var(--warn)';}
+  }
+  // ── Ref civa ──
+  const refCdisplay=Np('f-ref-costo');
+  if(refCdisplay){const e=document.getElementById('f-ref-civa');if(e)e.value=MF(IVA(refCdisplay));calcSaldo('ref');}
+  // ── Flete IVA ──
+  const f1=Np('f-flete1'),f2=Np('f-flete2'),flete=f1+f2,fleteIva=IVA(f1)+IVA(f2);
   if(f1){const e=document.getElementById('f-flete1-iva');if(e)e.value=MF(IVA(f1));}
   if(f2){const e=document.getElementById('f-flete2-iva');if(e)e.value=MF(IVA(f2));}
   if(flete){
     const et=document.getElementById('f-flete-total');if(et)et.value=MF(flete);
     const eti=document.getElementById('f-flete-total-iva');if(eti)eti.value=MF(fleteIva);
   }
+  // ── Comisión ──
+  const comPct=parseFloat(V('f-com-pct'))||0;
   const comMonto=tv>0&&comPct?tv*comPct/100:0;
-  // ── Costos netos (sin IVA) ──
-  const costoCompra=tc;             // precio crudo neto × tn proveedor
-  const costoRefin=refC||0;         // servicio refinado neto
-  const costoFlete=flete;           // flete (sin IVA, es gasto operativo)
-  const costoComision=comMonto;     // comisión neta
+  if(comMonto){
+    const e=document.getElementById('f-com-calc');if(e)e.value=MF(comMonto);
+    const e2=document.getElementById('f-com-calc-iva');if(e2)e2.value=MF(IVA(comMonto));
+  }
+  // ── TC sección ref/transp/com ──
+  const tcRef=getTCVal('ref');
+  const tcTransp=getTCVal('transp');
+  const refCraw=Np('f-ref-costo');
+  const refC=tcRef.isDol?refCraw*tcRef.tc:refCraw;
+  const f1p=tcTransp.isDol?f1*tcTransp.tc:f1;
+  const f2p=tcTransp.isDol?f2*tcTransp.tc:f2;
+  const fleteP=f1p+f2p;
+  const costoCompra=tc;
+  const costoRefin=refC;
+  const costoFlete=fleteP;
+  const costoComision=comMonto;
   const costoNetoTotal=costoCompra+costoRefin+costoFlete+costoComision;
-  // ── Costos con IVA ──
-  const costoIvaTotal=IVA(costoCompra)+IVA(costoRefin)+costoFlete+IVA(costoComision);
-  // ── Resultado ──
-  const resultadoNeto=tv-costoNetoTotal;      // venta neta − costos netos
-  const resultadoCiva=IVA(tv)-costoIvaTotal;  // venta c/IVA − costos c/IVA
+  const costoIvaTotal=IVA(costoCompra)+IVA(costoRefin)+IVA(f1p)+IVA(f2p)+IVA(costoComision);
+  const resultadoNeto=tv-costoNetoTotal;
+  const resultadoCiva=IVA(tv)-costoIvaTotal;
   const margenPct=costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0;
-  // ── Mostrar desglose ──
+  // ── Mostrar resultado ──
   const setCosto=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--dan)';}};
   const setIngreso=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--suc)';}};
-  // [USD result moved below]
   setCosto('f-costo-compra')(costoCompra);
   setCosto('f-costo-compra-iva')(IVA(costoCompra));
   setCosto('f-costo-refin')(costoRefin);
   setCosto('f-costo-refin-iva')(IVA(costoRefin));
   setCosto('f-costo-flete')(costoFlete);
-  setCosto('f-costo-flete-iva')(typeof fleteIva!=='undefined'?fleteIva:IVA(costoFlete));
+  setCosto('f-costo-flete-iva')(IVA(costoFlete));
   setCosto('f-costo-com')(costoComision);
   setCosto('f-costo-com-iva')(IVA(costoComision));
   setCosto('f-costo-total')(costoNetoTotal);
@@ -1556,65 +1541,41 @@ function liveCalc(){
   if(costoNetoTotal||tv){
     const re=document.getElementById('f-resultado');
     const reiva=document.getElementById('f-resultado-iva');
-    // USD result block
+    if(re){re.value=MF(resultadoNeto);re.style.color=resultadoNeto>0?'var(--suc)':resultadoNeto<0?'var(--dan)':'var(--t2)';}
+    if(reiva){reiva.value=MF(resultadoCiva);reiva.style.color=resultadoCiva>0?'var(--suc)':resultadoCiva<0?'var(--dan)':'var(--t2)';}
+    document.getElementById('f-margen-pct').value=costoNetoTotal?margenPct.toFixed(2)+'%':'—';
+    // Resultado en USD
+    const tcResUsd=tcV.isDol?tcV.tc:(tcC.isDol?tcC.tc:0);
     const usdWrap=document.getElementById('f-resultado-usd-wrap');
     const usdPesosWrap=document.getElementById('f-resultado-usd-pesos-wrap');
-    // TC de la operación: usar el de venta o compra (el que esté en dólares)
-    const tcResUsd=tcVenta.isDol?tcVenta.tc:(tcCompra.isDol?tcCompra.tc:0);
     if(tcResUsd>0){
       if(usdWrap)usdWrap.style.display='';
       if(usdPesosWrap)usdPesosWrap.style.display='';
-      // Resultado en USD = pesos / TC operación
       const resUsd=Math.round(resultadoNeto/tcResUsd*100)/100;
       const elUsd=document.getElementById('f-resultado-usd');
-      if(elUsd){
-        elUsd.value='USD '+resUsd.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
-        elUsd.style.color=resUsd>=0?'var(--suc)':'var(--dan)';
-      }
-      // Resultado en pesos = resultadoNeto (ya calculado al TC de la operación)
+      if(elUsd){elUsd.value='USD '+resUsd.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});elUsd.style.color=resUsd>=0?'var(--suc)':'var(--dan)';}
       const elPesos=document.getElementById('f-resultado-usd-pesos');
-      if(elPesos){
-        // Resultado en pesos = resultado en USD * TC operacion
-        const resPesos=Math.round(resUsd*tcResUsd);
-        elPesos.value=MF(resPesos);
-        elPesos.style.color=resPesos>=0?'var(--suc)':'var(--dan)';
-      }
-      // Ocultar scenario box (usa cotización actual, no la de la op)
-      document.getElementById('scenario-box').style.display='none';
+      if(elPesos){const resPesos=Math.round(resUsd*tcResUsd);elPesos.value=MF(resPesos);elPesos.style.color=resPesos>=0?'var(--suc)':'var(--dan)';}
     } else {
       if(usdWrap)usdWrap.style.display='none';
       if(usdPesosWrap)usdPesosWrap.style.display='none';
     }
-    re.value=MF(resultadoNeto);
-    re.style.color=resultadoNeto>0?'var(--suc)':resultadoNeto<0?'var(--dan)':'var(--t2)';
-    if(reiva){reiva.value=MF(resultadoCiva);reiva.style.color=resultadoCiva>0?'var(--suc)':resultadoCiva<0?'var(--dan)':'var(--t2)';}
-    document.getElementById('f-margen-pct').value=costoNetoTotal?margenPct.toFixed(2)+'%':'—';
-    // Ocultar columnas c/IVA del card resultado cuando operación en dólares
-  if(isDolOp){
-      ['f-costo-compra-iva','f-costo-refin-iva','f-costo-flete-iva','f-costo-com-iva',
-       'f-costo-total-iva','f-ingreso-total-iva','f-resultado-iva'].forEach(id=>{
-        const e=document.getElementById(id);if(!e)return;
-        const w=e.closest('.field');if(w)w.style.display='none';e.value='';
-      });
+    // Escenarios
+    const dv1=NpTC('f-dv1'),baseR=dv1||dolar.divisa||1;
+    const showS=!tcResUsd&&resultadoNeto!==0&&(dolar.mayorista||dolar.blue);
+    document.getElementById('scenario-box').style.display=showS?'grid':'none';
+    if(showS){
+      const scens=[
+        {name:'Dólar Divisa',val:dolar.divisa||baseR,r:resultadoNeto},
+        {name:'Dólar Mayorista',val:dolar.mayorista,r:dolar.mayorista?resultadoNeto*(dolar.mayorista/baseR):0},
+        {name:'Dólar Blue',val:dolar.blue,r:dolar.blue?resultadoNeto*(dolar.blue/baseR):0}
+      ];
+      document.getElementById('scenario-box').innerHTML=scens.filter(s=>s.val).map(s=>`<div class="sc ${s.r>=0?'sc-g':'sc-r'}"><div class="lbl">${s.name} ($${Math.round(s.val).toLocaleString('es-AR')})</div><div class="val">${MF(Math.abs(s.r))}</div><div class="sub">${s.r>=0?'✓ Ganancia':'✗ Pérdida'}</div></div>`).join('');
     }
   }
-  const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
-  const showS=resultadoNeto!==0&&(dolar.mayorista||dolar.blue);
-  document.getElementById('scenario-box').style.display=showS?'grid':'none';
-  if(showS){
-    const scens=[
-      {name:'Dólar Divisa',val:dolar.divisa||baseR,r:resultadoNeto},
-      {name:'Dólar Mayorista',val:dolar.mayorista,r:dolar.mayorista?resultadoNeto*(dolar.mayorista/baseR):0},
-      {name:'Dólar Blue',val:dolar.blue,r:dolar.blue?resultadoNeto*(dolar.blue/baseR):0}
-    ];
-    document.getElementById('scenario-box').innerHTML=scens.map(s=>{
-      const cls=s.r>100?'win':s.r<-100?'lose':'neutral';
-      return`<div class="scen ${cls}"><div class="sn">${s.name}${s.val?' ('+MF(s.val)+')':''}</div>
-        <div class="sv">${s.r?MF(Math.abs(s.r)):'—'}</div>
-        <div class="ss">${s.r>100?'✓ Ganancia':s.r<-100?'✗ Pérdida':'—'}</div></div>`;
-    }).join('');
-  }
+  calcSaldo('prov');calcSaldo('comp');
 }
+
 function saveOp(){
   const prov=V('f-prov'),fop=V('f-fop');
   const tipo=V('f-tipo'),prod=tipo==='granel'?V('f-acg'):V('f-ace');
