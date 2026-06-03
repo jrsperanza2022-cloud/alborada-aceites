@@ -8,6 +8,7 @@
 <style>
 :root{
   --pri:#1e4d8c;--prd:#163d70;--prl:#e8f0fb;--prb:#c5d8f5;
+  --brd:var(--bor);--sec:var(--acc);--t1:var(--text);--warn:var(--war);
   --acc:#e67e22;--acl:#fef3e2;--acb:#f5c07a;
   --suc:#27ae60;--sul:#e8f8ef;--sub:#a0d8b4;
   --war:#f39c12;--wal:#fffbea;--wab:#f5d98a;
@@ -1399,9 +1400,6 @@ function liveCalc(){
   // ── Tipo de cambio por sección ──
   const tcC=getTCVal('compra');   // {isDol, tc}
   const tcV=getTCVal('venta');
-  // IMMEDIATE DEBUG - show in field
-  const _dbgEl=document.getElementById('f-tc');
-  if(_dbgEl)_dbgEl.value='tc:'+tcC.isDol+'/'+tcC.tc+' tnv:'+NpTN('f-tnv')+' pc:'+Np('f-pc');
   // ── Precios raw (en la moneda ingresada) ──
   const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
   const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
