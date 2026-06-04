@@ -1436,7 +1436,7 @@ function liveCalc(){
     if(N('f-pve'))document.getElementById('f-pve-iva').value=MF(IVA(N('f-pve')));
   }
   // ── Mostrar totales ──
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v?MF(v):'';}
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=(v||v===0)?MF(v):'';}
   set('f-tc', tc);
   set('f-tv', tv);
   // IVA totales solo si pesos
@@ -1449,13 +1449,13 @@ function liveCalc(){
   if(showTcIva)set('f-tc-iva', IVA(tc));
   if(showTvIva)set('f-tv-iva', IVA(tv));
   // ── Totales en USD ──
-  if(tcC.isDol&&tc){
+  if(tcC.isDol&&pcRaw){
     const el=document.getElementById('f-tc-usd');
     const wr=document.getElementById('f-tc-usd-wrap');
     if(wr)wr.style.display='';
     if(el)el.value='USD '+Math.round(pcRaw*base).toLocaleString('es-AR');
   }
-  if(tcV.isDol&&tv){
+  if(tcV.isDol&&pvRaw){
     const el=document.getElementById('f-tv-usd');
     const wr=document.getElementById('f-tv-usd-wrap');
     if(wr)wr.style.display='';
@@ -1536,7 +1536,7 @@ function liveCalc(){
   setCosto('f-costo-total-iva')(costoIvaTotal);
   setIngreso('f-ingreso-total')(tv);
   setIngreso('f-ingreso-total-iva')(IVA(tv));
-  if(costoNetoTotal||tv){
+  if(costoNetoTotal||tv||tc||resultadoNeto){
     const re=document.getElementById('f-resultado');
     const reiva=document.getElementById('f-resultado-iva');
     if(re){re.value=MF(resultadoNeto);re.style.color=resultadoNeto>0?'var(--suc)':resultadoNeto<0?'var(--dan)':'var(--t2)';}
