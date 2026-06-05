@@ -956,18 +956,23 @@ const NpV=v=>{
   else{s=s.replace(/\./g,'');}
   return parseFloat(s)||0;
 };
-const NpTC=v=>{
-  if(!v&&v!==0)return 0;
-  let s=(v+'').trim().replace(/\s/g,'');
-  // For TC values: comma = decimal, point = decimal (both treated as decimal separator)
-  // Never has thousands separators since values are 1000-2000
-  if(s.includes(','))s=s.replace(',','.');
+const NpTC=id=>{
+  const e=document.getElementById(id);
+  if(!e)return 0;
+  let s=(e.value+'').trim().replace(/\s/g,'');
+  // TC values are 1000-2000 range: point = thousands sep, comma = decimal
+  // e.g. "1.393" = 1393, "1.393,50" = 1393.50
+  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
+  // else: "1393" or "1.393" — strip dots (thousands)
+  else{s=s.replace(/\./g,'');}
   return parseFloat(s)||0;
 };
-const NpTN=v=>{
-  if(!v&&v!==0)return 0;
-  let s=(v+'').trim();
-  if(s.includes(','))s=s.replace(',','.');
+const NpTN=id=>{
+  const e=document.getElementById(id);
+  if(!e)return 0;
+  let s=(e.value+'').trim().replace(/\s+/g,'');
+  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
+  else{s=s.replace(/\./g,'');}
   return parseFloat(s)||0;
 };
 const V=id=>document.getElementById(id)?.value||'';
@@ -1213,26 +1218,55 @@ function T(name){
   if(r[name])r[name]();
 }
 async function fetchDolar(){
+  const ENDPOINTS=[
+    'https://dolarapi.com/v1/dolares',
+    'https://api.bluelytics.com.ar/v2/latest',
+  ];
+  const avg=(x)=>x?(Math.round(((x.compra||0)+(x.venta||0))/2*100)/100):0;
+  // Intento 1: dolarapi.com
   try{
-    const r=await fetch('https://dolarapi.com/v1/dolares');
+    const r=await fetch(ENDPOINTS[0]);
+    if(!r.ok)throw new Error('status '+r.status);
     const arr=await r.json();
     const of=arr.find(x=>x.casa==='oficial');
     const my=arr.find(x=>x.casa==='mayorista');
     const bl=arr.find(x=>x.casa==='blue');
-    // Usar promedio entre compra y venta para mayor precisión
-    const avg=(x)=>x?(Math.round(((x.compra||0)+(x.venta||0))/2*100)/100):0;
     if(of)dolar.divisa=avg(of);
     if(my)dolar.mayorista=avg(my);
     if(bl)dolar.blue=avg(bl);
     cfg.dolarDiv=dolar.divisa;cfg.dolarMay=dolar.mayorista;cfg.dolarBlue=dolar.blue;
-    const now=new Date();
-    const ts=now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
     save();updateWidget();
+    const ts=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
     toast('✓ Cotización actualizada — '+ts);
-  }catch(e){
-    dolar.divisa=cfg.dolarDiv||0;dolar.mayorista=cfg.dolarMay||0;dolar.blue=cfg.dolarBlue||0;
-    updateWidget();
-    toast('⚠ Sin conexión — usando última cotización','err');
+    return;
+  }catch(e1){}
+  // Intento 2: bluelytics
+  try{
+    const r=await fetch(ENDPOINTS[1]);
+    if(!r.ok)throw new Error('status '+r.status);
+    const d=await r.json();
+    if(d.oficial)dolar.divisa=avg({compra:d.oficial.value_buy,venta:d.oficial.value_sell});
+    if(d.oficial_euro){}
+    if(d.blue)dolar.blue=avg({compra:d.blue.value_buy,venta:d.blue.value_sell});
+    if(dolar.divisa)dolar.mayorista=dolar.mayorista||dolar.divisa;
+    cfg.dolarDiv=dolar.divisa;cfg.dolarMay=dolar.mayorista;cfg.dolarBlue=dolar.blue;
+    save();updateWidget();
+    const ts=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    toast('✓ Cotización actualizada (alt) — '+ts);
+    return;
+  }catch(e2){}
+  // Fallback: usar guardado o pedir manual
+  dolar.divisa=cfg.dolarDiv||0;dolar.mayorista=cfg.dolarMay||0;dolar.blue=cfg.dolarBlue||0;
+  updateWidget();
+  if(!dolar.divisa){
+    toast('⚠ Sin conexión — ingresá las cotizaciones en Config.','err');
+    // Resaltar campos en Config
+    ['cfg-div','cfg-may','cfg-blue'].forEach(id=>{
+      const e=document.getElementById(id);
+      if(e&&!e.value){e.style.borderColor='var(--dan)';e.style.boxShadow='0 0 0 3px rgba(231,76,60,.25)';}
+    });
+  } else {
+    toast('⚠ Sin conexión — usando última cotización guardada','err');
   }
 }
 function updateWidget(){
@@ -1248,6 +1282,7 @@ function updateWidget(){
   if(cfg.dolarBlue)document.getElementById('cfg-blue').value=cfg.dolarBlue;
 }
 function saveDolarManual(){
+  ['cfg-div','cfg-may','cfg-blue'].forEach(id=>{const e=document.getElementById(id);if(e){e.style.borderColor='';e.style.boxShadow='';}});
   cfg.dolarDiv=Np('cfg-div')||cfg.dolarDiv;cfg.dolarMay=Np('cfg-may')||cfg.dolarMay;cfg.dolarBlue=Np('cfg-blue')||cfg.dolarBlue;
   dolar.divisa=cfg.dolarDiv;dolar.mayorista=cfg.dolarMay;dolar.blue=cfg.dolarBlue;
   updateWidget();save();
@@ -1409,9 +1444,9 @@ function liveCalc(){
   // ── Convertir a pesos usando TC de la sección ──
   const pcPesos=tcC.isDol?pcRaw*tcC.tc:pcRaw;
   const pvPesos=tcV.isDol?pvRaw*tcV.tc:pvRaw;
-  // ── Precio neto en pesos (sin IVA) ──
-  const pc=pcMode==='civa'?pcPesos/1.21:pcPesos;
-  const pv=pvMode==='civa'?pvPesos/1.21:pvPesos;
+  // ── Precio neto en pesos (sin IVA) — el usuario siempre ingresa el neto ──
+  const pc=pcPesos;
+  const pv=pvPesos;
   // ── Toneladas ──
   const tnv=NpTN('f-tnv');
   const tnventa=NpTN('f-tnventa')||tnv;
@@ -1429,8 +1464,8 @@ function liveCalc(){
     const fPvIva=document.getElementById('f-pv-iva');
     if(fPcIva){fPcIva.closest('.field').style.display=showIvaC?'':'none';}
     if(fPvIva){fPvIva.closest('.field').style.display=showIvaV?'':'none';}
-    if(showIvaC&&fPcIva)fPcIva.value=MF(pcPesos);
-    if(showIvaV&&fPvIva)fPvIva.value=MF(pvPesos);
+    if(showIvaC&&fPcIva)fPcIva.value=MF(Math.round(pcPesos*1.21));
+    if(showIvaV&&fPvIva)fPvIva.value=MF(Math.round(pvPesos*1.21));
   } else {
     if(N('f-pcos'))document.getElementById('f-pcos-iva').value=MF(IVA(N('f-pcos')));
     if(N('f-pve'))document.getElementById('f-pve-iva').value=MF(IVA(N('f-pve')));
@@ -1517,15 +1552,18 @@ function liveCalc(){
   const costoFlete=fleteP;
   const costoComision=comMonto;
   const costoNetoTotal=costoCompra+costoRefin+costoFlete+costoComision;
-  const costoIvaTotal=IVA(costoCompra)+IVA(costoRefin)+IVA(f1p)+IVA(f2p)+IVA(costoComision);
+  // IVA solo aplica si la moneda es pesos y el modo IVA está activo
+  const ivaC=(!tcC.isDol&&pcMode==='civa')?IVA(costoCompra):costoCompra;
+  const ivaV=(!tcV.isDol&&pvMode==='civa')?IVA(tv):tv;
+  const costoIvaTotal=ivaC+IVA(costoRefin)+IVA(f1p)+IVA(f2p)+IVA(costoComision);
   const resultadoNeto=tv-costoNetoTotal;
-  const resultadoCiva=IVA(tv)-costoIvaTotal;
+  const resultadoCiva=ivaV-costoIvaTotal;
   const margenPct=costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0;
   // ── Mostrar resultado ──
   const setCosto=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--dan)';}};
   const setIngreso=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--suc)';}};
   setCosto('f-costo-compra')(costoCompra);
-  setCosto('f-costo-compra-iva')(IVA(costoCompra));
+  setCosto('f-costo-compra-iva')(!tcC.isDol&&pcMode==='civa'?IVA(costoCompra):costoCompra);
   setCosto('f-costo-refin')(costoRefin);
   setCosto('f-costo-refin-iva')(IVA(costoRefin));
   setCosto('f-costo-flete')(costoFlete);
@@ -1535,7 +1573,17 @@ function liveCalc(){
   setCosto('f-costo-total')(costoNetoTotal);
   setCosto('f-costo-total-iva')(costoIvaTotal);
   setIngreso('f-ingreso-total')(tv);
-  setIngreso('f-ingreso-total-iva')(IVA(tv));
+  setIngreso('f-ingreso-total-iva')(!tcV.isDol&&pvMode==='civa'?IVA(tv):tv);
+  // ── Ocultar columnas c/IVA si ambas operaciones son en USD ──
+  const hayIvaC=!tcC.isDol&&pcMode==='civa';
+  const hayIvaV=!tcV.isDol&&pvMode==='civa';
+  const hayIva=hayIvaC||hayIvaV;
+  ['f-costo-compra-iva','f-costo-refin-iva','f-costo-flete-iva','f-costo-com-iva'].forEach(id=>{
+    const el=document.getElementById(id)?.closest('.field');if(el)el.style.display=hayIva?'':'none';
+  });
+  ['f-ingreso-total-iva','f-resultado-iva','f-costo-total-iva'].forEach(id=>{
+    const el=document.getElementById(id)?.closest('.field');if(el)el.style.display=hayIva?'':'none';
+  });
   if(costoNetoTotal||tv||tc||resultadoNeto){
     const re=document.getElementById('f-resultado');
     const reiva=document.getElementById('f-resultado-iva');
@@ -2194,14 +2242,14 @@ fillOpFilter();
 
 <!-- CALCULADORA FLOTANTE -->
 <div id="calc-fab" onclick="toggleCalc()" title="Calculadora" style="position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.4);font-size:22px;transition:transform .15s">🧮</div>
-<div id="calc-panel" style="display:none;position:fixed;bottom:82px;right:24px;width:260px;background:var(--surf2);border:1.5px solid var(--brd);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:998;overflow:hidden">
+<div id="calc-panel" style="display:none;position:fixed;bottom:82px;right:24px;width:260px;background:var(--surf2);border:1.5px solid var(--bor);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:998;overflow:hidden">
   <div style="background:var(--surf3);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
     <span style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px"><i class="ti ti-calculator"></i> Calculadora</span>
     <button onclick="toggleCalc()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;line-height:1"><i class="ti ti-x"></i></button>
   </div>
   <div style="padding:12px">
     <div id="calc-expr" style="font-size:11px;color:var(--t3);min-height:16px;text-align:right;padding:0 4px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
-    <div id="calc-display" style="font-size:26px;font-weight:700;color:var(--t1);text-align:right;padding:4px 4px 10px;border-bottom:1px solid var(--brd);margin-bottom:10px;min-height:42px;word-break:break-all">0</div>
+    <div id="calc-display" style="font-size:26px;font-weight:700;color:var(--text);text-align:right;padding:4px 4px 10px;border-bottom:1px solid var(--bor);margin-bottom:10px;min-height:42px;word-break:break-all">0</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
       <button class="cb cbf" onclick="calcPct()">%</button>
       <button class="cb cbf" onclick="calcClear()">C</button>
@@ -2227,9 +2275,9 @@ fillOpFilter();
   </div>
 </div>
 <style>
-.cb{background:var(--surf3);border:1px solid var(--brd);border-radius:8px;color:var(--t1);font-size:15px;font-weight:600;padding:10px 0;cursor:pointer;transition:background .1s}
+.cb{background:var(--surf3);border:1px solid var(--bor);border-radius:8px;color:var(--text);font-size:15px;font-weight:600;padding:10px 0;cursor:pointer;transition:background .1s}
 .cb:hover{background:var(--surf)}
-.cbf{color:var(--sec)}
+.cbf{color:var(--acc)}
 .cbo{color:var(--pri);background:var(--prl)}
 .cbeq{background:var(--pri);color:#fff;border-color:var(--pri)}
 .cbeq:hover{opacity:.9}
