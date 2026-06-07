@@ -1044,14 +1044,14 @@ function toARS(val,prefix){
 function toggleActorMoneda(actor){
   const m=document.getElementById('f-'+actor+'-moneda')?.value||'pesos';
   const isDol=m==='dolares';
-  ['dol-wrap','dv-wrap'].forEach(s=>{
+  ['tc-tipo-wrap','tc-val-wrap'].forEach(s=>{
     const el=document.getElementById('f-'+actor+'-'+s);
     if(el)el.style.display=isDol?'':'none';
   });
   if(isDol){
-    const tipo=document.getElementById('f-'+actor+'-dol')?.value||'divisa';
+    const tipo=document.getElementById('f-'+actor+'-tc-tipo')?.value||'divisa';
     const val=tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:dolar.blue||0;
-    if(val){const e=document.getElementById('f-'+actor+'-dv');if(e&&!e.value){e.value=val.toLocaleString('es-AR');if(typeof fmtNum==='function')fmtNum(e);}}
+    if(val){const e=document.getElementById('f-'+actor+'-tc-val');if(e&&!e.value){e.value=val.toLocaleString('es-AR');if(typeof fmtNum==='function')fmtNum(e);}}
   }
 }
 
@@ -1086,10 +1086,10 @@ function toggleMonedaOp(){
 function toggleCompMoneda(){
   const m=document.getElementById('f-comp-moneda')?.value||'pesos';
   const isDol=m==='dolares';
-  const dw=document.getElementById('f-comp-dol-wrap');
-  const dvw=document.getElementById('f-comp-dv-wrap');
-  if(dw)dw.style.display=isDol?'block':'none';
-  if(dvw)dvw.style.display=isDol?'block':'none';
+  const dw=document.getElementById('f-comp-tc-tipo-wrap');
+  const dvw=document.getElementById('f-comp-tc-val-wrap');
+  if(dw)dw.style.display=isDol?'':'none';
+  if(dvw)dvw.style.display=isDol?'':'none';
 }
 
 function toggleActorEcheq(actor,val){
@@ -1274,7 +1274,7 @@ function updateWidget(){
   document.getElementById('dv-div').textContent=f(dolar.divisa);
   document.getElementById('dv-may').textContent=f(dolar.mayorista);
   document.getElementById('dv-blue').textContent=f(dolar.blue);
-  ['f-dv1','f-dv2','f-prov-dv','f-comp-dv','f-ref-dv'].forEach(id=>{
+  ['f-dv1','f-dv2','f-prov-tc-val','f-comp-tc-val','f-ref-tc-val','f-transp-tc-val','f-com-tc-val'].forEach(id=>{
     const e=document.getElementById(id);if(e&&!e.value&&dolar.divisa)e.value=dolar.divisa;
   });
   if(cfg.dolarDiv)document.getElementById('cfg-div').value=cfg.dolarDiv;
@@ -1536,8 +1536,8 @@ function liveCalc(){
   const comPct=parseFloat(V('f-com-pct'))||0;
   const comMonto=tv>0&&comPct?tv*comPct/100:0;
   if(comMonto){
-    const e=document.getElementById('f-com-calc');if(e)e.value=MF(comMonto);
-    const e2=document.getElementById('f-com-calc-iva');if(e2)e2.value=MF(IVA(comMonto));
+    const e=document.getElementById('f-com-monto');if(e)e.value=MF(comMonto);
+    const e2=document.getElementById('f-com-iva');if(e2)e2.value=MF(IVA(comMonto));
   }
   // ── TC sección ref/transp/com ──
   const tcRef=getTCVal('ref');
@@ -1679,16 +1679,16 @@ function saveOp(){
     comPct,comMonto,comIva:IVA(comMonto),
     costoTotal:costoNetoTotal,resultado:resultadoNeto,profitMay,profitBlue,
     pctMargen:costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0,
-    provPago:V('f-prov-pago'),provMoneda:V('f-prov-moneda')||'pesos',provDolTipo:V('f-prov-dol'),provDolVal:Np('f-prov-dv'),
+    provPago:V('f-prov-pago'),provMoneda:V('f-prov-moneda')||'pesos',provDolTipo:V('f-prov-tc-tipo'),provDolVal:NpTC('f-prov-tc-val'),
     provPagado:Np('f-prov-pagado'),provNotas:V('f-prov-notas'),
-    refPago:V('f-ref-pago'),refMoneda:V('f-ref-moneda')||'pesos',refDolTipo:V('f-ref-dol'),refDolVal:Np('f-ref-dv'),
+    refPago:V('f-ref-pago'),refMoneda:V('f-ref-moneda')||'pesos',refDolTipo:V('f-ref-tc-tipo'),refDolVal:NpTC('f-ref-tc-val'),
     refPagado:Np('f-ref-pagado'),refEst:V('f-ref-est'),refNotas:V('f-ref-notas'),
-    transpPago:V('f-transp-pago'),transpMoneda:V('f-transp-moneda')||'pesos',transpDolTipo:V('f-transp-dol'),transpDolVal:Np('f-transp-dv'),
+    transpPago:V('f-transp-pago'),transpMoneda:V('f-transp-moneda')||'pesos',transpDolTipo:V('f-transp-tc-tipo'),transpDolVal:NpTC('f-transp-tc-val'),
     transpPag1:Np('f-transp-pag1'),transpPag2:Np('f-transp-pag2'),
     transpEst:V('f-transp-est'),transpNotas:V('f-transp-notas'),
-    comPago:V('f-com-pago'),comMoneda:V('f-com-moneda')||'pesos',comDolTipo:V('f-com-dol'),comPagado:Np('f-com-pagado'),
+    comPago:V('f-com-pago'),comMoneda:V('f-com-moneda')||'pesos',comDolTipo:V('f-com-tc-tipo'),comPagado:Np('f-com-pagado'),
     comEst:V('f-com-est'),comNombre:V('f-com-nombre'),comNotas:V('f-com-notas'),
-    compPago:V('f-comp-pago'),compMoneda:V('f-comp-moneda')||'pesos',compDolTipo:V('f-comp-dol'),compDolVal:Np('f-comp-dv'),
+    compPago:V('f-comp-pago'),compMoneda:V('f-comp-moneda')||'pesos',compDolTipo:V('f-comp-tc-tipo'),compDolVal:NpTC('f-comp-tc-val'),
     compCobrado:Np('f-comp-cobrado'),compEst:V('f-comp-est'),compNotas:V('f-comp-notas'),
     tickets1:[...tix1],tickets2:[...tix2]
   };
@@ -1722,18 +1722,18 @@ function clearForm(){
    'f-tn1','f-tn2','f-tn3','f-tn4','f-dif1','f-dif2','f-desc1','f-dv1','f-dv2',
    'f-fcob','f-f1sal','f-f1lle','f-f2sal','f-f2lle','f-remito','f-factura','f-notas',
    'f-a1','f-a2','f-a3','f-at',
-   'f-prov-dv','f-prov-pagado','f-prov-saldo','f-prov-notas',
+   'f-prov-tc-val','f-prov-pagado','f-prov-saldo','f-prov-notas',
    'f-ref-nombre','f-ref-costo','f-ref-civa','f-ref-pagado','f-ref-saldo','f-ref-notas',
-   'f-transp','f-transp-dv','f-transp-pag1','f-transp-pag2','f-transp-saldo','f-transp-notas',
+   'f-transp','f-transp-tc-val','f-transp-pag1','f-transp-pag2','f-transp-saldo','f-transp-notas',
    'f-flete1','f-flete1-iva','f-flete2','f-flete2-iva','f-flete-total','f-flete-total-iva','f-com-nombre','f-com-pct','f-com-monto','f-com-iva','f-com-pagado','f-com-notas',
-   'f-comp-dv','f-comp-cobrado','f-comp-saldo','f-comp-notas',
+   'f-comp-tc-val','f-comp-cobrado','f-comp-saldo','f-comp-notas',
    'f-costo-total','f-ingreso-total','f-resultado','f-margen-pct',
    'f-pcos','f-pve','f-pcos-iva','f-pve-iva','f-uni','f-plt','f-marca']
   .forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   ['f-prov','f-comp','f-acg','f-ace','f-pres','f-est-ent','f-est-cob','f-est-gen',
-   'f-pago','f-prov-pago','f-ref-pago','f-ref-dol','f-transp-pago','f-transp-dol',
-   'f-com-pago','f-com-dol','f-comp-pago','f-comp-dol','f-dol1','f-dol2',
-   'f-prov-dol','f-transp-est','f-ref-est','f-com-est','f-comp-est']
+   'f-pago','f-prov-pago','f-ref-pago','f-ref-tc-tipo','f-transp-pago','f-transp-tc-tipo',
+   'f-com-pago','f-com-tc-tipo','f-comp-pago','f-comp-tc-tipo','f-dol1','f-dol2',
+   'f-prov-tc-tipo','f-transp-est','f-ref-est','f-com-est','f-comp-est']
   .forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=0;});
   document.getElementById('tn-flow-box').style.display='none';
   document.getElementById('scenario-box').style.display='none';
@@ -1752,7 +1752,7 @@ function clearForm(){
   ['f-pc-iva','f-pv-iva'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';const w=e.closest('.field');if(w)w.style.display='none';}});
   document.getElementById('f-fop').value=new Date().toISOString().split('T')[0];
   setTipo('granel',document.querySelector('#tipo-tog button:first-child'));
-  if(dolar.divisa)['f-dv1','f-dv2','f-prov-dv','f-comp-dv','f-ref-dv','f-transp-dv','f-com-dv'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=dolar.divisa;});
+  if(dolar.divisa)['f-dv1','f-dv2','f-prov-tc-val','f-comp-tc-val','f-ref-tc-val','f-transp-tc-val','f-com-tc-val'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=dolar.divisa;});
 }
 function cancelEdit(){clearForm();}
 function editOp(id){
@@ -1827,29 +1827,29 @@ function editOp(id){
   sv('f-flete1',o.flete1);sv('f-flete2',o.flete2);
   // ── Proveedor ──
   ss('f-prov-pago',o.provPago,'Transferencia total');
-  ss('f-prov-moneda',o.provMoneda||'pesos');toggleActorMoneda('prov');ss('f-prov-dol',o.provDolTipo,'divisa');sv('f-prov-dv',o.provDolVal);
+  ss('f-prov-moneda',o.provMoneda||'pesos');toggleActorMoneda('prov');ss('f-prov-tc-tipo',o.provDolTipo,'divisa');sv('f-prov-tc-val',o.provDolVal);
   sv('f-prov-pagado',o.provPagado);sv('f-prov-notas',o.provNotas);
   toggleActorEcheq('prov',o.provPago||'');
   // ── Refinador ──
   ss('f-ref-pago',o.refPago,'Pendiente');
-  ss('f-ref-moneda',o.refMoneda||'pesos');toggleActorMoneda('ref');ss('f-ref-dol',o.refDolTipo,'divisa');sv('f-ref-dv',o.refDolVal);
+  ss('f-ref-moneda',o.refMoneda||'pesos');toggleActorMoneda('ref');ss('f-ref-tc-tipo',o.refDolTipo,'divisa');sv('f-ref-tc-val',o.refDolVal);
   sv('f-ref-pagado',o.refPagado);ss('f-ref-est',o.refEst,'Pendiente');sv('f-ref-notas',o.refNotas);
   toggleActorEcheq('ref',o.refPago||'');
   // ── Transportista ──
   ss('f-transp-pago',o.transpPago,'Efectivo');
-  ss('f-transp-dol',o.transpDolTipo,'pesos');sv('f-transp-dv',o.transpDolVal);
+  ss('f-transp-tc-tipo',o.transpDolTipo,'divisa');sv('f-transp-tc-val',o.transpDolVal);
   sv('f-transp-pag1',o.transpPag1);sv('f-transp-pag2',o.transpPag2);
   ss('f-transp-est',o.transpEst,'Pendiente');sv('f-transp-notas',o.transpNotas);
   toggleActorEcheq('transp',o.transpPago||'');
   // ── Comisionista ──
   ss('f-com-pago',o.comPago,'Transferencia');
-  ss('f-com-moneda',o.comMoneda||'pesos');toggleActorMoneda('com');ss('f-com-dol',o.comDolTipo,'divisa');sv('f-com-pagado',o.comPagado);
+  ss('f-com-moneda',o.comMoneda||'pesos');toggleActorMoneda('com');ss('f-com-tc-tipo',o.comDolTipo,'divisa');sv('f-com-pagado',o.comPagado);
   ss('f-com-est',o.comEst,'Pendiente');sv('f-com-notas',o.comNotas);
   toggleActorEcheq('com',o.comPago||'');
   // ── Comprador ──
   ss('f-comp-moneda',o.compMoneda||'pesos');toggleCompMoneda();
   ss('f-comp-pago',o.compPago,'Transferencia total');
-  ss('f-comp-dol',o.compDolTipo,'divisa');sv('f-comp-dv',o.compDolVal);
+  ss('f-comp-tc-tipo',o.compDolTipo,'divisa');sv('f-comp-tc-val',o.compDolVal);
   sv('f-comp-cobrado',o.compCobrado);ss('f-comp-est',o.compEst,'Pendiente');sv('f-comp-notas',o.compNotas);
   toggleActorEcheq('comp',o.compPago||'');
   // ── Tickets y echeqs ──
@@ -1880,8 +1880,8 @@ function saveEcheq(){
 function clearEcheq(){
   ['e-fr','e-fc','e-fend','e-empresa','e-num','e-imp','e-opref','e-obs',
    'e-desc-pct','e-desc-monto','e-gasto-acred','e-imp-neto','e-saldo-pend',
-   'e-imp-pagado','e-fecha-pago','e-endosado-a','e-banco-endoso'].forEach(id=>document.getElementById(id).value='');
-  ['e-banco','e-cant','e-est','e-forma-cobro'].forEach(id=>document.getElementById(id).selectedIndex=0);
+   'e-imp-pagado','e-fecha-pago','e-endosado-a','e-banco-endoso'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['e-banco','e-cant','e-est','e-forma-cobro'].forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=0;});
 }
 function deleteEcheq(id){
   if(!confirm('¿Eliminar?'))return;
