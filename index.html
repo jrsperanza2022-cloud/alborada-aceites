@@ -2,230 +2,2349 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Alborada — Parche de correcciones v2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Alborada — Gestión Aceite</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:900px;margin:40px auto;padding:20px;background:#f5f7fa;color:#1a2540}
-h1{color:#1e4d8c;margin-bottom:4px}
-.sub{color:#5a6a8a;margin-bottom:32px;font-size:14px}
-.bug{background:#fff;border:1px solid #d8e2f0;border-radius:10px;padding:20px;margin-bottom:16px;border-left:4px solid #e74c3c}
-.bug.fix{border-left-color:#27ae60}
-.bug h3{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}
-.sev{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}
-.sev.critical{background:#ffe0e0;color:#9a1a1a}
-.sev.high{background:#fff0d8;color:#8a4a00}
-.sev.med{background:#e0eeff;color:#1a4090}
-.bug p{font-size:13px;color:#5a6a8a;margin:6px 0 10px}
-.code{background:#1a2540;color:#e8f0fb;border-radius:6px;padding:12px;font-size:12px;font-family:monospace;overflow-x:auto;margin:6px 0}
-.code .del{color:#ff6b6b;text-decoration:line-through}
-.code .add{color:#51cf66}
-.how{background:#e8f8ef;border:1px solid #a0d8b4;border-radius:6px;padding:10px 14px;font-size:12px;margin-top:10px}
-.how strong{color:#1a7a40}
-.summary{background:#1e4d8c;color:#fff;border-radius:10px;padding:20px 24px;margin-bottom:28px}
-.summary h2{margin:0 0 12px;font-size:16px}
-.summary ul{margin:0;padding-left:20px;font-size:13px;line-height:1.8}
+:root{
+  --pri:#1e4d8c;--prd:#163d70;--prl:#e8f0fb;--prb:#c5d8f5;
+  --brd:var(--bor);--sec:var(--acc);--t1:var(--text);--warn:var(--war);
+  --acc:#e67e22;--acl:#fef3e2;--acb:#f5c07a;
+  --suc:#27ae60;--sul:#e8f8ef;--sub:#a0d8b4;
+  --war:#f39c12;--wal:#fffbea;--wab:#f5d98a;
+  --dan:#e74c3c;--dal:#fff0ee;--dab:#f5a0a0;
+  --pur:#8e44ad;--pul:#f5e8ff;--pub:#d4a8f0;
+  --bg:#f0f4fa;--surf:#fff;--surf2:#f7f9fc;--surf3:#edf1f7;
+  --bor:#d8e2f0;--text:#1a2540;--t2:#5a6a8a;--t3:#9aaac8;
+  --rad:12px;--rsm:7px;
+  --sh:0 1px 4px rgba(30,77,140,.08);--shlg:0 4px 20px rgba(30,77,140,.13);
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0e1420;--surf:#161e30;--surf2:#1c2638;--surf3:#222e42;--bor:#2a3850;
+  --text:#d8e6ff;--t2:#7a94c0;--t3:#3a5080;--prl:#0a1528;--prb:#1a3060;
+  --sul:#0a1e12;--sub:#1a5030;--wal:#1e1800;--wab:#5a4000;--dal:#200a08;--dab:#6a2020;
+}}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.app{max-width:1280px;margin:0 auto;padding-bottom:80px;}
+header{background:linear-gradient(120deg,#1e4d8c,#2d6fbf);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;box-shadow:var(--shlg);}
+header h1{font-size:15px;font-weight:700;flex:1;}
+.hbadge{background:rgba(255,255,255,.18);font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;}
+.dw-row{display:flex;gap:8px;}
+.dw{background:rgba(255,255,255,.12);border-radius:8px;padding:4px 9px;cursor:pointer;transition:background .2s;text-align:center;}
+.dw:hover{background:rgba(255,255,255,.22);}
+.dw .dl{opacity:.7;font-size:9px;text-transform:uppercase;}
+.dw .dv{font-weight:700;font-size:12px;}
+.tabs{display:flex;background:var(--surf);border-bottom:1px solid var(--bor);overflow-x:auto;scrollbar-width:none;position:sticky;top:47px;z-index:199;box-shadow:0 2px 6px rgba(30,77,140,.06);}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:10px 14px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;color:var(--t2);white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:all .15s;}
+.tab i{font-size:13px;}
+.tab.active{border-bottom-color:var(--pri);color:var(--pri);font-weight:700;}
+.tab:hover:not(.active){background:var(--surf2);}
+.panel{display:none;padding:14px;}
+.panel.active{display:block;}
+.card{background:var(--surf);border:1px solid var(--bor);border-radius:var(--rad);padding:15px;margin-bottom:11px;box-shadow:var(--sh);}
+.card.accent{border-left:4px solid var(--pri);}
+.card.cgreen{border-left:4px solid var(--suc);}
+.card.corange{border-left:4px solid var(--acc);}
+.card.cpurple{border-left:4px solid var(--pur);}
+.sec{font-size:10px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--prb);padding-bottom:5px;margin:14px 0 9px;display:flex;align-items:center;justify-content:space-between;}
+.sec span{display:flex;align-items:center;gap:5px;}
+.sec:first-child{margin-top:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;}
+@media(max-width:900px){.g5{grid-template-columns:1fr 1fr 1fr;}.g4{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.g3,.g4,.g5{grid-template-columns:1fr 1fr;}}
+@media(max-width:360px){.g2,.g3,.g4,.g5{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:10px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.field input,.field select,.field textarea{font-size:13px;padding:8px 10px;border:1.5px solid var(--bor);border-radius:var(--rsm);background:var(--surf);color:var(--text);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(30,77,140,.1);}
+.field input[readonly]{background:var(--surf2);color:#c8d8f0;cursor:default;font-weight:500;}
+.field textarea{resize:vertical;min-height:54px;line-height:1.5;}
+.field .hint{font-size:9px;color:var(--t3);margin-top:2px;}
+.btn{padding:8px 16px;border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:none;transition:all .15s;line-height:1;}
+.btn i{font-size:14px;}
+.bp{background:var(--pri);color:#fff;}.bp:hover{background:var(--prd);}
+.bs{background:transparent;color:var(--pri);border:1.5px solid var(--pri);}.bs:hover{background:var(--prl);}
+.br{background:transparent;color:var(--dan);border:1.5px solid var(--dan);}.br:hover{background:var(--dal);}
+.bsm{padding:5px 11px;font-size:11px;}
+.bi{padding:6px;border-radius:var(--rsm);background:transparent;border:1px solid var(--bor);cursor:pointer;color:var(--t2);line-height:1;transition:all .15s;}
+.bi:hover{border-color:var(--pri);color:var(--pri);}
+.bi.del:hover{border-color:var(--dan);color:var(--dan);}
+.act{display:flex;gap:8px;justify-content:flex-end;margin-top:13px;border-top:1px solid var(--bor);padding-top:13px;flex-wrap:wrap;}
+.toggle{display:flex;border:1.5px solid var(--prb);border-radius:var(--rsm);overflow:hidden;width:fit-content;margin-bottom:10px;}
+.toggle button{padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--t2);transition:all .15s;}
+.toggle button.active{background:var(--pri);color:#fff;}
+.badge{font-size:10px;padding:3px 7px;border-radius:20px;font-weight:700;white-space:nowrap;}
+.bg2{background:#e0f5ea;color:#1a7a40;}.be2{background:#e0eeff;color:#1a4090;}
+.bo2{background:#fff0d8;color:#8a4a00;}.bm2{background:#f0e0ff;color:#5a0a9a;}
+.bpend{background:#fff0d8;color:#8a4a00;}.bcob{background:#e0f5ea;color:#1a7a40;}
+.bpar{background:#e0eeff;color:#1a4090;}.bcan{background:#ffe0e0;color:#9a1a1a;}
+.bwin{background:#e0f5ea;color:#1a7a40;font-weight:700;}.blose{background:#ffe0e0;color:#9a1a1a;font-weight:700;}
+.box{border-radius:var(--rsm);padding:12px 14px;margin-top:9px;}
+.bxb{background:var(--prl);border:1.5px solid var(--prb);}
+.bxo{background:var(--wal);border:1.5px solid var(--wab);}
+.bxg{background:var(--sul);border:1.5px solid var(--sub);}
+.bxr{background:var(--dal);border:1.5px solid var(--dab);}
+.bxp{background:var(--pul);border:1.5px solid var(--pub);}
+.bxn{background:var(--surf2);border:1.5px solid var(--bor);}
+.bx-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.bxb .bx-title{color:var(--pri);}.bxo .bx-title{color:var(--war);}.bxg .bx-title{color:var(--suc);}
+.bxr .bx-title{color:var(--dan);}.bxp .bx-title{color:var(--pur);}
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px;}
+.sc{background:var(--surf);border:1px solid var(--bor);border-radius:var(--rsm);padding:11px 12px;position:relative;overflow:hidden;}
+.sc::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;}
+.sc.sc-b::before{background:var(--pri);}.sc.sc-g::before{background:var(--suc);}
+.sc.sc-o::before{background:var(--acc);}.sc.sc-r::before{background:var(--dan);}.sc.sc-p::before{background:var(--pur);}
+.sc .lbl{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;font-weight:600;}
+.sc .val{font-size:20px;font-weight:800;line-height:1;}
+.sc .val.sm{font-size:13px;font-weight:700;}
+.sc .val.g{color:var(--suc);}.sc .val.r{color:var(--dan);}.sc .val.b{color:var(--pri);}.sc .val.o{color:var(--acc);}
+.sc .sub{font-size:9px;color:var(--t3);margin-top:2px;}
+.tw{overflow-x:auto;border-radius:var(--rsm);border:1px solid var(--bor);}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{background:var(--surf3);font-weight:700;font-size:9px;text-align:left;padding:7px 9px;border-bottom:1.5px solid var(--bor);color:var(--t2);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;}
+td{padding:7px 9px;border-bottom:1px solid var(--bor);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--prl);}
+.tdg{color:var(--suc);font-weight:700;}.tdr{color:var(--dan);font-weight:700;}
+.tdb{color:var(--pri);font-weight:700;}.tdo{color:var(--acc);font-weight:700;}
+.empty td{text-align:center;color:var(--t3);padding:24px;font-style:italic;}
+.sbar{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap;}
+.sbar input,.sbar select{font-size:12px;padding:7px 10px;border:1.5px solid var(--bor);border-radius:var(--rsm);background:var(--surf);color:var(--text);flex:1;min-width:100px;outline:none;}
+.sbar input:focus,.sbar select:focus{border-color:var(--pri);}
+.alert{border-radius:var(--rsm);padding:8px 12px;font-size:12px;display:flex;align-items:center;gap:7px;margin-top:7px;}
+.awarn{background:var(--wal);border:1px solid var(--wab);color:#7a5000;}
+.aok{background:var(--sul);border:1px solid var(--sub);color:#1a6a30;}
+.aerr{background:var(--dal);border:1px solid var(--dab);color:#8a1a1a;}
+.ainfo{background:var(--prl);border:1px solid var(--prb);color:var(--pri);}
+.tzone{border:2px dashed var(--prb);border-radius:var(--rad);padding:14px;text-align:center;cursor:pointer;background:var(--prl);position:relative;margin-top:8px;transition:all .2s;}
+.tzone:hover,.tzone.drag{border-color:var(--pri);background:#ddeeff;}
+.tzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.tzone i{font-size:22px;color:var(--pri);}
+.tzone p{font-size:12px;color:var(--t2);margin-top:4px;}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:7px;margin-top:8px;}
+.tthumb{position:relative;border-radius:var(--rsm);overflow:hidden;border:1px solid var(--bor);aspect-ratio:3/4;background:var(--surf2);}
+.tthumb img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;}
+.tthumb .tdel{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.55);border:none;border-radius:50%;width:19px;height:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;}
+.tthumb .tdel i{font-size:10px;}
+.tthumb .tlbl{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:9px;padding:2px 4px;text-align:center;}
+.tmini{width:30px;height:40px;object-fit:cover;border-radius:3px;border:1px solid var(--bor);cursor:pointer;transition:transform .15s;}
+.tmini:hover{transform:scale(1.15);}
+.tinline{display:flex;gap:3px;align-items:center;}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;}
+.lb img{max-width:100%;max-height:88vh;border-radius:var(--rad);}
+.lb-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.lb-info{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font-size:12px;padding:4px 14px;border-radius:20px;white-space:nowrap;}
+.modal-bg{position:fixed;inset:0;background:rgba(10,20,50,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(3px);}
+.modal{background:var(--surf);border-radius:var(--rad);box-shadow:var(--shlg);width:100%;max-width:860px;max-height:92vh;overflow-y:auto;}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1;}
+.modal-header h3{font-size:14px;font-weight:700;}
+.modal-body{padding:14px 18px;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--bor);display:flex;justify-content:flex-end;gap:8px;}
+.chart-wrap{display:flex;align-items:flex-end;gap:4px;height:76px;margin-top:8px;}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.chart-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;cursor:pointer;}
+.chart-lbl{font-size:9px;color:var(--t3);text-align:center;}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.scen{border-radius:var(--rsm);padding:10px 12px;text-align:center;border:1.5px solid;}
+.scen.win{background:var(--sul);border-color:var(--sub);}
+.scen.lose{background:var(--dal);border-color:var(--dab);}
+.scen.neutral{background:var(--surf2);border-color:var(--bor);}
+.scen .sn{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.scen.win .sn{color:var(--suc);}.scen.lose .sn{color:var(--dan);}
+.scen .sv{font-size:17px;font-weight:800;}
+.scen.win .sv{color:var(--suc);}.scen.lose .sv{color:var(--dan);}
+.scen .ss{font-size:9px;color:var(--t2);margin-top:2px;}
+.tn-flow{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr;align-items:center;gap:5px;margin-top:8px;}
+.tn-node{background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:9px 7px;text-align:center;}
+.tn-node .nn{font-size:9px;color:var(--t2);font-weight:700;text-transform:uppercase;margin-bottom:3px;}
+.tn-node .nv{font-size:14px;font-weight:800;color:var(--pri);}
+.tn-node.filled{background:var(--sul);border-color:var(--sub);}
+.tn-node.filled .nv{color:var(--suc);}
+.tn-arrow{text-align:center;color:var(--t3);}
+.tn-diff{font-size:11px;font-weight:700;text-align:center;margin-top:2px;}
+.actor-card{background:var(--surf);border:1.5px solid var(--bor);border-radius:var(--rsm);padding:12px 14px;margin-bottom:10px;}
+.actor-card .at{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.a-prov .at{color:var(--pri);}.a-ref .at{color:var(--suc);}
+.a-transp .at{color:var(--acc);}.a-com .at{color:var(--pur);}.a-comp .at{color:var(--dan);}
+.echeq-row{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 1.5fr 1.5fr 32px;gap:7px;align-items:end;padding:8px;background:var(--surf2);border-radius:var(--rsm);margin-bottom:6px;border:1px solid var(--bor);}
+.echeq-row .field label{font-size:9px;}
+.toasts{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.toast{background:#1e3a6a;color:#fff;padding:9px 20px;border-radius:var(--rad);font-size:12px;box-shadow:var(--shlg);animation:tin .25s ease;white-space:nowrap;font-weight:500;}
+.toast.err{background:#8a2020;}.toast.info{background:var(--acc);}
+@keyframes tin{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.opn{font-size:10px;color:var(--t3);background:var(--surf3);padding:2px 6px;border-radius:4px;font-weight:700;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--prb);border-radius:3px;}
+@media print{header,.tabs,.act,.bi,.btn,.toasts,.lb{display:none!important;}.panel{display:block!important;}.card{break-inside:avoid;}}
 </style>
 </head>
 <body>
-<h1>🔧 Alborada — Correcciones v2</h1>
-<p class="sub">Revisión exhaustiva del código — 9 bugs encontrados y corregidos</p>
-
-<div class="summary">
-  <h2>Resumen de correcciones</h2>
-  <ul>
-    <li><strong>Bug A:</strong> calcSaldo(prov/comp) — N('f-tv') fallaba en campos formateados</li>
-    <li><strong>Bug B:</strong> calcSaldo(ref) — comparaba IVA(costo) con monto pagado neto</li>
-    <li><strong>Bug C:</strong> saveOp() — 4 claves duplicadas en el objeto data</li>
-    <li><strong>Bug D:</strong> saveOp() — no guardaba tnVenta; editOp() la buscaba</li>
-    <li><strong>Bug E:</strong> clearForm() — f-tnventa no incluido en lista de reset</li>
-    <li><strong>Bug F:</strong> NpTC() — parsing de "1.393,50" daba resultado incorrecto</li>
-    <li><strong>Bug G:</strong> renderDash() — alertas de echeqs podían duplicarse</li>
-    <li><strong>Bug H:</strong> fixEcheqs() — definida pero nunca llamada al iniciar</li>
-    <li><strong>Bug I:</strong> editOp() — fillActorSelects() reseteaba selects de actores</li>
-  </ul>
+<div class="app">
+<header>
+  <i class="ti ti-droplet-filled" style="font-size:20px"></i>
+  <h1>Alborada — Gestión Aceite</h1>
+  <span class="hbadge" id="hbadge">0 ops</span>
+  <div class="dw-row">
+    <div class="dw" onclick="fetchDolar()"><div class="dl">Divisa</div><div class="dv" id="dv-div">—</div></div>
+    <div class="dw" onclick="fetchDolar()"><div class="dl">Mayor.</div><div class="dv" id="dv-may">—</div></div>
+    <div class="dw" onclick="fetchDolar()"><div class="dl">Blue</div><div class="dv" id="dv-blue">—</div></div>
+  </div>
+</header>
+<div class="tabs">
+  <div class="tab active" onclick="T('dash')"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+  <div class="tab" onclick="T('op')"><i class="ti ti-plus-circle"></i>Nueva op.</div>
+  <div class="tab" onclick="T('planilla')"><i class="ti ti-table"></i>Planilla</div>
+  <div class="tab" onclick="T('echeq')"><i class="ti ti-credit-card"></i>Echeqs</div>
+  <div class="tab" onclick="T('provs')"><i class="ti ti-users"></i>Actores</div>
+  <div class="tab" onclick="T('gastos')"><i class="ti ti-receipt"></i>Gastos</div>
+  <div class="tab" onclick="T('cfg')"><i class="ti ti-settings"></i>Config.</div>
+</div><!-- DASHBOARD -->
+<div class="panel active" id="panel-dash">
+  <div class="scards" id="dc"></div>
+  <div class="g2" style="gap:11px">
+    <div>
+      <div class="sec"><span><i class="ti ti-alert-triangle"></i>Alertas activas</span></div>
+      <div id="d-alerts"><div style="color:var(--t3);font-size:12px;padding:5px 0">Sin alertas ✓</div></div>
+    </div>
+    <div>
+      <div class="sec"><span><i class="ti ti-chart-bar"></i>Resultado mensual</span></div>
+      <div class="chart-wrap" id="monthly-chart"><div style="color:var(--t3);font-size:12px">Sin datos</div></div>
+    </div>
+  </div>
+  <div class="sec" style="margin-top:14px"><span><i class="ti ti-credit-card"></i>Echeqs próximos a vencer</span></div>
+  <div id="d-echeqs"><div style="color:var(--t3);font-size:12px;padding:5px 0">Sin echeqs próximos ✓</div></div>
+  <div class="sec" style="margin-top:14px"><span><i class="ti ti-clock"></i>Últimas operaciones</span></div>
+  <div class="tw"><table><thead><tr><th>#</th><th>Fecha</th><th>Proveedor</th><th>Producto</th><th>Tn vend.</th><th>Resultado</th><th>Entrega</th><th>Cobro</th><th></th></tr></thead>
+  <tbody id="d-recent"><tr class="empty"><td colspan="9">Sin operaciones</td></tr></tbody></table></div>
 </div>
 
-<!-- BUG A -->
-<div class="bug">
-<h3><span class="sev critical">CRÍTICO</span> Bug A — calcSaldo(prov/comp): saldo siempre cero</h3>
-<p>
-  <code>calcSaldo()</code> usaba <code>N('f-tv')</code> para leer el total de venta.
-  <code>N()</code> internamente hace <code>parseFloat(el.value)</code>, que sobre el valor 
-  <code>"$28.050.000"</code> retorna <code>NaN</code> (el signo pesos y los puntos de miles 
-  rompen el parsing). El saldo quedaba vacío aunque hubiera datos.
-</p>
-<div class="code"><span class="del">const tv=N('f-tv');</span>
-<span class="add">// FIX: extraer solo dígitos del campo readonly formateado
-const tv=parseInt((document.getElementById('f-tv')?.value||'').replace(/[^\d]/g,''))||0;</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>calcSaldo()</code>, ramas <code>actor==='prov'</code> y <code>actor==='comp'</code></div>
+<!-- NUEVA OP -->
+<div class="panel" id="panel-op">
+  <input type="hidden" id="edit-id" value="">
+  <div id="edit-banner" class="box bxb" style="display:none;margin-bottom:11px">
+    <div class="bx-title"><i class="ti ti-pencil"></i>Editando operación <span id="edit-num"></span></div>
+    <div style="font-size:12px;color:var(--t2)">Modificá los datos y guardá para actualizar.</div>
+  </div>
+  <div class="card accent">
+    <div class="sec"><span><i class="ti ti-file-description"></i>Identificación</span></div>
+    <div class="g4">
+      <div class="field"><label>Fecha operación *</label><input type="date" id="f-fop"></div>
+      <div class="field"><label>N° Remito</label><input type="text" id="f-remito" placeholder="R-0001-00123"></div>
+      <div class="field"><label>N° Factura</label><input type="text" id="f-factura" placeholder="A-0001-00456"></div>
+      <div class="field"><label>Forma de pago general</label>
+        <select id="f-pago" onchange="toggleEcheqInline()">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
+    </div>
+    <div class="g4" style="margin-top:10px">
+      <div class="field"><label>Estado entrega</label>
+        <select id="f-est-ent"><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option><option value="Completa">Completa</option></select></div>
+      <div class="field"><label>Estado cobro</label>
+        <select id="f-est-cob"><option value="Pendiente">Pendiente</option><option value="Parcial">Parcial</option><option value="A cuenta">A cuenta</option><option value="Cobrado">Cobrado</option></select></div>
+      <div class="field"><label>Estado general</label>
+        <select id="f-est-gen"><option value="En curso">En curso</option><option value="Completada">Completada</option><option value="Cancelada">Cancelada</option><option value="Disputa">En disputa</option></select></div>
+      <div class="field"><label>Notas generales</label><input type="text" id="f-notas" placeholder="Observaciones"></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTO -->
+  <div class="card">
+    <div class="sec"><span><i class="ti ti-package"></i>Producto</span></div>
+    <div class="toggle" id="tipo-tog">
+      <button class="active" onclick="setTipo('granel',this)">A granel (tn)</button>
+      <button onclick="setTipo('envase',this)">Envasado</button>
+    </div>
+    <input type="hidden" id="f-tipo" value="granel">
+    <div id="gf">
+
+      <!-- COMPRA (crudo) -->
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sec);margin:8px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-down-circle"></i>Compra — aceite crudo</div>
+      <div class="g4">
+        <div class="field"><label>Moneda compra</label>
+          <select id="f-compra-moneda" onchange="toggleSecMoneda('compra')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-compra-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-compra-tc-tipo" onchange="syncTCVal('compra');liveCalc()">
+            <option value="divisa">Divisa</option>
+            <option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option>
+            <option value="manual">Manual</option></select></div>
+        <div class="field" id="f-compra-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-compra-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
+        <div class="field"><label>Producto comprado *</label>
+          <select id="f-acg">
+            <option value="">— seleccionar —</option>
+            <optgroup label="SOJA"><option>Soja crudo a granel</option><option>Soja refinado a granel</option></optgroup>
+            <optgroup label="GIRASOL"><option>Girasol crudo a granel</option><option>Girasol refinado a granel</option></optgroup>
+            <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
+            <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
+          </select></div>
+        <div class="field"><label id="lbl-pc">P. compra neto (por tn)</label>
+          <input type="text" inputmode="numeric" id="f-pc" placeholder="ej: 32,50" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>IVA compra</label>
+          <select id="f-pc-iva-mode" onchange="liveCalc()">
+            <option value="neto">Sin IVA</option>
+            <option value="civa">Con IVA 21%</option>
+          </select></div>
+        <div class="field"><label id="lbl-pc-iva">P. compra c/IVA</label><input type="text" id="f-pc-iva" readonly></div>
+        <div class="field"><label>Tn a pagar al proveedor</label><input type="text" inputmode="decimal" id="f-tnv" placeholder="ej: 28.020 o 28,020" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Peso descarga en refinería (tn2)</div></div>
+        <div class="field"><label id="lbl-tc">Total compra neto</label><input type="text" id="f-tc" readonly></div>
+        <div class="field" id="f-tc-iva-wrap"><label>Total compra c/IVA</label><input type="text" id="f-tc-iva" readonly></div>
+        <div class="field" id="f-tc-usd-wrap" style="display:none"><label>Total compra (USD)</label><input type="text" id="f-tc-usd" readonly style="color:#4fc3f7;font-weight:600"></div>
+      </div>
+      <!-- VENTA (refinado) -->
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin:14px 0 6px;display:flex;align-items:center;gap:6px"><i class="ti ti-arrow-up-circle"></i>Venta — aceite refinado</div>
+      <div class="g4">
+        <div class="field"><label>Moneda venta</label>
+          <select id="f-venta-moneda" onchange="toggleSecMoneda('venta')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-venta-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-venta-tc-tipo" onchange="syncTCVal('venta');liveCalc()">
+            <option value="divisa">Divisa</option>
+            <option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option>
+            <option value="manual">Manual</option></select></div>
+        <div class="field" id="f-venta-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-venta-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
+        <div class="field"><label>Producto vendido *</label>
+          <select id="f-acv">
+            <option value="">— seleccionar —</option>
+            <optgroup label="SOJA"><option>Soja crudo a granel</option><option>Soja refinado a granel</option></optgroup>
+            <optgroup label="GIRASOL"><option>Girasol crudo a granel</option><option>Girasol refinado a granel</option></optgroup>
+            <optgroup label="MAÍZ"><option>Maíz crudo a granel</option><option>Maíz refinado a granel</option></optgroup>
+            <optgroup label="OTROS"><option>Aceite Mezcla crudo</option><option>Aceite Mezcla refinado</option><option>Speller</option><option>Otro</option></optgroup>
+          </select></div>
+        <div class="field"><label id="lbl-pv">P. venta neto (por tn)</label>
+          <input type="text" inputmode="numeric" id="f-pv" placeholder="ej: 33,50" oninput="fmtNum(this);liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>IVA venta</label>
+          <select id="f-pv-iva-mode" onchange="liveCalc()">
+            <option value="neto">Sin IVA</option>
+            <option value="civa">Con IVA 21%</option>
+          </select></div>
+        <div class="field"><label id="lbl-pv-iva">P. venta c/IVA</label><input type="text" id="f-pv-iva" readonly></div>
+        <div class="field"><label>Tn a cobrar al comprador</label><input type="text" inputmode="decimal" id="f-tnventa" placeholder="ej: 28.020 o 28,020" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Peso descarga en destino (tn4)</div></div>
+        <div class="field"><label id="lbl-tv">Total venta neto</label><input type="text" id="f-tv" readonly></div>
+        <div class="field" id="f-tv-iva-wrap"><label>Total venta c/IVA</label><input type="text" id="f-tv-iva" readonly></div>
+        <div class="field" id="f-tv-usd-wrap" style="display:none"><label>Total venta (USD)</label><input type="text" id="f-tv-usd" readonly style="color:#81c784;font-weight:600"></div>
+      </div>
+    </div>
+    <div id="ef" style="display:none">
+      <div class="g5">
+        <div class="field"><label>Aceite *</label>
+          <select id="f-ace">
+            <option value="">— seleccionar —</option>
+            <optgroup label="SOJA"><option>Soja envasado</option></optgroup>
+            <optgroup label="GIRASOL"><option>Girasol envasado</option></optgroup>
+            <optgroup label="MAÍZ"><option>Maíz envasado</option></optgroup>
+            <optgroup label="OTROS"><option>Aceite Mezcla envasado</option><option>Speller envasado</option><option>Otro envasado</option></optgroup>
+          </select></div>
+        <div class="field"><label>Presentación</label>
+          <select id="f-pres"><option value="">—</option><option>850 cc</option><option>900 cc</option><option>1500 cc</option><option>3000 cc</option><option>4500 cc</option><option>5000 cc</option></select></div>
+        <div class="field"><label>Marca</label><input type="text" id="f-marca"></div>
+        <div class="field"><label>Unidades</label><input type="number" id="f-uni" oninput="liveCalc()"></div>
+        <div class="field"><label>Pallets</label><input type="number" id="f-plt"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin:8px 0 4px">
+        <button class="btn bp" onclick="liveCalc()" style="font-size:11px;padding:5px 14px"><i class="ti ti-refresh"></i> Recalcular totales</button>
+      </div>
+      <div class="g4" style="margin-top:4px">
+        <div class="field"><label>P. costo neto ($)</label><input type="number" id="f-pcos" oninput="liveCalc()"></div>
+        <div class="field"><label>P. costo c/IVA ($)</label><input type="text" id="f-pcos-iva" readonly></div>
+        <div class="field"><label>P. venta neto ($)</label><input type="number" id="f-pve" oninput="liveCalc()"></div>
+        <div class="field"><label>P. venta c/IVA ($)</label><input type="text" id="f-pve-iva" readonly></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTORES -->
+  <div class="card cpurple">
+    <div class="sec"><span><i class="ti ti-users"></i>Actores y condiciones económicas por actor</span></div>
+    <div class="actor-card a-prov">
+      <div class="at"><i class="ti ti-building-store"></i>Proveedor</div>
+      <div class="g4">
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Proveedor *</label>
+            <select id="f-prov"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'proveedor')" title="Agregar proveedor"><i class="ti ti-plus"></i></button>
+        </div>
+        <div class="field"><label>Forma de pago</label>
+          <select id="f-prov-pago" onchange="toggleActorEcheq('prov',this.value);toggleAdelantos(this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-prov-moneda" onchange="toggleSecMoneda('prov')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-prov-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-prov-tc-tipo" onchange="syncTCVal('prov');liveCalc()">
+            <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+        <div class="field" id="f-prov-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-prov-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label id="lbl-a1">Adelanto 1 ($)</label><input type="text" inputmode="numeric" id="f-a1" placeholder="ej: 20.000.000" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-a2">Adelanto 2 ($)</label><input type="text" inputmode="numeric" id="f-a2" placeholder="ej: 0" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-a3">Adelanto 3 ($)</label><input type="text" inputmode="numeric" id="f-a3" placeholder="ej: 0" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-at">Total adelantos</label><input type="text" id="f-at" readonly></div>
+      </div>
+      <div class="g3" style="margin-top:8px">
+        <div class="field"><label id="lbl-prov-pagado">Importe pagado ($)</label><input type="text" inputmode="numeric" id="f-prov-pagado" oninput="fmtNum(this);calcSaldo('prov')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-prov-saldo" readonly></div>
+        <div class="field"><label>Notas</label><input type="text" id="f-prov-notas" placeholder="ej: saldo a 30 días"></div>
+      </div>
+      <div id="actor-echeqs-prov" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al proveedor <button class="btn bsm bs" onclick="addActorEcheq('prov')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-prov"></div>
+      </div>
+    </div>
+    <div class="actor-card a-ref">
+      <div class="at"><i class="ti ti-building-factory"></i>Refinador</div>
+      <div class="g4">
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Refinador</label>
+            <select id="f-ref-nombre"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'refinador')" title="Agregar refinador"><i class="ti ti-plus"></i></button>
+        </div>
+        <div class="field"><label>Forma de pago</label>
+          <select id="f-ref-pago" onchange="toggleActorEcheq('ref',this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-ref-moneda" onchange="toggleSecMoneda('ref')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-ref-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-ref-tc-tipo" onchange="syncTCVal('ref');liveCalc()">
+            <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+        <div class="field" id="f-ref-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-ref-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label>Costo servicio neto ($)</label><input type="text" inputmode="numeric" id="f-ref-costo" placeholder="ej: 6.500.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Costo c/IVA ($)</label><input type="text" id="f-ref-civa" readonly></div>
+        <div class="field"><label id="lbl-ref-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-ref-pagado" oninput="fmtNum(this);calcSaldo('ref')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Saldo ($)</label><input type="text" id="f-ref-saldo" readonly></div>
+      </div>
+      <div class="g3" style="margin-top:8px">
+        <div class="field"><label>Estado pago</label>
+          <select id="f-ref-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option></select></div>
+        <div class="field"><label>Notas</label><input type="text" id="f-ref-notas" placeholder="ej: pago a 15 días"></div>
+        <div></div>
+      </div>
+      <div id="actor-echeqs-ref" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al refinador <button class="btn bsm bs" onclick="addActorEcheq('ref')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-ref"></div>
+      </div>
+    </div>
+    <div class="actor-card a-transp">
+      <div class="at"><i class="ti ti-truck"></i>Transportista</div>
+      <div class="g4">
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Transportista</label>
+            <select id="f-transp"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'transportista')" title="Agregar transportista"><i class="ti ti-plus"></i></button>
+        </div>
+        <div class="field"><label>Forma de pago</label>
+          <select id="f-transp-pago" onchange="toggleActorEcheq('transp',this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-transp-moneda" onchange="toggleSecMoneda('transp')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-transp-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-transp-tc-tipo" onchange="syncTCVal('transp');liveCalc()">
+            <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+        <div class="field" id="f-transp-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-transp-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label>Flete tramo 1 neto ($)</label><input type="text" inputmode="numeric" id="f-flete1" placeholder="ej: 850.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Origen → Refinería</div></div>
+        <div class="field"><label>Flete tramo 1 c/IVA ($)</label><input type="text" id="f-flete1-iva" readonly></div>
+        <div class="field"><label>Flete tramo 2 neto ($)</label><input type="text" inputmode="numeric" id="f-flete2" placeholder="ej: 900.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"><div class="hint">Refinería → Envasadora</div></div>
+        <div class="field"><label>Flete tramo 2 c/IVA ($)</label><input type="text" id="f-flete2-iva" readonly></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label>Total flete neto ($)</label><input type="text" id="f-flete-total" readonly></div>
+        <div class="field"><label>Total flete c/IVA ($)</label><input type="text" id="f-flete-total-iva" readonly></div>
+        <div class="field"><label id="lbl-transp-pag1">Pagado tramo 1 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag1" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label id="lbl-transp-pag2">Pagado tramo 2 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag2" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      </div>
+      <div class="g3" style="margin-top:8px">
+        <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-transp-saldo" readonly></div>
+        <div class="field"><label>Estado pago</label>
+          <select id="f-transp-est"><option>Pendiente</option><option>Tramo 1 pago</option><option>Tramo 2 pago</option><option>Total pago</option></select></div>
+        <div class="field"><label>Notas</label><input type="text" id="f-transp-notas" placeholder="ej: cheque rechazado"></div>
+      </div>
+      <div id="actor-echeqs-transp" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al transportista <button class="btn bsm bs" onclick="addActorEcheq('transp')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-transp"></div>
+      </div>
+    </div>
+    <div class="actor-card a-com">
+      <div class="at"><i class="ti ti-user-check"></i>Comisionista</div>
+      <div class="g4">
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Comisionista</label>
+            <select id="f-com-nombre"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'comisionista')" title="Agregar comisionista"><i class="ti ti-plus"></i></button>
+        </div>
+        <div class="field"><label>Comisión (%)</label><input type="number" step="0.01" id="f-com-pct" placeholder="ej: 1.5" oninput="liveCalc()"></div>
+        <div class="field"><label>Comisión calculada neto ($)</label><input type="text" id="f-com-monto" readonly></div>
+        <div class="field"><label>Comisión c/IVA ($)</label><input type="text" id="f-com-iva" readonly></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label>Forma de pago</label>
+          <select id="f-com-pago" onchange="toggleActorEcheq('com',this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
+        <div class="field"><label>Moneda pago</label>
+          <select id="f-com-moneda" onchange="toggleSecMoneda('com')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-com-tc-tipo-wrap" style="display:none"><label>Tipo de cambio</label>
+          <select id="f-com-tc-tipo" onchange="syncTCVal('com');liveCalc()">
+            <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+        <div class="field" id="f-com-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
+          <input type="text" inputmode="numeric" id="f-com-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
+        <div class="field"><label id="lbl-com-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-com-pagado" oninput="fmtNum(this);calcSaldo('com')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Estado</label>
+          <select id="f-com-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option><option>Echeq rechazado</option></select></div>
+      </div>
+      <div class="field" style="margin-top:8px"><label>Notas</label><input type="text" id="f-com-notas" placeholder="ej: echeq rechazado — pendiente regularización"></div>
+      <div id="actor-echeqs-com" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al comisionista <button class="btn bsm bs" onclick="addActorEcheq('com')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-com"></div>
+      </div>
+    </div>
+    <div class="actor-card a-comp" style="margin-bottom:0">
+      <div class="at"><i class="ti ti-shopping-cart"></i>Comprador</div>
+      <div class="g4">
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Comprador</label>
+            <select id="f-comp"><option value="">— seleccionar —</option></select></div>
+          <button class="bi" style="align-self:flex-end;height:34px;padding:0 10px" onclick="openProvModal(null,'comprador')" title="Agregar comprador"><i class="ti ti-plus"></i></button>
+        </div>
+        <div class="field"><label>Forma de cobro</label>
+          <select id="f-comp-pago" onchange="toggleActorEcheq('comp',this.value)">
+            <option>Efectivo total</option><option>Efectivo parcial</option>
+            <option>Transferencia total</option><option>Transferencia parcial</option>
+            <option>Echeq total</option><option>Echeq parcial</option>
+            <option>Pendiente</option></select></div>
+        <div class="field"><label>Moneda cobro</label>
+          <select id="f-comp-moneda" onchange="toggleSecMoneda('comp')">
+            <option value="pesos">Pesos ($)</option>
+            <option value="dolares">Dólares (USD)</option></select></div>
+        <div class="field" id="f-comp-tc-tipo-wrap" style="display:none"><label>Tipo de dólar</label>
+          <select id="f-comp-tc-tipo" onchange="syncTCVal('comp');liveCalc()">
+            <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+            <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+        <div class="field" id="f-comp-tc-val-wrap" style="display:none"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-comp-tc-val" placeholder="ej: 1391" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label id="lbl-comp-cobrado">Cobrado al comprador ($)</label><input type="text" inputmode="numeric" id="f-comp-cobrado" oninput="fmtNum(this);calcSaldo('comp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Saldo a cobrar ($)</label><input type="text" id="f-comp-saldo" readonly></div>
+        <div class="field"><label>Estado cobro</label>
+          <select id="f-comp-est"><option>Pendiente</option><option>Parcial</option><option>A cuenta</option><option>Cobrado</option></select></div>
+        <div class="field"><label>Notas</label><input type="text" id="f-comp-notas" placeholder="ej: 2 vencimientos pactados"></div>
+      </div>
+      <div id="actor-echeqs-comp" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs del comprador <button class="btn bsm bs" onclick="addActorEcheq('comp')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
+        <div id="actor-echeq-rows-comp"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ECHEQS INLINE -->
+  <div class="card" id="card-echeqs-inline" style="display:none">
+    <div class="sec"><span><i class="ti ti-credit-card"></i>Echeqs de esta operación (hasta 6)</span>
+      <button class="btn bsm bp" onclick="addEcheqRow()"><i class="ti ti-plus"></i>Agregar echeq</button>
+    </div>
+    <div id="echeqs-inline-container"></div>
+    <div class="alert ainfo" style="margin-top:8px"><i class="ti ti-info-circle"></i>Los echeqs cargados aquí se guardan también en la sección Echeqs vinculados a esta operación.</div>
+  </div>
+
+  <!-- VIAJE 1 -->
+  <div class="card cgreen">
+    <div class="sec"><span><i class="ti ti-truck"></i>Viaje 1 — Crudo (origen → refinería)</span></div>
+    <div class="g4">
+      <div class="field"><label>Fecha salida origen</label><input type="date" id="f-f1sal"></div>
+      <div class="field"><label>Fecha llegada refinería</label><input type="date" id="f-f1lle"></div>
+      <div class="field"><label>Dólar del día viaje 1</label>
+        <select id="f-dol1" onchange="setDolarViaje(1)">
+          <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+          <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+      <div class="field"><label>Valor dólar viaje 1 ($)</label><input type="number" id="f-dv1" placeholder="ej: 1391" oninput="liveCalc()"></div>
+    </div>
+    <div class="g4" style="margin-top:10px">
+      <div class="field"><label>🔵 Carga crudo — origen (tn)</label><input type="text" inputmode="decimal" id="f-tn1" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 30.340" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar el camión</div></div>
+      <div class="field"><label>🟡 Descarga crudo — refinería (tn)</label><input type="text" inputmode="decimal" id="f-tn2" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 30.310" oninput="liveCalc()"><div class="hint">Ticket balanza al llegar a refinería</div></div>
+      <div class="field"><label>Diferencia crudo (auto)</label><input type="text" id="f-dif1" readonly></div>
+      <div class="field"><label>Descuento / Humedad (kg)</label><input type="number" step="0.001" id="f-desc1" placeholder="ej: 0.547"></div>
+    </div>
+    <div class="sec" style="margin-top:12px"><span><i class="ti ti-camera"></i>Tickets viaje 1 (máx. 4)</span><span style="font-size:9px;color:var(--t3)" id="tc1"></span></div>
+    <div class="tzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropTix(event,'tix1')">
+      <input type="file" accept="image/*" multiple onchange="addTix(this.files,'tix1')">
+      <i class="ti ti-photo-up"></i><p><strong>Tocá o arrastrá</strong> fotos del ticket de balanza</p>
+    </div>
+    <div class="tgrid" id="tp1"></div>
+  </div>
+
+  <!-- VIAJE 2 -->
+  <div class="card corange">
+    <div class="sec"><span><i class="ti ti-truck"></i>Viaje 2 — Refinado (refinería → envasadora)</span></div>
+    <div class="g4">
+      <div class="field"><label>Fecha salida refinería</label><input type="date" id="f-f2sal"></div>
+      <div class="field"><label>Fecha llegada envasadora</label><input type="date" id="f-f2lle"></div>
+      <div class="field"><label>Dólar del día viaje 2</label>
+        <select id="f-dol2" onchange="setDolarViaje(2)">
+          <option value="divisa">Divisa</option><option value="mayorista">Mayorista</option>
+          <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
+      <div class="field"><label>Valor dólar viaje 2 ($)</label><input type="number" id="f-dv2" placeholder="ej: 1395" oninput="liveCalc()"></div>
+    </div>
+    <div class="g4" style="margin-top:10px">
+      <div class="field"><label>🟢 Carga refinado — refinería (tn)</label><input type="text" inputmode="decimal" id="f-tn3" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 29.280" oninput="liveCalc()"><div class="hint">Ticket balanza al cargar refinado</div></div>
+      <div class="field"><label>🔴 Entrega refinado — envasadora (tn)</label><input type="text" inputmode="decimal" id="f-tn4" onkeypress="return /[\d.,]/.test(event.key)" placeholder="ej: 29.260" oninput="liveCalc()"><div class="hint">Ticket balanza al entregar</div></div>
+      <div class="field"><label>Diferencia refinado (auto)</label><input type="text" id="f-dif2" readonly></div>
+      <div class="field"><label>Fecha cobro / liquidación</label><input type="date" id="f-fcob"></div>
+    </div>
+    <div class="sec" style="margin-top:12px"><span><i class="ti ti-camera"></i>Tickets viaje 2 (máx. 4)</span><span style="font-size:9px;color:var(--t3)" id="tc2"></span></div>
+    <div class="tzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropTix(event,'tix2')">
+      <input type="file" accept="image/*" multiple onchange="addTix(this.files,'tix2')">
+      <i class="ti ti-photo-up"></i><p><strong>Tocá o arrastrá</strong> fotos del ticket de balanza</p>
+    </div>
+    <div class="tgrid" id="tp2"></div>
+    <div id="tn-flow-box" style="display:none;margin-top:12px">
+      <div class="bx-title"><i class="ti ti-arrows-right-left"></i>Flujo de toneladas — tiempo real</div>
+      <div class="tn-flow">
+        <div class="tn-node" id="fn1"><div class="nn">Carga crudo<br>origen</div><div class="nv" id="fnv1">—</div></div>
+        <div class="tn-arrow"><i class="ti ti-arrow-right"></i><div class="tn-diff" id="fnd1" style="color:var(--t3)">—</div></div>
+        <div class="tn-node" id="fn2"><div class="nn">Descarga crudo<br>refinería</div><div class="nv" id="fnv2">—</div></div>
+        <div class="tn-arrow"><i class="ti ti-arrow-right"></i><div class="tn-diff" style="color:var(--t3);font-size:9px">refin.</div></div>
+        <div class="tn-node" id="fn3"><div class="nn">Carga refinado<br>refinería</div><div class="nv" id="fnv3">—</div></div>
+        <div class="tn-arrow"><i class="ti ti-arrow-right"></i><div class="tn-diff" id="fnd3" style="color:var(--t3)">—</div></div>
+        <div class="tn-node" id="fn4"><div class="nn">Entrega refinado<br>envasadora</div><div class="nv" id="fnv4">—</div></div>
+      </div>
+      <div class="box bxn" style="margin-top:9px">
+        <div class="bx-title"><i class="ti ti-scale"></i>Balance de toneladas</div>
+        <div class="g4" id="bal-box"></div>
+        <div class="g4" style="margin-top:10px">
+          <div class="field"><label>🟡→🟢 Crudo entrado vs refinado salido</label><input type="text" id="f-dif-proceso" readonly><div class="hint">Diferencia en el proceso de refinado (tn2 vs tn3)</div></div>
+          <div class="field"><label>Rendimiento refinado (%)</label><input type="text" id="f-rend-refin" readonly></div>
+          <div class="field"><label>🔵→🔴 Crudo origen vs entrega final</label><input type="text" id="f-dif-total" readonly><div class="hint">Diferencia total operación (tn1 vs tn4)</div></div>
+          <div class="field"><label>Merma total operación (%)</label><input type="text" id="f-merma-total" readonly></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="card accent">
+    <div class="sec"><span><i class="ti ti-trending-up"></i>Resultado financiero — resumen automático</span></div>
+    <!-- Desglose de costos -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--dan);margin-bottom:6px;letter-spacing:.5px">▼ Costos</div>
+    <div class="g4" style="margin-bottom:8px">
+      <div class="field"><label>Compra crudo neto ($)</label><input type="text" id="f-costo-compra" readonly></div>
+      <div class="field"><label>Compra crudo c/IVA ($)</label><input type="text" id="f-costo-compra-iva" readonly></div>
+      <div class="field"><label>Servicio refinado neto ($)</label><input type="text" id="f-costo-refin" readonly></div>
+      <div class="field"><label>Servicio refinado c/IVA ($)</label><input type="text" id="f-costo-refin-iva" readonly></div>
+    </div>
+    <div class="g4" style="margin-bottom:10px">
+      <div class="field"><label>Flete total neto ($)</label><input type="text" id="f-costo-flete" readonly></div>
+      <div class="field"><label>Flete total c/IVA ($)</label><input type="text" id="f-costo-flete-iva" readonly></div>
+      <div class="field"><label>Comisión neta ($)</label><input type="text" id="f-costo-com" readonly></div>
+      <div class="field"><label>Comisión c/IVA ($)</label><input type="text" id="f-costo-com-iva" readonly></div>
+      <div class="field"><label>Costo total neto ($)</label><input type="text" id="f-costo-total" readonly style="font-weight:700;color:var(--dan)"></div>
+    </div>
+    <!-- Ingreso y resultado -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--suc);margin-bottom:6px;letter-spacing:.5px">▲ Ingreso y resultado</div>
+    <div class="g4">
+      <div class="field"><label>Ingreso venta neto ($)</label><input type="text" id="f-ingreso-total" readonly style="font-weight:700;color:var(--suc)"></div>
+      <div class="field"><label>Ingreso venta c/IVA ($)</label><input type="text" id="f-ingreso-total-iva" readonly style="font-weight:700;color:var(--suc)"></div>
+      <div class="field"><label>Resultado neto ($)</label><input type="text" id="f-resultado" readonly style="font-weight:800"></div>
+      <div class="field"><label>Resultado c/IVA ($)</label><input type="text" id="f-resultado-iva" readonly style="font-weight:800"></div>
+      <div class="field" id="f-resultado-usd-wrap" style="display:none"><label>Resultado (USD) — al TC op.</label><input type="text" id="f-resultado-usd" readonly style="font-weight:800;color:var(--suc)"></div>
+      <div class="field" id="f-resultado-usd-pesos-wrap" style="display:none"><label>Resultado en pesos ($) — al TC op.</label><input type="text" id="f-resultado-usd-pesos" readonly style="font-weight:800"></div>
+    </div>
+    <div class="g4" style="margin-top:8px">
+      <div class="field"><label>Costo total c/IVA ($)</label><input type="text" id="f-costo-total-iva" readonly style="font-weight:700;color:var(--dan)"></div>
+      <div class="field"><label>Margen sobre costos (%)</label><input type="text" id="f-margen-pct" readonly></div>
+      <div class="field"></div>
+      <div class="field"></div>
+    </div>
+    <div id="scenario-box" class="scenario-grid" style="display:none"></div>
+  </div>
+
+  <div class="act">
+    <button class="btn bs" onclick="cancelEdit()"><i class="ti ti-x"></i>Cancelar</button>
+    <button class="btn bp" onclick="saveOp()"><i class="ti ti-device-floppy"></i><span id="save-lbl">Guardar operación</span></button>
+  </div>
+</div>
+<!-- PLANILLA -->
+<div class="panel" id="panel-planilla">
+  <div class="sbar">
+    <input type="text" id="pl-q" placeholder="🔍 Buscar..." oninput="renderPlanilla()">
+    <input type="date" id="pl-fd" onchange="renderPlanilla()" title="Desde">
+    <input type="date" id="pl-fh" onchange="renderPlanilla()" title="Hasta">
+    <select id="pl-ec" onchange="renderPlanilla()"><option value="">Cobro: todos</option><option>Pendiente</option><option>Parcial</option><option>Cobrado</option></select>
+    <select id="pl-ee" onchange="renderPlanilla()"><option value="">Entrega: todas</option><option>Pendiente</option><option>Parcial</option><option>Completa</option></select>
+    <button class="btn bp bsm" onclick="T('op')"><i class="ti ti-plus"></i>Nueva</button>
+    <button class="btn bs bsm" onclick="exportCSV()"><i class="ti ti-file-spreadsheet"></i>CSV</button>
+  </div>
+  <div class="scards" id="pl-cards"></div>
+  <div class="tw"><table>
+    <thead><tr>
+      <th>#</th><th>F.Op.</th><th>F.Sal.Crudo</th><th>F.Lle.Refin.</th><th>F.Sal.Ref.</th><th>F.Lle.Env.</th><th>F.Cobro</th>
+      <th>Proveedor</th><th>Comprador</th><th>Transportista</th><th>Comisionista</th><th>Refinador</th>
+      <th>Tipo</th><th>Producto</th><th>Present.</th>
+      <th>🔵 Carga crudo</th><th>🟡 Desc.crudo refin.</th><th>Dif.crudo</th>
+      <th>🟢 Carga ref.refin.</th><th>🔴 Entrega ref.env.</th><th>Dif.ref.</th>
+      <th>Tn vendidas</th>
+      <th>P.Compra neto</th><th>P.Venta neto</th><th>P.Compra c/IVA</th><th>P.Venta c/IVA</th>
+      <th>Serv.refin.</th><th>Flete T1</th><th>Flete T2</th><th>Comisión</th>
+      <th>Costo total</th><th>Ingreso total</th>
+      <th>Result. Divisa</th><th>Result. Mayor.</th><th>Result. Blue</th><th>Margen%</th>
+      <th>Adelantos</th><th>Dól.V1</th><th>Dól.V2</th>
+      <th>Pago prov.</th><th>Pago refin.</th><th>Pago transp.</th><th>Pago com.</th><th>Cobro comp.</th>
+      <th>Entrega</th><th>Cobro</th><th>Pago gral.</th>
+      <th>Remito</th><th>Factura</th><th>Tickets</th><th>Notas</th><th style="position:sticky;right:0;background:var(--surf3);z-index:2;min-width:64px">Acc.</th>
+    </tr></thead>
+    <tbody id="tb-planilla"><tr class="empty"><td colspan="52">Sin operaciones</td></tr></tbody>
+  </table></div>
 </div>
 
-<!-- BUG B -->
-<div class="bug">
-<h3><span class="sev critical">CRÍTICO</span> Bug B — calcSaldo(ref): saldo incorrecto</h3>
-<p>
-  Para el refinador, el saldo se calculaba como <code>IVA(costoNeto) - pagado</code>,
-  pero el campo "Pagado ($)" del refinador guarda el importe neto pagado (sin IVA).
-  Esto producía un saldo exagerado en ~21%.
-</p>
-<div class="code"><span class="del">if(c)document.getElementById('f-ref-saldo').value=MF(IVA(c)-p);</span>
-<span class="add">// FIX: refPagado es neto → restar del costo neto, no del c/IVA
-if(c)document.getElementById('f-ref-saldo').value=MF(c-p);</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>calcSaldo()</code>, rama <code>actor==='ref'</code></div>
+<!-- ECHEQS -->
+<div class="panel" id="panel-echeq">
+  <div class="card">
+    <div class="sec" style="margin-top:0"><span><i class="ti ti-credit-card"></i>Nuevo echeq</span></div>
+    <div class="g4">
+      <div class="field"><label>Fecha realizado *</label><input type="date" id="e-fr"></div>
+      <div class="field"><label>Fecha cobro *</label><input type="date" id="e-fc"></div>
+      <div class="field"><label>Fecha endosado</label><input type="date" id="e-fend"></div>
+      <div class="field"><label>Estado</label>
+        <select id="e-est">
+          <option value="Pendiente">Pendiente</option><option value="Al cobro">Al cobro</option>
+          <option value="Cobrado total">Cobrado — Total</option><option value="Cobrado parcial">Cobrado — Parcial</option>
+          <option value="A cuenta">A cuenta</option><option value="Endosado">Endosado</option>
+          <option value="Endosado parcial">Endosado — Parcial</option>
+          <option value="Rechazado">Rechazado</option><option value="En gestión">En gestión judicial</option>
+        </select></div>
+    </div>
+    <div class="g4" style="margin-top:10px">
+      <div class="field"><label>Empresa / Persona *</label><input type="text" id="e-empresa" placeholder="ej: Proveedor SA o Juan García"></div>
+      <div class="field"><label>Banco *</label>
+        <select id="e-banco"><option value="">— seleccionar —</option>
+          <option>Banco Nación</option><option>Banco Provincia</option><option>Banco Santander</option>
+          <option>Banco Galicia</option><option>BBVA</option><option>HSBC</option>
+          <option>Banco Macro</option><option>ICBC</option><option>Banco Supervielle</option><option>Otro</option></select></div>
+      <div class="field"><label>N° de cheque</label><input type="text" id="e-num" placeholder="ej: 00012345"></div>
+      <div class="field"><label>Op. asociada (N°)</label><input type="number" id="e-opref" placeholder="ej: 5"></div>
+    </div>
+    <div class="g4" style="margin-top:10px">
+      <div class="field"><label>Importe bruto ($) *</label><input type="text" inputmode="numeric" id="e-imp"  placeholder="ej: 42000000" oninput="calcEcheq()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      <div class="field"><label>Descuento endoso (%)</label><input type="number" step="0.01" id="e-desc-pct" placeholder="ej: 2.5" oninput="calcEcheq()"></div>
+      <div class="field"><label>Gastos acreditación ($)</label><input type="text" inputmode="numeric" id="e-gasto-acred"  placeholder="ej: 15000" oninput="calcEcheq()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      <div class="field"><label>Cantidad echeqs</label>
+        <select id="e-cant"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
+    </div>
+    <div class="box bxo" style="margin-top:10px">
+      <div class="bx-title"><i class="ti ti-calculator"></i>Resultado financiero</div>
+      <div class="g4">
+        <div class="field"><label>Monto descuento ($)</label><input type="text" id="e-desc-monto" readonly></div>
+        <div class="field"><label>Importe neto ($)</label><input type="text" id="e-imp-neto" readonly style="font-weight:700"></div>
+        <div class="field"><label>Importe pagado/cobrado ($)</label><input type="text" inputmode="numeric" id="e-imp-pagado"  placeholder="ej: 20000000" oninput="calcEcheq()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="e-saldo-pend" readonly></div>
+      </div>
+      <div class="g4" style="margin-top:8px">
+        <div class="field"><label>Fecha pago efectivo</label><input type="date" id="e-fecha-pago"></div>
+        <div class="field"><label>Forma cobro</label>
+          <select id="e-forma-cobro"><option value="">—</option><option>Transferencia</option><option>Acreditación bancaria</option><option>Efectivo</option><option>Compensación</option></select></div>
+        <div class="field"><label>Endosado a</label><input type="text" id="e-endosado-a" placeholder="ej: García SA"></div>
+        <div class="field"><label>Banco destino endoso</label><input type="text" id="e-banco-endoso"></div>
+      </div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>Observaciones</label>
+      <textarea id="e-obs" placeholder="Notas adicionales..."></textarea></div>
+    <div class="act">
+      <button class="btn bs" onclick="clearEcheq()"><i class="ti ti-x"></i>Limpiar</button>
+      <button class="btn bp" onclick="saveEcheq()"><i class="ti ti-device-floppy"></i>Guardar echeq</button>
+    </div>
+  </div>
+  <div class="sec"><span><i class="ti ti-list"></i>Echeqs registrados</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <select id="ef-est" onchange="renderEcheqs()" style="font-size:11px;padding:4px 8px;border:1px solid var(--bor);border-radius:var(--rsm);background:var(--surf);color:var(--text)">
+        <option value="">Todos</option><option>Pendiente</option><option>Al cobro</option>
+        <option>Cobrado total</option><option>Cobrado parcial</option><option>A cuenta</option>
+        <option>Endosado</option><option>Endosado parcial</option><option>Rechazado</option><option>En gestión</option>
+      </select>
+      <select id="ef-op" onchange="renderEcheqs()" style="font-size:11px;padding:4px 8px;border:1px solid var(--bor);border-radius:var(--rsm);background:var(--surf);color:var(--text)">
+        <option value="">Todas las ops</option>
+      </select>
+    </div>
+  </div>
+  <div class="scards" id="echeq-totals"></div>
+  <div class="tw"><table>
+    <thead><tr><th>Realizado</th><th>Cobro</th><th>F.Endoso</th><th>Empresa/Persona</th><th>Banco</th><th>N° Cheque</th><th>Bruto</th><th>Desc.%</th><th>G.Acred.</th><th>Neto</th><th>Pagado</th><th>Saldo</th><th>F.Pago</th><th>Endosado a</th><th>Cant.</th><th>Op.</th><th>Estado</th><th>Obs.</th><th></th></tr></thead>
+    <tbody id="tb-echeqs"><tr class="empty"><td colspan="19">Sin echeqs</td></tr></tbody>
+  </table></div>
 </div>
 
-<!-- BUG C -->
-<div class="bug">
-<h3><span class="sev high">ALTO</span> Bug C — saveOp(): 4 claves duplicadas en objeto data</h3>
-<p>
-  El objeto <code>data</code> en <code>saveOp()</code> declara 
-  <code>provMoneda</code>, <code>refMoneda</code>, <code>transpMoneda</code> y <code>comMoneda</code>
-  dos veces cada una. En JavaScript la segunda declaración pisa a la primera.
-  En este caso ambas leen el mismo campo, por lo que no genera datos incorrectos,
-  pero es una inconsistencia y un bug latente si se cambia una de las dos.
-</p>
-<div class="code"><span class="del">// Primera declaración (bloque de monedas/TC):
-provMoneda:V('f-prov-moneda')||'pesos', ...
-
-// Segunda declaración (bloque de condiciones de pago) — DUPLICADO:
-provPago:V('f-prov-pago'),provMoneda:V('f-prov-moneda')||'pesos',provDolTipo:...</span>
-<span class="add">// FIX: eliminar provMoneda/refMoneda/transpMoneda/comMoneda del segundo bloque
-provPago:V('f-prov-pago'),provDolTipo:V('f-prov-tc-tipo'),provDolVal:NpTC('f-prov-tc-val'),
-refPago:V('f-ref-pago'),refDolTipo:V('f-ref-tc-tipo'),refDolVal:NpTC('f-ref-tc-val'),
-transpPago:V('f-transp-pago'),transpDolTipo:V('f-transp-tc-tipo'),transpDolVal:NpTC('f-transp-tc-val'),
-comPago:V('f-com-pago'),comDolTipo:V('f-com-tc-tipo'),comPagado:Np('f-com-pagado'),</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>saveOp()</code>, objeto <code>data</code>, segundo bloque de actores</div>
+<!-- ACTORES -->
+<div class="panel" id="panel-provs">
+  <div class="sbar">
+    <input type="text" id="pq" placeholder="🔍 Buscar actor..." oninput="renderProvs()">
+    <select id="pq-tipo" onchange="renderProvs()" style="flex:0 0 150px">
+      <option value="">Todos los roles</option><option value="proveedor">Proveedor</option>
+      <option value="refinador">Refinador</option><option value="transportista">Transportista</option>
+      <option value="comisionista">Comisionista</option><option value="comprador">Comprador</option>
+    </select>
+    <button class="btn bp bsm" onclick="openProvModal()"><i class="ti ti-plus"></i>Agregar actor</button>
+  </div>
+  <div id="provs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px"></div>
 </div>
 
-<!-- BUG D -->
-<div class="bug">
-<h3><span class="sev critical">CRÍTICO</span> Bug D — saveOp() no guarda tnVenta; editOp() la pierde</h3>
-<p>
-  <code>editOp()</code> recupera las toneladas de venta con <code>o.tnVenta||o.tnVendidas</code>.
-  Pero <code>saveOp()</code> guarda <code>tnVendidas:tnv</code> (las toneladas de compra al proveedor)
-  y nunca guarda <code>tnVenta</code>. Al editar una operación, el campo 
-  "Tn a cobrar al comprador" siempre se rellena con el valor de compra.
-</p>
-<div class="code"><span class="del">tn1,tn2,tn3,tn4,tnVendidas:tnv,</span>
-<span class="add">tn1,tn2,tn3,tn4,tnVendidas:tnv,tnVenta:tnventa,</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>saveOp()</code>, objeto <code>data</code>, línea de toneladas</div>
+<!-- GASTOS -->
+<div class="panel" id="panel-gastos">
+  <div class="card">
+    <div class="sec" style="margin-top:0"><span><i class="ti ti-receipt"></i>Registrar gasto operativo</span></div>
+    <div class="g4">
+      <div class="field"><label>Fecha</label><input type="date" id="g-fecha"></div>
+      <div class="field"><label>Categoría</label>
+        <select id="g-cat"><option>Flete</option><option>Laboratorio</option><option>Almacenaje</option>
+          <option>Administración</option><option>Impuestos</option><option>Gasto financiero</option><option>Otro</option></select></div>
+      <div class="field"><label>Importe neto ($)</label><input type="text" inputmode="numeric" id="g-imp"  placeholder="ej: 150000" oninput="calcGastoIVA()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      <div class="field"><label>Importe c/IVA ($)</label><input type="text" id="g-imp-iva" readonly></div>
+    </div>
+    <div class="g2" style="margin-top:10px">
+      <div class="field"><label>Proveedor / Concepto</label><input type="text" id="g-prov" placeholder="ej: Transportes Pérez"></div>
+      <div class="field"><label>Descripción</label><input type="text" id="g-desc" placeholder="ej: Flete op#5"></div>
+    </div>
+    <div class="act"><button class="btn bp" onclick="saveGasto()"><i class="ti ti-device-floppy"></i>Registrar gasto</button></div>
+  </div>
+  <div class="scards" id="g-cards" style="margin-top:4px"></div>
+  <div class="sec"><span><i class="ti ti-list"></i>Gastos registrados</span></div>
+  <div class="tw"><table><thead><tr><th>Fecha</th><th>Categoría</th><th>Concepto</th><th>Descripción</th><th>Importe neto</th><th>c/IVA</th><th></th></tr></thead>
+  <tbody id="tb-gastos"><tr class="empty"><td colspan="7">Sin gastos</td></tr></tbody></table></div>
 </div>
 
-<!-- BUG E -->
-<div class="bug">
-<h3><span class="sev high">ALTO</span> Bug E — clearForm() no limpia f-tnventa</h3>
-<p>
-  El campo <code>f-tnventa</code> (Tn a cobrar al comprador) no estaba incluido
-  en la lista de campos a limpiar en <code>clearForm()</code>. Al crear una nueva
-  operación después de una anterior, el campo quedaba con el valor previo.
-</p>
-<div class="code"><span class="del">'f-tnv', /* f-tnventa FALTABA */</span>
-<span class="add">'f-tnv','f-tnventa', // FIX: agregar f-tnventa</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>clearForm()</code>, array de IDs de campos</div>
+<!-- CONFIG -->
+<div class="panel" id="panel-cfg">
+  <div class="card">
+    <div class="sec" style="margin-top:0"><span><i class="ti ti-building"></i>Empresa</span></div>
+    <div class="g3">
+      <div class="field"><label>Nombre empresa</label><input type="text" id="cfg-empresa" placeholder="Alborada Aceites"></div>
+      <div class="field"><label>CUIT</label><input type="text" id="cfg-cuit"></div>
+      <div class="field"><label>Dirección</label><input type="text" id="cfg-dir"></div>
+    </div>
+    <div class="act"><button class="btn bp" onclick="saveCfg()"><i class="ti ti-device-floppy"></i>Guardar</button></div>
+  </div>
+  <div class="card">
+    <div class="sec"><span><i class="ti ti-currency-dollar"></i>Cotización dólar manual</span></div>
+    <div class="g3">
+      <div class="field"><label>Dólar Divisa ($)</label><input type="text" inputmode="numeric" id="cfg-div"  oninput="saveDolarManual()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      <div class="field"><label>Dólar Mayorista ($)</label><input type="text" inputmode="numeric" id="cfg-may"  oninput="saveDolarManual()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+      <div class="field"><label>Dólar Blue ($)</label><input type="text" inputmode="numeric" id="cfg-blue"  oninput="saveDolarManual()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+    </div>
+    <div class="act"><button class="btn bs" onclick="fetchDolar()"><i class="ti ti-refresh"></i>Actualizar online</button></div>
+  </div>
+  <div class="card">
+    <div class="sec"><span><i class="ti ti-database"></i>Backup y datos</span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn bs" onclick="backupData()"><i class="ti ti-download"></i>Exportar backup JSON</button>
+      <label class="btn bs" style="cursor:pointer"><i class="ti ti-upload"></i>Importar backup
+        <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreData(this)"></label>
+      <button class="btn br" onclick="confirmClear()"><i class="ti ti-trash"></i>Borrar todo</button>
+    </div>
+    <div class="alert ainfo" style="margin-top:10px"><i class="ti ti-info-circle"></i>Los datos se guardan en este navegador. Exportá el backup regularmente para no perder información.</div>
+  </div>
 </div>
 
-<!-- BUG F -->
-<div class="bug">
-<h3><span class="sev high">ALTO</span> Bug F — NpTC(): parsing incorrecto de "1.393,50"</h3>
-<p>
-  La función <code>NpTC()</code> (para leer tipos de cambio) maneja correctamente
-  <code>"1.393"</code> → 1393 y <code>"1.393,50"</code> → 1393.50 en el código original.
-  Sin embargo, si el campo contiene un valor sin coma como <code>"1393.50"</code> 
-  (con punto decimal al estilo inglés, posible si el usuario escribe desde un teclado 
-  numérico en ciertos dispositivos), el algoritmo <code>stripDotsAlways</code> lo convierte
-  en 139350. Se refuerza la lógica para valores TC >= 100.
-</p>
-<div class="code"><span class="del">else{s=s.replace(/\./g,'');} // strip todos los puntos sin validar</span>
-<span class="add">else {
-  const stripped = s.replace(/\./g, '');
-  // TC siempre >= 100 en Argentina; si stripped >= 100, los puntos eran miles
-  s = (parseFloat(stripped) >= 100) ? stripped : s;
-}</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>NpTC()</code>, rama <code>else</code></div>
+</div><!-- /app -->
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" style="display:none" onclick="closeLB()">
+  <button class="lb-close" onclick="closeLB()"><i class="ti ti-x"></i></button>
+  <img id="lb-img" src="" onclick="event.stopPropagation()">
+  <div class="lb-info" id="lb-txt"></div>
 </div>
 
-<!-- BUG G -->
-<div class="bug">
-<h3><span class="sev high">ALTO</span> Bug G — renderDash(): alertas de echeqs duplicadas</h3>
-<p>
-  <code>renderDash()</code> procesa el array global <code>echeqs</code> para generar alertas
-  de vencimiento. Cuando hay operaciones con múltiples actores que comparten el mismo
-  echeq (posible por el sistema de <code>fromOp</code>), las alertas podían aparecer
-  duplicadas. <code>renderEcheqs()</code> ya tenía su propia deduplicación pero 
-  <code>renderDash()</code> no.
-</p>
-<div class="code"><span class="del">echeqs.filter(e=>e.estado==='Rechazado').forEach(e=>{...</span>
-<span class="add">// FIX: deduplicar antes de filtrar alertas
-const echeqsDedup=[...new Map(echeqs.map(e=>[e.id,e])).values()];
-echeqsDedup.filter(e=>e.estado==='Rechazado').forEach(e=>{...
-echeqsDedup.filter(e=>e.estado==='Pendiente'&&e.fc).forEach(e=>{...</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>renderDash()</code>, bloque de alertas de echeqs</div>
+<!-- MODAL ACTOR -->
+<div class="modal-bg" id="prov-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-header"><h3 id="prov-modal-title">Nuevo actor</h3>
+      <button class="bi" onclick="closeProvModal()"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="field"><label>Nombre *</label><input type="text" id="pm-nombre"></div>
+        <div class="field"><label>Rol</label>
+          <select id="pm-rol"><option value="proveedor">Proveedor</option><option value="refinador">Refinador</option>
+            <option value="transportista">Transportista</option><option value="comisionista">Comisionista</option>
+            <option value="comprador">Comprador</option></select></div>
+      </div>
+      <div class="g3" style="margin-top:10px">
+        <div class="field"><label>Razón social</label><input type="text" id="pm-rs"></div>
+        <div class="field"><label>CUIT</label><input type="text" id="pm-cuit"></div>
+        <div class="field"><label>Teléfono</label><input type="text" id="pm-tel"></div>
+      </div>
+      <div class="g2" style="margin-top:10px">
+        <div class="field"><label>Email</label><input type="email" id="pm-email"></div>
+        <div class="field"><label>Localidad</label><input type="text" id="pm-loc"></div>
+      </div>
+      <div class="field" style="margin-top:10px"><label>Notas</label>
+        <textarea id="pm-notas"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn bs" onclick="closeProvModal()">Cancelar</button>
+      <button class="btn bp" onclick="saveProv()"><i class="ti ti-device-floppy"></i>Guardar</button>
+    </div>
+  </div>
 </div>
 
-<!-- BUG H -->
-<div class="bug">
-<h3><span class="sev med">MEDIO</span> Bug H — fixEcheqs() nunca se ejecuta</h3>
-<p>
-  La función <code>fixEcheqs()</code> corrige echeqs con importes en formato de string
-  y elimina duplicados del localStorage. Está definida correctamente pero nunca se
-  llama en el bloque de inicialización al cargar la página.
-</p>
-<div class="code"><span class="del">loadCfg();
-fetchDolar();</span>
-<span class="add">fixEcheqs(); // FIX: ejecutar al iniciar para limpiar datos del localStorage
+<div class="toasts" id="toasts"></div>
+<script>
+let ops=JSON.parse(localStorage.getItem('alb_ops')||'[]');
+let echeqs=JSON.parse(localStorage.getItem('alb_echeqs')||'[]');
+let gastos=JSON.parse(localStorage.getItem('alb_gastos')||'[]');
+let proveedores=JSON.parse(localStorage.getItem('alb_provs')||'[]');
+let cfg=JSON.parse(localStorage.getItem('alb_cfg')||'{}');
+let cnt=parseInt(localStorage.getItem('alb_cnt')||'0');
+let tix1=[],tix2=[],editingId=null,inlineEcheqCount=0;
+let dolar={divisa:0,mayorista:0,blue:0};
+
+function save(){
+  localStorage.setItem('alb_ops',JSON.stringify(ops));
+  localStorage.setItem('alb_echeqs',JSON.stringify(echeqs));
+  localStorage.setItem('alb_gastos',JSON.stringify(gastos));
+  localStorage.setItem('alb_provs',JSON.stringify(proveedores));
+  localStorage.setItem('alb_cfg',JSON.stringify(cfg));
+  localStorage.setItem('alb_cnt',cnt);
+  document.getElementById('hbadge').textContent=ops.filter(o=>o.id&&o.proveedor).length+' ops';
+}
+const MF=n=>(n||n===0)?'$'+Math.round(Number(n)).toLocaleString('es-AR'):'—';
+const Tn=n=>n?Number(n).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn':'—';
+const Dt=d=>{if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];};
+const DC=v=>v>0?'var(--dan)':v<0?'var(--suc)':'var(--t3)';
+const DS=v=>(v>0?'+':'')+Number(v).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn';
+const N=id=>parseFloat(document.getElementById(id)?.value)||0;
+const Np=id=>{const e=document.getElementById(id);if(!e)return 0;return NpV(e.value);};
+const NpV=v=>{
+  if(v===null||v===undefined||v==='')return 0;
+  let s=(v+'').trim().replace(/\s+/g,'');
+  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
+  else{s=s.replace(/\./g,'');}
+  return parseFloat(s)||0;
+};
+const NpTC=id=>{
+  const e=document.getElementById(id);
+  if(!e)return 0;
+  let s=(e.value+'').trim().replace(/\s/g,'');
+  // TC values are 1000-2000 range: point = thousands sep, comma = decimal
+  // e.g. "1.393" = 1393, "1.393,50" = 1393.50
+  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
+  // else: "1393" or "1.393" — strip dots (thousands)
+  else{s=s.replace(/\./g,'');}
+  return parseFloat(s)||0;
+};
+const NpTN=id=>{
+  const e=document.getElementById(id);
+  if(!e)return 0;
+  let s=(e.value+'').trim().replace(/\s+/g,'');
+  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
+  else{s=s.replace(/\./g,'');}
+  return parseFloat(s)||0;
+};
+const V=id=>document.getElementById(id)?.value||'';
+const IVA=n=>n?Math.round(n*1.21):0;
+
+
+// ── Actor echeq counters ──
+const actorEcheqCount={prov:0,ref:0,transp:0,com:0,comp:0};
+
+
+
+function fmtNum(el){
+  const v=el.value;
+  const hasComma=v.includes(',');
+  const parts=v.replace(/[^\d,]/g,'').split(',');
+  const intPart=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  el.value=hasComma?(intPart+','+(parts[1]||'')):intPart;
+  try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}
+}
+
+
+
+
+// ── TC por sección ────────────────────────────────────────────────────────
+function getTCVal(prefix){
+  const m=document.getElementById('f-'+prefix+'-moneda')?.value||'pesos';
+  if(m!=='dolares')return {isDol:false,tc:1};
+  // SIEMPRE usar el valor del campo — el tipo solo sirve para autocompletar
+  const tc=NpTC('f-'+prefix+'-tc-val')||1;
+  return {isDol:true,tc};
+}
+function syncTCVal(prefix,force){
+  const tipo=document.getElementById('f-'+prefix+'-tc-tipo')?.value||'manual';
+  if(tipo==='manual')return;
+  const val=tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:dolar.blue||0;
+  if(val){
+    const e=document.getElementById('f-'+prefix+'-tc-val');
+    // Solo autocompleta si el campo está vacío o se fuerza
+    if(e&&(force||!e.value)){e.value=val.toLocaleString('es-AR');fmtNum(e);}
+  }
+}
+function toggleSecMoneda(prefix){
+  const m=document.getElementById('f-'+prefix+'-moneda')?.value||'pesos';
+  const isDol=m==='dolares';
+  ['tc-tipo-wrap','tc-val-wrap'].forEach(s=>{
+    const el=document.getElementById('f-'+prefix+'-'+s);
+    if(el)el.style.display=isDol?'':'none';
+  });
+  // Hide IVA selector when dolares (no IVA in USD transactions)
+  if(prefix==='compra'){const e=document.getElementById('f-pc-iva-mode')?.closest('.field');if(e)e.style.display=isDol?'none':'';}
+  if(prefix==='venta'){const e=document.getElementById('f-pv-iva-mode')?.closest('.field');if(e)e.style.display=isDol?'none':'';}
+  if(isDol)syncTCVal(prefix,false);
+  // Show/hide USD total fields
+  if(prefix==='compra'){
+    const w=document.getElementById('f-tc-usd-wrap');if(w)w.style.display=isDol?'':'none';
+    const lbl=document.getElementById('lbl-pc');if(lbl)lbl.textContent=isDol?'P. compra neto (USD/tn)':'P. compra neto (por tn)';
+  }
+  if(prefix==='venta'){
+    const w=document.getElementById('f-tv-usd-wrap');if(w)w.style.display=isDol?'':'none';
+    const lbl=document.getElementById('lbl-pv');if(lbl)lbl.textContent=isDol?'P. venta neto (USD/tn)':'P. venta neto (por tn)';
+  }
+  liveCalc();
+}
+function toARS(val,prefix){
+  const {isDol,tc}=getTCVal(prefix);
+  return isDol?Math.round(val*tc):val;
+}
+
+function toggleActorMoneda(actor){
+  const m=document.getElementById('f-'+actor+'-moneda')?.value||'pesos';
+  const isDol=m==='dolares';
+  ['tc-tipo-wrap','tc-val-wrap'].forEach(s=>{
+    const el=document.getElementById('f-'+actor+'-'+s);
+    if(el)el.style.display=isDol?'':'none';
+  });
+  if(isDol){
+    const tipo=document.getElementById('f-'+actor+'-tc-tipo')?.value||'divisa';
+    const val=tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:dolar.blue||0;
+    if(val){const e=document.getElementById('f-'+actor+'-tc-val');if(e&&!e.value){e.value=val.toLocaleString('es-AR');if(typeof fmtNum==='function')fmtNum(e);}}
+  }
+}
+
+function toggleMonedaOp(){
+  const m=document.getElementById('f-op-moneda')?.value||'pesos';
+  const isDol=m==='dolares';
+  const show=id=>document.getElementById(id)&&(document.getElementById(id).style.display=isDol?'':'none');
+  const hide=id=>document.getElementById(id)&&(document.getElementById(id).style.display='none');
+  if(isDol){show('f-op-tc-wrap');show('f-op-tc-val-wrap');show('f-op-tc-res-wrap');
+    show('f-tc-usd-wrap');show('f-tv-usd-wrap');
+    const l1=document.getElementById('lbl-pc');if(l1)l1.textContent='P. compra neto (USD/tn)';
+    const l2=document.getElementById('lbl-pv');if(l2)l2.textContent='P. venta neto (USD/tn)';
+    const l3=document.getElementById('lbl-tc');if(l3)l3.textContent='Total compra neto ($)';
+    const l4=document.getElementById('lbl-tv');if(l4)l4.textContent='Total venta neto ($)';
+  }else{
+    hide('f-op-tc-wrap');hide('f-op-tc-val-wrap');hide('f-op-tc-res-wrap');
+    hide('f-tc-usd-wrap');hide('f-tv-usd-wrap');
+    const l1=document.getElementById('lbl-pc');if(l1)l1.textContent='P. compra neto ($/tn)';
+    const l2=document.getElementById('lbl-pv');if(l2)l2.textContent='P. venta neto ($/tn)';
+    const l3=document.getElementById('lbl-tc');if(l3)l3.textContent='Total compra neto ($)';
+    const l4=document.getElementById('lbl-tv');if(l4)l4.textContent='Total venta neto ($)';
+  }
+  // Auto-fill TC val from dolar cotization
+  if(isDol){
+    const tipo=document.getElementById('f-op-tc-tipo')?.value||'divisa';
+    const val=tipo==='divisa'?dolar.divisa:tipo==='mayorista'?dolar.mayorista:tipo==='blue'?dolar.blue:0;
+    if(val){const e=document.getElementById('f-op-tc-val');if(e){e.value=val.toLocaleString('es-AR');fmtNum(e);}}
+  }
+  liveCalc();
+}
+
+function toggleCompMoneda(){
+  const m=document.getElementById('f-comp-moneda')?.value||'pesos';
+  const isDol=m==='dolares';
+  const dw=document.getElementById('f-comp-tc-tipo-wrap');
+  const dvw=document.getElementById('f-comp-tc-val-wrap');
+  if(dw)dw.style.display=isDol?'':'none';
+  if(dvw)dvw.style.display=isDol?'':'none';
+}
+
+function toggleActorEcheq(actor,val){
+  const v=(val||'').toLowerCase();
+  const isEcheq=v.includes('echeq');
+  const isTotal=v.includes('total');
+  const isEcheqParcial=isEcheq&&!isTotal;
+  // Panel de echeqs individuales solo si es echeq parcial
+  const panel=document.getElementById('actor-echeqs-'+actor);
+  if(panel)panel.style.display=isEcheqParcial?'block':'none';
+  // Renombrar labels según contexto
+  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+  const labels={
+    prov:{pagado:'lbl-prov-pagado', def:'Importe pagado ($)', echeq:'Importe echeq ($)'},
+    ref: {pagado:'lbl-ref-pagado',  def:'Pagado ($)',         echeq:'Importe echeq ($)'},
+    transp:{pagado:'lbl-transp-pag1',def:'Pagado tramo 1 ($)',echeq:'Echeq tramo 1 ($)'},
+    com: {pagado:'lbl-com-pagado',  def:'Pagado ($)',         echeq:'Importe echeq ($)'},
+    comp:{pagado:'lbl-comp-cobrado',def:'Cobrado al comprador ($)',echeq:'Importe echeq ($)'},
+  };
+  const lbl=labels[actor];
+  if(lbl)set(lbl.pagado, isEcheq?lbl.echeq:lbl.def);
+  if(actor==='transp')set('lbl-transp-pag2',isEcheq?'Echeq tramo 2 ($)':'Pagado tramo 2 ($)');
+}
+
+function addActorEcheq(actor){
+  if(actorEcheqCount[actor]>=6){toast('Máximo 6 echeqs por actor','err');return;}
+  actorEcheqCount[actor]++;
+  const i=actorEcheqCount[actor];
+  const row=document.createElement('div');
+  row.id='aer-'+actor+'-'+i;
+  row.className='echeq-row';
+  row.style.cssText='grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 1.5fr 1.5fr 32px;';
+  row.innerHTML=`
+    <div class="field"><label>#${i} Empresa/Persona</label><input type="text" id="aei-emp-${actor}-${i}" placeholder="García SA"></div>
+    <div class="field"><label>Banco</label><input type="text" id="aei-banco-${actor}-${i}" placeholder="Galicia"></div>
+    <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}"></div>
+    <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}"></div>
+    <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}"></div>
+    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" placeholder="ej: 7.000.000" oninput="calcSaldo('${actor}')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+    <div class="field"><label>Estado</label>
+      <select id="aei-est-${actor}-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
+    <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+  document.getElementById('actor-echeq-rows-'+actor).appendChild(row);
+}
+
+function getActorEcheqs(actor,opId){
+  const result=[];
+  for(let i=1;i<=6;i++){
+    const el=document.getElementById('aer-'+actor+'-'+i);if(!el)continue;
+    const raw=document.getElementById('aei-imp-'+actor+'-'+i)?.value||'';const imp=NpV(raw);if(!imp)continue;
+    result.push({id:Date.now()+Math.random(),
+      fr:document.getElementById('aei-fr-'+actor+'-'+i)?.value||'',
+      fc:document.getElementById('aei-fc-'+actor+'-'+i)?.value||'',
+      empresa:document.getElementById('aei-emp-'+actor+'-'+i)?.value||'',
+      banco:document.getElementById('aei-banco-'+actor+'-'+i)?.value||'',
+      num:document.getElementById('aei-num-'+actor+'-'+i)?.value||'',
+      imp,impNeto:imp,descPct:0,descMonto:0,gastoAcred:0,cant:'1',
+      opRef:opId,actor,obs:'',
+      estado:document.getElementById('aei-est-'+actor+'-'+i)?.value||'Pendiente',
+      fromOp:true});
+  }
+  return result;
+}
+
+function clearActorEcheqs(){
+  ['prov','ref','transp','com','comp'].forEach(actor=>{
+    actorEcheqCount[actor]=0;
+    const c=document.getElementById('actor-echeq-rows-'+actor);if(c)c.innerHTML='';
+    const p=document.getElementById('actor-echeqs-'+actor);if(p)p.style.display='none';
+  });
+}
+
+function restoreActorEcheqs(opId){
+  // Re-populate echeq rows for each actor from saved echeqs linked to this op
+  ['prov','ref','transp','com','comp'].forEach(actor=>{
+    const saved=echeqs.filter(e=>e.opRef==opId&&e.actor===actor&&e.fromOp);
+    if(!saved.length)return;
+    const pago=document.getElementById('f-'+actor+'-pago')||document.getElementById('f-comp-pago');
+    const pagoVal=(actor==='comp'?document.getElementById('f-comp-pago'):document.getElementById('f-'+actor+'-pago'))?.value||'';
+    document.getElementById('actor-echeqs-'+actor).style.display='block';
+    saved.forEach(e=>{
+      actorEcheqCount[actor]++;
+      const i=actorEcheqCount[actor];
+      const row=document.createElement('div');
+      row.id='aer-'+actor+'-'+i;row.className='echeq-row';
+      row.style.cssText='grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 1.5fr 1.5fr 32px;';
+      row.innerHTML=`
+        <div class="field"><label>#${i} Empresa/Persona</label><input type="text" id="aei-emp-${actor}-${i}" value="${e.empresa||''}"></div>
+        <div class="field"><label>Banco</label><input type="text" id="aei-banco-${actor}-${i}" value="${e.banco||''}"></div>
+        <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}" value="${e.num||''}"></div>
+        <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}" value="${e.fr||''}"></div>
+        <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}" value="${e.fc||''}"></div>
+        <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" value="${e.imp||''}"></div>
+        <div class="field"><label>Estado</label>
+          <select id="aei-est-${actor}-${i}">
+            ${['Pendiente','Al cobro','Cobrado total','Endosado','Rechazado'].map(opt=>`<option${opt===e.estado?' selected':''}>${opt}</option>`).join('')}
+          </select></div>
+        <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+      document.getElementById('actor-echeq-rows-'+actor).appendChild(row);
+    });
+  });
+}
+
+
+function fixEcheqs(){
+  echeqs=echeqs.map(e=>{if(e.imp!==undefined){e.imp=NpV(e.imp+'');e.impNeto=NpV((e.impNeto||e.imp)+'');}return e;});
+  const seen=new Set();
+  echeqs=echeqs.filter(e=>{
+    const k=`${e.opRef||''}-${e.actor||''}-${e.empresa||''}-${e.fc||''}-${Math.round(e.imp||0)}`;
+    if(seen.has(k))return false;seen.add(k);return true;
+  });
+  save();
+}
+
+function toast(msg,type=''){
+  const c=document.getElementById('toasts'),t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>t.remove(),3200);
+}
+function T(name){
+  const names=['dash','op','planilla','echeq','provs','gastos','cfg'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  const r={dash:renderDash,op:()=>setTimeout(liveCalc,50),planilla:renderPlanilla,provs:renderProvs,gastos:renderGastos,echeq:()=>{renderEcheqs();fillOpFilter();}};
+  if(r[name])r[name]();
+}
+async function fetchDolar(){
+  const ENDPOINTS=[
+    'https://dolarapi.com/v1/dolares',
+    'https://api.bluelytics.com.ar/v2/latest',
+  ];
+  const avg=(x)=>x?(Math.round(((x.compra||0)+(x.venta||0))/2*100)/100):0;
+  // Intento 1: dolarapi.com
+  try{
+    const r=await fetch(ENDPOINTS[0]);
+    if(!r.ok)throw new Error('status '+r.status);
+    const arr=await r.json();
+    const of=arr.find(x=>x.casa==='oficial');
+    const my=arr.find(x=>x.casa==='mayorista');
+    const bl=arr.find(x=>x.casa==='blue');
+    if(of)dolar.divisa=avg(of);
+    if(my)dolar.mayorista=avg(my);
+    if(bl)dolar.blue=avg(bl);
+    cfg.dolarDiv=dolar.divisa;cfg.dolarMay=dolar.mayorista;cfg.dolarBlue=dolar.blue;
+    save();updateWidget();
+    const ts=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    toast('✓ Cotización actualizada — '+ts);
+    return;
+  }catch(e1){}
+  // Intento 2: bluelytics
+  try{
+    const r=await fetch(ENDPOINTS[1]);
+    if(!r.ok)throw new Error('status '+r.status);
+    const d=await r.json();
+    if(d.oficial)dolar.divisa=avg({compra:d.oficial.value_buy,venta:d.oficial.value_sell});
+    if(d.oficial_euro){}
+    if(d.blue)dolar.blue=avg({compra:d.blue.value_buy,venta:d.blue.value_sell});
+    if(dolar.divisa)dolar.mayorista=dolar.mayorista||dolar.divisa;
+    cfg.dolarDiv=dolar.divisa;cfg.dolarMay=dolar.mayorista;cfg.dolarBlue=dolar.blue;
+    save();updateWidget();
+    const ts=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    toast('✓ Cotización actualizada (alt) — '+ts);
+    return;
+  }catch(e2){}
+  // Fallback: usar guardado o pedir manual
+  dolar.divisa=cfg.dolarDiv||0;dolar.mayorista=cfg.dolarMay||0;dolar.blue=cfg.dolarBlue||0;
+  updateWidget();
+  if(!dolar.divisa){
+    toast('⚠ Sin conexión — ingresá las cotizaciones en Config.','err');
+    // Resaltar campos en Config
+    ['cfg-div','cfg-may','cfg-blue'].forEach(id=>{
+      const e=document.getElementById(id);
+      if(e&&!e.value){e.style.borderColor='var(--dan)';e.style.boxShadow='0 0 0 3px rgba(231,76,60,.25)';}
+    });
+  } else {
+    toast('⚠ Sin conexión — usando última cotización guardada','err');
+  }
+}
+function updateWidget(){
+  const f=v=>v?'$'+Math.round(v).toLocaleString('es-AR'):'—';
+  document.getElementById('dv-div').textContent=f(dolar.divisa);
+  document.getElementById('dv-may').textContent=f(dolar.mayorista);
+  document.getElementById('dv-blue').textContent=f(dolar.blue);
+  ['f-dv1','f-dv2','f-prov-tc-val','f-comp-tc-val','f-ref-tc-val','f-transp-tc-val','f-com-tc-val'].forEach(id=>{
+    const e=document.getElementById(id);if(e&&!e.value&&dolar.divisa)e.value=dolar.divisa;
+  });
+  if(cfg.dolarDiv)document.getElementById('cfg-div').value=cfg.dolarDiv;
+  if(cfg.dolarMay)document.getElementById('cfg-may').value=cfg.dolarMay;
+  if(cfg.dolarBlue)document.getElementById('cfg-blue').value=cfg.dolarBlue;
+}
+function saveDolarManual(){
+  ['cfg-div','cfg-may','cfg-blue'].forEach(id=>{const e=document.getElementById(id);if(e){e.style.borderColor='';e.style.boxShadow='';}});
+  cfg.dolarDiv=Np('cfg-div')||cfg.dolarDiv;cfg.dolarMay=Np('cfg-may')||cfg.dolarMay;cfg.dolarBlue=Np('cfg-blue')||cfg.dolarBlue;
+  dolar.divisa=cfg.dolarDiv;dolar.mayorista=cfg.dolarMay;dolar.blue=cfg.dolarBlue;
+  updateWidget();save();
+}
+function getDV(tipo){
+  if(tipo==='divisa')return dolar.divisa;
+  if(tipo==='mayorista')return dolar.mayorista;
+  if(tipo==='blue')return dolar.blue;
+  return 0;
+}
+function setDolarViaje(n){
+  const v=getDV(V('f-dol'+n));
+  if(v)document.getElementById('f-dv'+n).value=v;
+  liveCalc();
+}
+function setTipo(t,btn){
+  document.getElementById('f-tipo').value=t;
+  document.querySelectorAll('#tipo-tog button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('gf').style.display=t==='granel'?'block':'none';
+  document.getElementById('ef').style.display=t==='envase'?'block':'none';
+}
+function addTix(files,key){
+  const arr=key==='tix1'?tix1:tix2;
+  if(arr.length>=4){toast('Máximo 4 tickets','err');return;}
+  Array.from(files).slice(0,4-arr.length).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{arr.push({d:e.target.result,n:f.name});renderTix(key);};
+    r.readAsDataURL(f);
+  });
+}
+function dropTix(e,key){e.preventDefault();e.currentTarget.classList.remove('drag');addTix(e.dataTransfer.files,key);}
+function renderTix(key){
+  const arr=key==='tix1'?tix1:tix2,n=key==='tix1'?'1':'2';
+  document.getElementById('tp'+n).innerHTML=arr.map((t,i)=>`<div class="tthumb">
+    <img src="${t.d}" onclick="openLB('${t.d}','V${n} T${i+1}')">
+    <button class="tdel" onclick="${key==='tix1'?'tix1':'tix2'}.splice(${i},1);renderTix('${key}')"><i class="ti ti-x"></i></button>
+    <div class="tlbl">T${i+1}</div></div>`).join('');
+  const c=document.getElementById('tc'+n);if(c)c.textContent=arr.length?arr.length+'/4':'';
+}
+function openLB(src,info){document.getElementById('lb-img').src=src;document.getElementById('lb-txt').textContent=info;document.getElementById('lb').style.display='flex';}
+function closeLB(){document.getElementById('lb').style.display='none';}
+
+function checkPrecioRazonable(){
+  const pc=NpV(document.getElementById('f-pc')?.value||'');
+  const pv=NpV(document.getElementById('f-pv')?.value||'');
+  const wpc=document.getElementById('warn-pc');
+  const wpv=document.getElementById('warn-pv');
+  if(wpc)wpc.style.display=pc>500000&&pc<1e10?'block':'none';
+  if(wpv)wpv.style.display=pv>500000&&pv<1e10?'block':'none';
+}
+
+function toggleAdelantos(val){
+  const v=(val||'').toLowerCase();
+  const isEcheq=v.includes('echeq');
+  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+  set('lbl-a1', isEcheq?'Echeq 1 ($)':'Adelanto 1 ($)');
+  set('lbl-a2', isEcheq?'Echeq 2 ($)':'Adelanto 2 ($)');
+  set('lbl-a3', isEcheq?'Echeq 3 ($)':'Adelanto 3 ($)');
+  set('lbl-at', isEcheq?'Total echeqs':'Total adelantos');
+}
+function toggleEcheqInline(){
+  const v=V('f-pago').toLowerCase();
+  const isEcheq=v.includes('echeq');
+  const isTotal=v.includes('total');
+  const isEcheqParcial=isEcheq&&!isTotal;
+  document.getElementById('card-echeqs-inline').style.display=isEcheqParcial?'block':'none';
+  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+  set('lbl-a1', isEcheq?'Echeq 1 ($)':'Adelanto 1 ($)');
+  set('lbl-a2', isEcheq?'Echeq 2 ($)':'Adelanto 2 ($)');
+  set('lbl-a3', isEcheq?'Echeq 3 ($)':'Adelanto 3 ($)');
+  set('lbl-at', isEcheq?'Total echeqs':'Total adelantos');
+}
+function addEcheqRow(){
+  if(inlineEcheqCount>=6){toast('Máximo 6 echeqs','err');return;}
+  inlineEcheqCount++;
+  const i=inlineEcheqCount;
+  const div=document.createElement('div');
+  div.id='er-'+i;div.className='echeq-row';
+  div.innerHTML=`
+    <div class="field"><label>#${i} Empresa/Persona</label><input type="text" id="ei-emp-${i}" placeholder="García SA"></div>
+    <div class="field"><label>Banco</label><input type="text" id="ei-banco-${i}" placeholder="Galicia"></div>
+    <div class="field"><label>N° cheque</label><input type="text" id="ei-num-${i}"></div>
+    <div class="field"><label>F. realizado</label><input type="date" id="ei-fr-${i}"></div>
+    <div class="field"><label>F. cobro</label><input type="date" id="ei-fc-${i}"></div>
+    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="ei-imp-${i}" placeholder="ej: 7.000.000" onkeypress="return /[\d.,]/.test(event.key)"></div>
+    <div class="field"><label>Estado</label>
+      <select id="ei-est-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
+    <button class="bi del" onclick="document.getElementById('er-${i}').remove()" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+  document.getElementById('echeqs-inline-container').appendChild(div);
+}
+function getInlineEcheqs(opId){
+  const result=[];
+  for(let i=1;i<=inlineEcheqCount;i++){
+    const el=document.getElementById('er-'+i);if(!el)continue;
+    const raw=document.getElementById('ei-imp-'+i)?.value||'';const imp=NpV(raw);if(!imp)continue;
+    result.push({id:Date.now()+i,fr:V('ei-fr-'+i),fc:V('ei-fc-'+i),
+      empresa:V('ei-emp-'+i),banco:V('ei-banco-'+i),num:V('ei-num-'+i),
+      imp,impNeto:imp,descPct:0,descMonto:0,gastoAcred:0,cant:'1',opRef:opId,
+      obs:'',estado:V('ei-est-'+i),fromOp:true});
+  }
+  return result;
+}
+function sumActorEcheqs(actor){
+  // Suma los importes de los echeqs del panel parcial de ese actor
+  let total=0;
+  for(let i=1;i<=6;i++){
+    const imp=document.getElementById('aei-imp-'+actor+'-'+i);
+    if(imp)total+=NpV(imp.value);
+  }
+  return total;
+}
+function calcSaldo(actor){
+  const echeqSum=sumActorEcheqs(actor);
+  if(actor==='prov'){
+    const tv=N('f-tv');
+    const p=(Np('f-prov-pagado')||0)+echeqSum;
+    if(tv)document.getElementById('f-prov-saldo').value=MF(tv-p);
+  }else if(actor==='ref'){
+    const c=Np('f-ref-costo');
+    const p=(Np('f-ref-pagado')||0)+echeqSum;
+    if(c)document.getElementById('f-ref-saldo').value=MF(IVA(c)-p);
+  }else if(actor==='transp'){
+    const t=Np('f-flete1')+Np('f-flete2');
+    const p=Np('f-transp-pag1')+Np('f-transp-pag2')+echeqSum;
+    if(t)document.getElementById('f-transp-saldo').value=MF(t-p);
+  }else if(actor==='comp'){
+    const tv=N('f-tv');
+    const c=(Np('f-comp-cobrado')||0)+echeqSum;
+    if(tv)document.getElementById('f-comp-saldo').value=MF(tv-c);
+  }
+}
+function calcAdel(){
+  const a=Np('f-a1')+Np('f-a2')+Np('f-a3');
+  document.getElementById('f-at').value=a?MF(a):'';
+}
+function calcEcheq(){
+  const imp=Np('e-imp'),pct=N('e-desc-pct'),gasto=Np('e-gasto-acred'),pagado=Np('e-imp-pagado');
+  const desc=imp*pct/100,neto=imp-desc-gasto;
+  document.getElementById('e-desc-monto').value=desc?MF(desc):'';
+  document.getElementById('e-imp-neto').value=imp?MF(neto):'';
+  document.getElementById('e-saldo-pend').value=pagado&&neto?MF(neto-pagado):'';
+}
+function calcGastoIVA(){
+  const imp=Np('g-imp');
+  document.getElementById('g-imp-iva').value=imp?MF(IVA(imp)):'';
+}
+function liveCalc(){
+  const tipo=V('f-tipo');
+  // ── Tipo de cambio por sección ──
+  const tcC=getTCVal('compra');   // {isDol, tc}
+  const tcV=getTCVal('venta');
+  // ── Precios raw (en la moneda ingresada) ──
+  const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
+  const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
+  // ── Modo IVA ──
+  const pcMode=document.getElementById('f-pc-iva-mode')?.value||'neto';
+  const pvMode=document.getElementById('f-pv-iva-mode')?.value||'neto';
+  // ── Convertir a pesos usando TC de la sección ──
+  const pcPesos=tcC.isDol?pcRaw*tcC.tc:pcRaw;
+  const pvPesos=tcV.isDol?pvRaw*tcV.tc:pvRaw;
+  // ── Precio neto en pesos (sin IVA) — el usuario siempre ingresa el neto ──
+  const pc=pcPesos;
+  const pv=pvPesos;
+  // ── Toneladas ──
+  const tnv=NpTN('f-tnv');
+  const tnventa=NpTN('f-tnventa')||tnv;
+  const uni=N('f-uni');
+  const base=tipo==='granel'?tnv:uni;
+  const basev=tipo==='granel'?tnventa:uni;
+  // ── Totales en pesos ──
+  const tc=Math.round(pc*base);
+  const tv=Math.round(pv*basev);
+  // ── Mostrar precios c/IVA (solo si pesos y Con IVA) ──
+  if(tipo==='granel'){
+    const showIvaC=!tcC.isDol&&pcMode==='civa';
+    const showIvaV=!tcV.isDol&&pvMode==='civa';
+    const fPcIva=document.getElementById('f-pc-iva');
+    const fPvIva=document.getElementById('f-pv-iva');
+    if(fPcIva){fPcIva.closest('.field').style.display=showIvaC?'':'none';}
+    if(fPvIva){fPvIva.closest('.field').style.display=showIvaV?'':'none';}
+    if(showIvaC&&fPcIva)fPcIva.value=MF(Math.round(pcPesos*1.21));
+    if(showIvaV&&fPvIva)fPvIva.value=MF(Math.round(pvPesos*1.21));
+  } else {
+    if(N('f-pcos'))document.getElementById('f-pcos-iva').value=MF(IVA(N('f-pcos')));
+    if(N('f-pve'))document.getElementById('f-pve-iva').value=MF(IVA(N('f-pve')));
+  }
+  // ── Mostrar totales ──
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=(v||v===0)?MF(v):'';}
+  set('f-tc', tc);
+  set('f-tv', tv);
+  // IVA totales solo si pesos
+  const showTcIva=!tcC.isDol&&pcMode==='civa';
+  const showTvIva=!tcV.isDol&&pvMode==='civa';
+  const tcIvaWrap=document.getElementById('f-tc-iva')?.closest('.field');
+  const tvIvaWrap=document.getElementById('f-tv-iva')?.closest('.field');
+  if(tcIvaWrap)tcIvaWrap.style.display=showTcIva?'':'none';
+  if(tvIvaWrap)tvIvaWrap.style.display=showTvIva?'':'none';
+  if(showTcIva)set('f-tc-iva', IVA(tc));
+  if(showTvIva)set('f-tv-iva', IVA(tv));
+  // ── Totales en USD ──
+  if(tcC.isDol&&pcRaw){
+    const el=document.getElementById('f-tc-usd');
+    const wr=document.getElementById('f-tc-usd-wrap');
+    if(wr)wr.style.display='';
+    if(el)el.value='USD '+Math.round(pcRaw*base).toLocaleString('es-AR');
+  }
+  if(tcV.isDol&&pvRaw){
+    const el=document.getElementById('f-tv-usd');
+    const wr=document.getElementById('f-tv-usd-wrap');
+    if(wr)wr.style.display='';
+    if(el)el.value='USD '+Math.round(pvRaw*basev).toLocaleString('es-AR');
+  }
+  // ── Actualizar dólar fields ──
+  if(dolar.divisa){
+    ['f-dv1','f-dv2','f-prov-tc-val','f-comp-tc-val','f-ref-tc-val'].forEach(id=>{
+      const e=document.getElementById(id);if(e&&!e.value){e.value=dolar.divisa.toLocaleString('es-AR');if(typeof fmtNum==='function')fmtNum(e);}
+    });
+  }
+  // ── Diferencias de toneladas ──
+  const tn1=NpTN('f-tn1'),tn2=NpTN('f-tn2'),tn3=NpTN('f-tn3'),tn4=NpTN('f-tn4');
+  const DS=d=>(d>=0?'+':'')+d.toFixed(3)+' tn';
+  if(tn1&&tn2){const d=tn2-tn1;document.getElementById('f-dif1').value=DS(d)+' ('+(Math.abs(d)/tn1*100).toFixed(3)+'%)';}
+  if(tn3&&tn4){const d=tn4-tn3;document.getElementById('f-dif2').value=DS(d)+' ('+(Math.abs(d)/tn3*100).toFixed(3)+'%)';}
+  if(tn2&&tn3){
+    const dP=tn3-tn2;
+    const eP=document.getElementById('f-dif-proceso');
+    const eR=document.getElementById('f-rend-refin');
+    if(eP){eP.value=DS(dP)+' ('+(Math.abs(dP)/tn2*100).toFixed(3)+'%)';eP.style.color=dP>=0?'var(--suc)':'var(--dan)';}
+    if(eR){const r=(tn3/tn2*100).toFixed(3);eR.value=r+'%';eR.style.color=parseFloat(r)>=99?'var(--suc)':'var(--warn)';}
+  }
+  if(tn1&&tn4){
+    const dT=tn4-tn1;
+    const eT=document.getElementById('f-dif-total');
+    const eM=document.getElementById('f-merma-total');
+    if(eT){eT.value=DS(dT)+' ('+(Math.abs(dT)/tn1*100).toFixed(3)+'%)';eT.style.color=dT>=0?'var(--suc)':'var(--dan)';}
+    if(eM){const m=(Math.abs(dT)/tn1*100).toFixed(3);eM.value=m+'%';eM.style.color=parseFloat(m)<=0.5?'var(--suc)':'var(--warn)';}
+  }
+  // ── Ref civa ──
+  const refCdisplay=Np('f-ref-costo');
+  if(refCdisplay){const e=document.getElementById('f-ref-civa');if(e)e.value=MF(IVA(refCdisplay));calcSaldo('ref');}
+  // ── Flete IVA ──
+  const f1=Np('f-flete1'),f2=Np('f-flete2'),flete=f1+f2,fleteIva=IVA(f1)+IVA(f2);
+  if(f1){const e=document.getElementById('f-flete1-iva');if(e)e.value=MF(IVA(f1));}
+  if(f2){const e=document.getElementById('f-flete2-iva');if(e)e.value=MF(IVA(f2));}
+  if(flete){
+    const et=document.getElementById('f-flete-total');if(et)et.value=MF(flete);
+    const eti=document.getElementById('f-flete-total-iva');if(eti)eti.value=MF(fleteIva);
+  }
+  // ── Comisión ──
+  const comPct=parseFloat(V('f-com-pct'))||0;
+  const comMonto=tv>0&&comPct?tv*comPct/100:0;
+  if(comMonto){
+    const e=document.getElementById('f-com-monto');if(e)e.value=MF(comMonto);
+    const e2=document.getElementById('f-com-iva');if(e2)e2.value=MF(IVA(comMonto));
+  }
+  // ── TC sección ref/transp/com ──
+  const tcRef=getTCVal('ref');
+  const tcTransp=getTCVal('transp');
+  const refCraw=Np('f-ref-costo');
+  const refC=tcRef.isDol?refCraw*tcRef.tc:refCraw;
+  const f1p=tcTransp.isDol?f1*tcTransp.tc:f1;
+  const f2p=tcTransp.isDol?f2*tcTransp.tc:f2;
+  const fleteP=f1p+f2p;
+  const costoCompra=tc;
+  const costoRefin=refC;
+  const costoFlete=fleteP;
+  const costoComision=comMonto;
+  const costoNetoTotal=costoCompra+costoRefin+costoFlete+costoComision;
+  // IVA solo aplica si la moneda es pesos y el modo IVA está activo
+  const ivaC=(!tcC.isDol&&pcMode==='civa')?IVA(costoCompra):costoCompra;
+  const ivaV=(!tcV.isDol&&pvMode==='civa')?IVA(tv):tv;
+  const costoIvaTotal=ivaC+IVA(costoRefin)+IVA(f1p)+IVA(f2p)+IVA(costoComision);
+  const resultadoNeto=tv-costoNetoTotal;
+  const resultadoCiva=ivaV-costoIvaTotal;
+  const margenPct=costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0;
+  // ── Mostrar resultado ──
+  const setCosto=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--dan)';}};
+  const setIngreso=id=>v=>{const e=document.getElementById(id);if(e){e.value=MF(v);e.style.color='var(--suc)';}};
+  setCosto('f-costo-compra')(costoCompra);
+  setCosto('f-costo-compra-iva')(!tcC.isDol&&pcMode==='civa'?IVA(costoCompra):costoCompra);
+  setCosto('f-costo-refin')(costoRefin);
+  setCosto('f-costo-refin-iva')(IVA(costoRefin));
+  setCosto('f-costo-flete')(costoFlete);
+  setCosto('f-costo-flete-iva')(IVA(costoFlete));
+  setCosto('f-costo-com')(costoComision);
+  setCosto('f-costo-com-iva')(IVA(costoComision));
+  setCosto('f-costo-total')(costoNetoTotal);
+  setCosto('f-costo-total-iva')(costoIvaTotal);
+  setIngreso('f-ingreso-total')(tv);
+  setIngreso('f-ingreso-total-iva')(!tcV.isDol&&pvMode==='civa'?IVA(tv):tv);
+  // ── Ocultar columnas c/IVA si ambas operaciones son en USD ──
+  const hayIvaC=!tcC.isDol&&pcMode==='civa';
+  const hayIvaV=!tcV.isDol&&pvMode==='civa';
+  const hayIva=hayIvaC||hayIvaV;
+  ['f-costo-compra-iva','f-costo-refin-iva','f-costo-flete-iva','f-costo-com-iva'].forEach(id=>{
+    const el=document.getElementById(id)?.closest('.field');if(el)el.style.display=hayIva?'':'none';
+  });
+  ['f-ingreso-total-iva','f-resultado-iva','f-costo-total-iva'].forEach(id=>{
+    const el=document.getElementById(id)?.closest('.field');if(el)el.style.display=hayIva?'':'none';
+  });
+  if(costoNetoTotal||tv||tc||resultadoNeto){
+    const re=document.getElementById('f-resultado');
+    const reiva=document.getElementById('f-resultado-iva');
+    if(re){re.value=MF(resultadoNeto);re.style.color=resultadoNeto>0?'var(--suc)':resultadoNeto<0?'var(--dan)':'var(--t2)';}
+    if(reiva){reiva.value=MF(resultadoCiva);reiva.style.color=resultadoCiva>0?'var(--suc)':resultadoCiva<0?'var(--dan)':'var(--t2)';}
+    document.getElementById('f-margen-pct').value=costoNetoTotal?margenPct.toFixed(2)+'%':'—';
+    // Resultado en USD
+    const tcResUsd=tcV.isDol?tcV.tc:(tcC.isDol?tcC.tc:0);
+    const usdWrap=document.getElementById('f-resultado-usd-wrap');
+    const usdPesosWrap=document.getElementById('f-resultado-usd-pesos-wrap');
+    if(tcResUsd>0){
+      if(usdWrap)usdWrap.style.display='';
+      if(usdPesosWrap)usdPesosWrap.style.display='';
+      const resUsd=Math.round(resultadoNeto/tcResUsd*100)/100;
+      const elUsd=document.getElementById('f-resultado-usd');
+      if(elUsd){elUsd.value='USD '+resUsd.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});elUsd.style.color=resUsd>=0?'var(--suc)':'var(--dan)';}
+      const elPesos=document.getElementById('f-resultado-usd-pesos');
+      if(elPesos){const resPesos=Math.round(resUsd*tcResUsd);elPesos.value=MF(resPesos);elPesos.style.color=resPesos>=0?'var(--suc)':'var(--dan)';}
+    } else {
+      if(usdWrap)usdWrap.style.display='none';
+      if(usdPesosWrap)usdPesosWrap.style.display='none';
+    }
+    // Escenarios
+    const dv1=NpTC('f-dv1'),baseR=dv1||dolar.divisa||1;
+    const showS=!tcResUsd&&resultadoNeto!==0&&(dolar.mayorista||dolar.blue);
+    document.getElementById('scenario-box').style.display=showS?'grid':'none';
+    if(showS){
+      const scens=[
+        {name:'Dólar Divisa',val:dolar.divisa||baseR,r:resultadoNeto},
+        {name:'Dólar Mayorista',val:dolar.mayorista,r:dolar.mayorista?resultadoNeto*(dolar.mayorista/baseR):0},
+        {name:'Dólar Blue',val:dolar.blue,r:dolar.blue?resultadoNeto*(dolar.blue/baseR):0}
+      ];
+      document.getElementById('scenario-box').innerHTML=scens.filter(s=>s.val).map(s=>`<div class="sc ${s.r>=0?'sc-g':'sc-r'}"><div class="lbl">${s.name} ($${Math.round(s.val).toLocaleString('es-AR')})</div><div class="val">${MF(Math.abs(s.r))}</div><div class="sub">${s.r>=0?'✓ Ganancia':'✗ Pérdida'}</div></div>`).join('');
+    }
+  }
+  calcSaldo('prov');calcSaldo('comp');
+}
+
+function saveOp(){
+  const prov=V('f-prov'),fop=V('f-fop');
+  const tipo=V('f-tipo'),prod=tipo==='granel'?V('f-acg'):V('f-ace');
+  if(!prov||!fop||!prod){toast('Completá proveedor, fecha y producto','err');return;}
+  // TC por sección independiente
+  const tcCompra=getTCVal('compra');
+  const tcVenta=getTCVal('venta');
+  const isDolOp=tcCompra.isDol||tcVenta.isDol;
+  const pcRaw=tipo==='granel'?Np('f-pc'):Np('f-pcos');
+  const pvRaw=tipo==='granel'?Np('f-pv'):Np('f-pve');
+  const pcMode=document.getElementById('f-pc-iva-mode')?.value||'neto';
+  const pvMode=document.getElementById('f-pv-iva-mode')?.value||'neto';
+  const pcPesos=tcCompra.isDol?Math.round(pcRaw*tcCompra.tc*100)/100:pcRaw;
+  const pvPesos=tcVenta.isDol?Math.round(pvRaw*tcVenta.tc*100)/100:pvRaw;
+  const pc=pcMode==='civa'?Math.round(pcPesos/1.21*100)/100:pcPesos;
+  const pv=pvMode==='civa'?Math.round(pvPesos/1.21*100)/100:pvPesos;
+  const tnv=NpTN('f-tnv'),uni=N('f-uni'),tnventa=NpTN('f-tnventa')||tnv,base=tipo==='granel'?tnv:uni,basev=tipo==='granel'?tnventa:uni;
+  const tc=pc*base,tv=pv*basev;
+  const comPct=N('f-com-pct'),comMonto=tv*comPct/100||0;
+  const refC=Np('f-ref-costo');
+  const f1=Np('f-flete1'),f2=Np('f-flete2'),flete=f1+f2,fleteIva=IVA(f1)+IVA(f2);
+  const costoNetoTotal=tc+(refC||0)+flete+comMonto;
+  const costoIvaTotal=IVA(tc)+IVA(refC||0)+(typeof fleteIva!=='undefined'?fleteIva:IVA(flete))+IVA(comMonto);
+  const resultadoNeto=tv-costoNetoTotal;
+  const resultadoCiva=IVA(tv)-costoIvaTotal;
+  const dv1=N('f-dv1'),baseR=dv1||dolar.divisa||1;
+  const profitMay=dolar.mayorista?resultadoNeto*(dolar.mayorista/baseR):0;
+  const profitBlue=dolar.blue?resultadoNeto*(dolar.blue/baseR):0;
+  const tn1=Np('f-tn1'),tn2=Np('f-tn2'),tn3=Np('f-tn3'),tn4=Np('f-tn4');
+  const a1=Np('f-a1'),a2=Np('f-a2'),a3=Np('f-a3');
+  const data={
+    proveedor:prov,comprador:V('f-comp'),transportista:V('f-transp'),
+    refinador:V('f-ref-nombre'),comisionista:V('f-com-nombre'),
+    remito:V('f-remito'),factura:V('f-factura'),
+    estEntrega:V('f-est-ent'),estCobro:V('f-est-cob'),estGen:V('f-est-gen'),
+    pago:V('f-pago'),notas:V('f-notas'),
+    fOp:fop,fCob:V('f-fcob'),
+    fSalCrudo:V('f-f1sal'),fLleCrudo:V('f-f1lle'),
+    fSalRef:V('f-f2sal'),fLleEnv:V('f-f2lle'),
+    tipo,producto:prod,productoVenta:V('f-acv')||prod,compraMoneda:V('f-compra-moneda')||'pesos',compraTcTipo:V('f-compra-tc-tipo')||'manual',compraTcVal:NpTC('f-compra-tc-val'),ventaMoneda:V('f-venta-moneda')||'pesos',ventaTcTipo:V('f-venta-tc-tipo')||'manual',ventaTcVal:NpTC('f-venta-tc-val'),provMoneda:V('f-prov-moneda')||'pesos',provTcTipo:V('f-prov-tc-tipo')||'manual',provTcVal:NpTC('f-prov-tc-val'),refMoneda:V('f-ref-moneda')||'pesos',refTcTipo:V('f-ref-tc-tipo')||'manual',refTcVal:NpTC('f-ref-tc-val'),transpMoneda:V('f-transp-moneda')||'pesos',transpTcTipo:V('f-transp-tc-tipo')||'manual',transpTcVal:NpTC('f-transp-tc-val'),comMoneda:V('f-com-moneda')||'pesos',comTcTipo:V('f-com-tc-tipo')||'manual',comTcVal:NpTC('f-com-tc-val'),compMoneda:V('f-comp-moneda')||'pesos',compTcTipo:V('f-comp-tc-tipo')||'manual',compTcVal:NpTC('f-comp-tc-val'),
+    presentacion:tipo==='envase'?V('f-pres'):'',
+    marca:tipo==='envase'?V('f-marca'):'',pallets:tipo==='envase'?V('f-plt'):'',unidades:uni,
+    pcompra:pc,pventa:pv,pcIvaMode:pcMode,pvIvaMode:pvMode,pcIva:IVA(pc),pvIva:IVA(pv),
+    tn1,tn2,tn3,tn4,tnVendidas:tnv,
+    dif1:tn1&&tn2?tn2-tn1:0,dif2:tn3&&tn4?tn4-tn3:0,
+    pctMerma1:tn1>0?Math.abs((tn2-tn1)/tn1*100):0,
+    pctMerma2:tn3>0?Math.abs((tn4-tn3)/tn3*100):0,
+    descuento:N('f-desc1'),
+    dolarTipo1:V('f-dol1'),dolarVal1:dv1,
+    dolarTipo2:V('f-dol2'),dolarVal2:N('f-dv2'),
+    adel1:a1,adel2:a2,adel3:a3,adelTotal:a1+a2+a3,
+    totalCompra:tc,totalVenta:tv,
+    refServicio:refC,refServIva:IVA(refC),
+    flete1:Np('f-flete1'),flete2:Np('f-flete2'),fleteTotal:flete,fleteIvaTotal:fleteIva,
+    comPct,comMonto,comIva:IVA(comMonto),
+    costoTotal:costoNetoTotal,resultado:resultadoNeto,profitMay,profitBlue,
+    pctMargen:costoNetoTotal>0?(resultadoNeto/costoNetoTotal*100):0,
+    provPago:V('f-prov-pago'),provMoneda:V('f-prov-moneda')||'pesos',provDolTipo:V('f-prov-tc-tipo'),provDolVal:NpTC('f-prov-tc-val'),
+    provPagado:Np('f-prov-pagado'),provNotas:V('f-prov-notas'),
+    refPago:V('f-ref-pago'),refMoneda:V('f-ref-moneda')||'pesos',refDolTipo:V('f-ref-tc-tipo'),refDolVal:NpTC('f-ref-tc-val'),
+    refPagado:Np('f-ref-pagado'),refEst:V('f-ref-est'),refNotas:V('f-ref-notas'),
+    transpPago:V('f-transp-pago'),transpMoneda:V('f-transp-moneda')||'pesos',transpDolTipo:V('f-transp-tc-tipo'),transpDolVal:NpTC('f-transp-tc-val'),
+    transpPag1:Np('f-transp-pag1'),transpPag2:Np('f-transp-pag2'),
+    transpEst:V('f-transp-est'),transpNotas:V('f-transp-notas'),
+    comPago:V('f-com-pago'),comMoneda:V('f-com-moneda')||'pesos',comDolTipo:V('f-com-tc-tipo'),comPagado:Np('f-com-pagado'),
+    comEst:V('f-com-est'),comNombre:V('f-com-nombre'),comNotas:V('f-com-notas'),
+    compPago:V('f-comp-pago'),compMoneda:V('f-comp-moneda')||'pesos',compDolTipo:V('f-comp-tc-tipo'),compDolVal:NpTC('f-comp-tc-val'),
+    compCobrado:Np('f-comp-cobrado'),compEst:V('f-comp-est'),compNotas:V('f-comp-notas'),
+    tickets1:[...tix1],tickets2:[...tix2]
+  };
+  if(editingId!==null){
+    const idx=ops.findIndex(o=>o.id===editingId);
+    if(idx>=0){
+      ops[idx]={...ops[idx],...data};
+      // Al editar: borrar echeqs de actor anteriores vinculados a esta op y recargar
+      const eid=editingId;
+      echeqs=echeqs.filter(e=>!(e.fromOp&&e.opRef===eid));
+      ['prov','ref','transp','com','comp'].forEach(actor=>{
+        getActorEcheqs(actor,eid).forEach(e=>echeqs.push(e));
+      });
+      toast('✓ Op #'+eid+' actualizada');
+    }
+    editingId=null;
+  }else{
+    cnt++;data.id=cnt;data.fechaCreacion=new Date().toISOString();
+    ops.push(data);
+    const ie=getInlineEcheqs(cnt);
+    ie.forEach(e=>echeqs.push(e));
+    ['prov','ref','transp','com','comp'].forEach(actor=>{
+      getActorEcheqs(actor,cnt).forEach(e=>echeqs.push(e));
+    });
+    toast('✓ Op #'+cnt+' guardada'+(ie.length?' con '+ie.length+' echeq(s)':''));
+  }
+  save();clearForm();renderDash();
+}
+function clearForm(){
+  ['f-pc','f-pv','f-pc-iva','f-pv-iva','f-tnv','f-tc','f-tv','f-tc-iva','f-tv-iva',
+   'f-tn1','f-tn2','f-tn3','f-tn4','f-dif1','f-dif2','f-desc1','f-dv1','f-dv2',
+   'f-fcob','f-f1sal','f-f1lle','f-f2sal','f-f2lle','f-remito','f-factura','f-notas',
+   'f-a1','f-a2','f-a3','f-at',
+   'f-prov-tc-val','f-prov-pagado','f-prov-saldo','f-prov-notas',
+   'f-ref-nombre','f-ref-costo','f-ref-civa','f-ref-pagado','f-ref-saldo','f-ref-notas',
+   'f-transp','f-transp-tc-val','f-transp-pag1','f-transp-pag2','f-transp-saldo','f-transp-notas',
+   'f-flete1','f-flete1-iva','f-flete2','f-flete2-iva','f-flete-total','f-flete-total-iva','f-com-nombre','f-com-pct','f-com-monto','f-com-iva','f-com-pagado','f-com-notas',
+   'f-comp-tc-val','f-comp-cobrado','f-comp-saldo','f-comp-notas',
+   'f-costo-total','f-ingreso-total','f-resultado','f-margen-pct',
+   'f-pcos','f-pve','f-pcos-iva','f-pve-iva','f-uni','f-plt','f-marca']
+  .forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['f-prov','f-comp','f-acg','f-ace','f-pres','f-est-ent','f-est-cob','f-est-gen',
+   'f-pago','f-prov-pago','f-ref-pago','f-ref-tc-tipo','f-transp-pago','f-transp-tc-tipo',
+   'f-com-pago','f-com-tc-tipo','f-comp-pago','f-comp-tc-tipo','f-dol1','f-dol2',
+   'f-prov-tc-tipo','f-transp-est','f-ref-est','f-com-est','f-comp-est']
+  .forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=0;});
+  document.getElementById('tn-flow-box').style.display='none';
+  document.getElementById('scenario-box').style.display='none';
+  document.getElementById('edit-id').value='';
+  document.getElementById('edit-banner').style.display='none';
+  document.getElementById('save-lbl').textContent='Guardar operación';
+  document.getElementById('card-echeqs-inline').style.display='none';
+  document.getElementById('echeqs-inline-container').innerHTML='';
+  inlineEcheqCount=0;
+  editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');clearActorEcheqs();
+  // Reset IVA mode selects
+  const pcm=document.getElementById('f-pc-iva-mode');if(pcm)pcm.value='neto';
+  ['compra','venta','prov','ref','transp','com','comp'].forEach(s=>{const e=document.getElementById('f-'+s+'-moneda');if(e)e.value='pesos';toggleSecMoneda(s);});
+  const pvm=document.getElementById('f-pv-iva-mode');if(pvm)pvm.value='neto';
+  // Show all hidden IVA fields
+  ['f-pc-iva','f-pv-iva'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';const w=e.closest('.field');if(w)w.style.display='none';}});
+  document.getElementById('f-fop').value=new Date().toISOString().split('T')[0];
+  setTipo('granel',document.querySelector('#tipo-tog button:first-child'));
+  if(dolar.divisa)['f-dv1','f-dv2','f-prov-tc-val','f-comp-tc-val','f-ref-tc-val','f-transp-tc-val','f-com-tc-val'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=dolar.divisa;});
+}
+function cancelEdit(){clearForm();}
+function editOp(id){
+  const o=ops.find(x=>x.id===id);if(!o)return;
+  // Switch to op tab FIRST so panel is visible, then clear and populate
+  T('op');
+  clearForm();
+  editingId=id;
+  document.getElementById('edit-id').value=id;
+  document.getElementById('edit-banner').style.display='block';
+  document.getElementById('edit-num').textContent='#'+id;
+  document.getElementById('save-lbl').textContent='Actualizar operación';
+  // Helper: set input value safely
+  const sv=(fid,v)=>{
+    const e=document.getElementById(fid);
+    if(!e||v===undefined||v===null)return;
+    if(e.tagName==='SELECT'){
+      const exists=[...e.options].some(o=>o.value==v||o.text==v);
+      if(!exists&&v){const o=document.createElement('option');o.value=v;o.text=v;e.appendChild(o);}
+      e.value=v;
+    } else if(e.getAttribute('inputmode')==='numeric'&&v!==''&&v!==0){
+      e.value=typeof v==='number'?v.toLocaleString('es-AR',{maximumFractionDigits:2}):v;
+      fmtNum(e);
+    } else {e.value=v;}
+  };
+  // Helper: set select value safely
+  const ss=(fid,v,def)=>{const e=document.getElementById(fid);if(e)e.value=v||def||e.options[0]?.value||'';};
+  // ── Identificación ──
+  sv('f-fop',o.fOp);sv('f-fcob',o.fCob);sv('f-remito',o.remito);sv('f-factura',o.factura);
+  ss('f-pago',o.pago,'Transferencia');
+  ss('f-est-ent',o.estEntrega,'Pendiente');
+  ss('f-est-cob',o.estCobro,'Pendiente');
+  ss('f-est-gen',o.estGen,'En curso');
+  sv('f-notas',o.notas);
+  toggleEcheqInline();
+  // ── Tipo y producto ──
+  const tipBtn=o.tipo==='envase'?document.querySelector('#tipo-tog button:last-child'):document.querySelector('#tipo-tog button:first-child');
+  setTipo(o.tipo||'granel',tipBtn);
+  fillActorSelects();
+  ss('f-compra-moneda',o.compraMoneda||'pesos');ss('f-compra-tc-tipo',o.compraTcTipo||'manual');sv('f-compra-tc-val',o.compraTcVal||'');toggleSecMoneda('compra');
+  ss('f-venta-moneda',o.ventaMoneda||'pesos');ss('f-venta-tc-tipo',o.ventaTcTipo||'manual');sv('f-venta-tc-val',o.ventaTcVal||'');toggleSecMoneda('venta');
+  ss('f-prov-moneda',o.provMoneda||'pesos');ss('f-prov-tc-tipo',o.provTcTipo||'manual');sv('f-prov-tc-val',o.provTcVal||'');toggleSecMoneda('prov');
+  ss('f-ref-moneda',o.refMoneda||'pesos');ss('f-ref-tc-tipo',o.refTcTipo||'manual');sv('f-ref-tc-val',o.refTcVal||'');toggleSecMoneda('ref');
+  ss('f-transp-moneda',o.transpMoneda||'pesos');ss('f-transp-tc-tipo',o.transpTcTipo||'manual');sv('f-transp-tc-val',o.transpTcVal||'');toggleSecMoneda('transp');
+  ss('f-com-moneda',o.comMoneda||'pesos');ss('f-com-tc-tipo',o.comTcTipo||'manual');sv('f-com-tc-val',o.comTcVal||'');toggleSecMoneda('com');
+  ss('f-comp-moneda',o.compMoneda||'pesos');ss('f-comp-tc-tipo',o.compTcTipo||'manual');sv('f-comp-tc-val',o.compTcVal||'');toggleSecMoneda('comp');
+  sv('f-acv',o.productoVenta);
+  sv('f-tnventa',o.tnVenta||o.tnVendidas);
+  if(o.tipo==='envase'){
+    ss('f-ace',o.producto);ss('f-pres',o.presentacion);
+    sv('f-marca',o.marca);sv('f-plt',o.pallets);sv('f-uni',o.unidades);
+    sv('f-pcos',o.pcompra);sv('f-pve',o.pventa);
+  }else{
+    ss('f-acg',o.producto);
+    sv('f-pc',o.pcompra);sv('f-pv',o.pventa);
+  ss('f-pc-iva-mode',o.pcIvaMode||'neto');ss('f-pv-iva-mode',o.pvIvaMode||'neto');
+  }
+  sv('f-tnv',o.tnVendidas);
+  // ── Actores ──
+  ss('f-prov',o.proveedor);sv('f-comp',o.comprador);sv('f-transp',o.transportista);
+  sv('f-ref-nombre',o.refinador);sv('f-com-nombre',o.comisionista);
+  // ── Viajes y toneladas ──
+  sv('f-f1sal',o.fSalCrudo);sv('f-f1lle',o.fLleCrudo);
+  sv('f-f2sal',o.fSalRef);sv('f-f2lle',o.fLleEnv);
+  sv('f-tn1',o.tn1);sv('f-tn2',o.tn2);sv('f-tn3',o.tn3);sv('f-tn4',o.tn4);
+  sv('f-desc1',o.descuento);
+  ss('f-dol1',o.dolarTipo1,'divisa');sv('f-dv1',o.dolarVal1);
+  ss('f-dol2',o.dolarTipo2,'divisa');sv('f-dv2',o.dolarVal2);
+  // ── Condiciones económicas ──
+  sv('f-a1',o.adel1);sv('f-a2',o.adel2);sv('f-a3',o.adel3);
+  sv('f-ref-costo',o.refServicio);sv('f-com-pct',o.comPct);
+  sv('f-flete1',o.flete1);sv('f-flete2',o.flete2);
+  // ── Proveedor ──
+  ss('f-prov-pago',o.provPago,'Transferencia total');
+  ss('f-prov-moneda',o.provMoneda||'pesos');toggleActorMoneda('prov');ss('f-prov-tc-tipo',o.provDolTipo,'divisa');sv('f-prov-tc-val',o.provDolVal);
+  sv('f-prov-pagado',o.provPagado);sv('f-prov-notas',o.provNotas);
+  toggleActorEcheq('prov',o.provPago||'');
+  // ── Refinador ──
+  ss('f-ref-pago',o.refPago,'Pendiente');
+  ss('f-ref-moneda',o.refMoneda||'pesos');toggleActorMoneda('ref');ss('f-ref-tc-tipo',o.refDolTipo,'divisa');sv('f-ref-tc-val',o.refDolVal);
+  sv('f-ref-pagado',o.refPagado);ss('f-ref-est',o.refEst,'Pendiente');sv('f-ref-notas',o.refNotas);
+  toggleActorEcheq('ref',o.refPago||'');
+  // ── Transportista ──
+  ss('f-transp-pago',o.transpPago,'Efectivo');
+  ss('f-transp-tc-tipo',o.transpDolTipo,'divisa');sv('f-transp-tc-val',o.transpDolVal);
+  sv('f-transp-pag1',o.transpPag1);sv('f-transp-pag2',o.transpPag2);
+  ss('f-transp-est',o.transpEst,'Pendiente');sv('f-transp-notas',o.transpNotas);
+  toggleActorEcheq('transp',o.transpPago||'');
+  // ── Comisionista ──
+  ss('f-com-pago',o.comPago,'Transferencia');
+  ss('f-com-moneda',o.comMoneda||'pesos');toggleActorMoneda('com');ss('f-com-tc-tipo',o.comDolTipo,'divisa');sv('f-com-pagado',o.comPagado);
+  ss('f-com-est',o.comEst,'Pendiente');sv('f-com-notas',o.comNotas);
+  toggleActorEcheq('com',o.comPago||'');
+  // ── Comprador ──
+  ss('f-comp-moneda',o.compMoneda||'pesos');toggleCompMoneda();
+  ss('f-comp-pago',o.compPago,'Transferencia total');
+  ss('f-comp-tc-tipo',o.compDolTipo,'divisa');sv('f-comp-tc-val',o.compDolVal);
+  sv('f-comp-cobrado',o.compCobrado);ss('f-comp-est',o.compEst,'Pendiente');sv('f-comp-notas',o.compNotas);
+  toggleActorEcheq('comp',o.compPago||'');
+  // ── Tickets y echeqs ──
+  tix1=[...(o.tickets1||[])];tix2=[...(o.tickets2||[])];
+  renderTix('tix1');renderTix('tix2');
+  restoreActorEcheqs(id);
+  // ── Recalcular ──
+  calcAdel();liveCalc();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function deleteOp(id){
+  if(!confirm('¿Eliminar la operación #'+id+'?'))return;
+  ops=ops.filter(o=>o.id!==id);save();renderPlanilla();renderDash();toast('Op #'+id+' eliminada');
+}
+function saveEcheq(){
+  const fr=V('e-fr'),fc=V('e-fc'),empresa=V('e-empresa'),banco=V('e-banco'),imp=V('e-imp');
+  if(!fr||!empresa||!banco||!imp){toast('Completá los campos requeridos','err');return;}
+  const impN=Number(imp),descPct=N('e-desc-pct'),gasto=Np('e-gasto-acred');
+  const descMonto=impN*descPct/100,impNeto=impN-descMonto-gasto;
+  const impPagado=Np('e-imp-pagado');
+  echeqs.push({id:Date.now(),fr,fc,fEnd:V('e-fend'),empresa,banco,num:V('e-num'),imp:impN,
+    descPct,descMonto,gastoAcred:gasto,impNeto,impPagado,saldoPend:impNeto-impPagado,
+    fechaPago:V('e-fecha-pago'),formaCobro:V('e-forma-cobro'),
+    endosadoA:V('e-endosado-a'),bancoEndoso:V('e-banco-endoso'),
+    cant:V('e-cant'),opRef:V('e-opref'),obs:V('e-obs'),estado:V('e-est')});
+  save();renderEcheqs();fillOpFilter();renderDash();toast('✓ Echeq registrado');clearEcheq();
+}
+function clearEcheq(){
+  ['e-fr','e-fc','e-fend','e-empresa','e-num','e-imp','e-opref','e-obs',
+   'e-desc-pct','e-desc-monto','e-gasto-acred','e-imp-neto','e-saldo-pend',
+   'e-imp-pagado','e-fecha-pago','e-endosado-a','e-banco-endoso'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['e-banco','e-cant','e-est','e-forma-cobro'].forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=0;});
+}
+function deleteEcheq(id){
+  if(!confirm('¿Eliminar?'))return;
+  echeqs=echeqs.filter(e=>e.id!==id);save();renderEcheqs();renderDash();
+}
+
+function fillActorSelects(keepVal){
+  const map={
+    'f-prov':'proveedor','f-comp':'comprador',
+    'f-ref-nombre':'refinador','f-transp':'transportista','f-com-nombre':'comisionista'
+  };
+  Object.entries(map).forEach(([fid,rol])=>{
+    const el=document.getElementById(fid);if(!el)return;
+    const cur=keepVal?el.value:'';
+    el.innerHTML='<option value="">— seleccionar —</option>';
+    proveedores.filter(p=>p.rol===rol).sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||'')).forEach(p=>{
+      const o=document.createElement('option');
+      o.value=p.nombre;o.textContent=p.nombre+(p.rs?' ('+p.rs+')':'');
+      el.appendChild(o);
+    });
+    if(cur)el.value=cur;
+  });
+}
+
+function fillOpFilter(){
+  const sel=document.getElementById('ef-op');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Todas las ops</option>';
+  [...new Set(echeqs.map(e=>e.opRef).filter(Boolean))].sort((a,b)=>Number(a)-Number(b)).forEach(v=>{
+    sel.innerHTML+=`<option value="${v}">Op #${v}</option>`;
+  });
+  sel.value=cur;
+}
+function renderEcheqs(){
+  const filt=V('ef-est'),opF=V('ef-op');
+  const list=echeqs.filter(e=>(!filt||e.estado===filt)&&(!opF||e.opRef==opF));
+  const tb=document.getElementById('tb-echeqs');
+  const be={'Pendiente':'bpend','Al cobro':'bpar','Cobrado total':'bcob','Cobrado parcial':'bpar',
+    'A cuenta':'bpar','Endosado':'bm2','Endosado parcial':'bm2','Rechazado':'bcan','En gestión':'bcan'};
+  if(!list.length){tb.innerHTML='<tr class="empty"><td colspan="19">Sin echeqs</td></tr>';return;}
+  tb.innerHTML=[...list].reverse().map(e=>{
+    const dias=e.fc?Math.ceil((new Date(e.fc)-new Date())/864e5):null;
+    const vc=dias!==null&&dias<=7&&e.estado==='Pendiente';
+    const tg=(e.descPct||0)>0||(e.gastoAcred||0)>0;
+    return`<tr>
+      <td>${Dt(e.fr)}</td>
+      <td class="${vc?'tdr':''}">${Dt(e.fc)}${vc?` <small style="color:var(--dan)">(${dias}d)</small>`:''}</td>
+      <td>${Dt(e.fEnd)}</td>
+      <td><strong>${e.empresa||'—'}</strong></td><td>${e.banco||'—'}</td><td>${e.num||'—'}</td>
+      <td class="tdb">${MF(e.imp)}</td>
+      <td class="tdr">${e.descPct?e.descPct+'%':'—'}</td>
+      <td class="tdr">${e.gastoAcred?MF(e.gastoAcred):'—'}</td>
+      <td class="${tg?'tdg':''}" style="font-weight:700">${MF(e.impNeto||e.imp)}</td>
+      <td class="tdg">${e.impPagado?MF(e.impPagado):'—'}</td>
+      <td class="${(e.saldoPend||0)>0?'tdr':''}">${(e.saldoPend||0)>0?MF(e.saldoPend):'—'}</td>
+      <td>${Dt(e.fechaPago)}</td>
+      <td>${e.endosadoA||'—'}</td>
+      <td style="text-align:center">${e.cant}</td>
+      <td>${e.opRef?'#'+e.opRef:'—'}</td>
+      <td><span class="badge ${be[e.estado]||'bpend'}">${e.estado}</span></td>
+      <td style="max-width:90px;overflow:hidden;text-overflow:ellipsis;color:var(--t2)">${e.obs||'—'}</td>
+      <td><button class="bi del" onclick="deleteEcheq(${e.id})"><i class="ti ti-trash" style="font-size:11px"></i></button></td>
+    </tr>`;
+  }).join('');
+  const tot=echeqs.reduce((s,e)=>s+(e.imp||0),0);
+  const totNeto=echeqs.reduce((s,e)=>s+(e.impNeto||e.imp||0),0);
+  const totGastos=echeqs.reduce((s,e)=>s+(e.descMonto||0)+(e.gastoAcred||0),0);
+  const totPagado=echeqs.reduce((s,e)=>s+(e.impPagado||0),0);
+  const pend=echeqs.filter(e=>['Pendiente','Al cobro','A cuenta','Cobrado parcial'].includes(e.estado)).reduce((s,e)=>s+(e.impNeto||e.imp||0),0);
+  const cob=echeqs.filter(e=>e.estado==='Cobrado total').reduce((s,e)=>s+(e.impNeto||e.imp||0),0);
+  const end=echeqs.filter(e=>e.estado.startsWith('Endosado')).reduce((s,e)=>s+(e.impNeto||e.imp||0),0);
+  document.getElementById('echeq-totals').innerHTML=`
+    <div class="sc sc-b"><div class="lbl">Total bruto</div><div class="val b sm">${MF(tot)}</div></div>
+    <div class="sc sc-r"><div class="lbl">Gastos financieros</div><div class="val r sm">${MF(totGastos)}</div></div>
+    <div class="sc sc-g"><div class="lbl">Total neto</div><div class="val g sm">${MF(totNeto)}</div></div>
+    <div class="sc sc-g"><div class="lbl">Cobrado/pagado</div><div class="val g sm">${MF(totPagado||cob)}</div></div>
+    <div class="sc sc-o"><div class="lbl">Saldo a cobrar</div><div class="val o sm">${MF(pend)}</div></div>
+    <div class="sc sc-p"><div class="lbl">Endosado</div><div class="val sm" style="color:var(--pur)">${MF(end)}</div></div>`;
+}
+function renderPlanilla(){
+  const q=(V('pl-q')||'').toLowerCase();
+  const fd=V('pl-fd'),fh=V('pl-fh'),ec=V('pl-ec'),ee=V('pl-ee');
+  let list=ops.filter(o=>{
+    if(q&&!o.proveedor.toLowerCase().includes(q)&&!o.producto.toLowerCase().includes(q)&&!(o.comprador||'').toLowerCase().includes(q)&&!(o.remito||'').toLowerCase().includes(q))return false;
+    if(fd&&o.fOp<fd)return false;if(fh&&o.fOp>fh)return false;
+    if(ec&&o.estCobro!==ec)return false;if(ee&&o.estEntrega!==ee)return false;
+    return true;
+  }).reverse();
+  let totV=0,totE=0,totR=0,totA=0;
+  ops.forEach(o=>{totV+=o.tnVendidas||0;totE+=(o.tn4||o.tn3)||0;totR+=o.resultado||0;totA+=o.adelTotal||0;});
+  document.getElementById('pl-cards').innerHTML=`
+    <div class="sc sc-b"><div class="lbl">Total ops</div><div class="val">${ops.length}</div></div>
+    <div class="sc sc-g"><div class="lbl">Tn vendidas</div><div class="val g sm">${totV.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc sc-g"><div class="lbl">Tn entregadas</div><div class="val g sm">${totE.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc ${totR>=0?'sc-g':'sc-r'}"><div class="lbl">Resultado acum.</div><div class="val ${totR>=0?'g':'r'} sm">${MF(totR)}</div></div>
+    <div class="sc sc-o"><div class="lbl">Adelantos</div><div class="val o sm">${MF(totA)}</div></div>`;
+  const tb=document.getElementById('tb-planilla');
+  if(!list.length){tb.innerHTML='<tr class="empty"><td colspan="52">Sin operaciones</td></tr>';return;}
+  const bc={Pendiente:'bpend',Parcial:'bpar',Cobrado:'bcob','A cuenta':'bpar'};
+  const bee={Pendiente:'bpend',Parcial:'bpar',Completa:'bcob'};
+  tb.innerHTML=list.map(o=>{
+    const winD=o.resultado>100,loseD=o.resultado<-100;
+    const winM=(o.profitMay||0)>100,loseM=(o.profitMay||0)<-100;
+    const winB=(o.profitBlue||0)>100,loseB=(o.profitBlue||0)<-100;
+    const t1Html=o.tickets1&&o.tickets1.length?`<div class="tinline">${o.tickets1.map((t,i)=>`<img class="tmini" src="${t.d}" onclick="openLB('${t.d}','Op #${o.id} V1-T${i+1}')" title="V1 T${i+1}">`).join('')}</div>`:'';
+    const t2Html=o.tickets2&&o.tickets2.length?`<div class="tinline">${o.tickets2.map((t,i)=>`<img class="tmini" src="${t.d}" onclick="openLB('${t.d}','Op #${o.id} V2-T${i+1}')" title="V2 T${i+1}">`).join('')}</div>`:'';
+    const tHtml=[t1Html,t2Html].filter(Boolean).join('<br>')||'—';
+    return`<tr>
+      <td><span class="opn">#${o.id}</span></td>
+      <td><strong>${Dt(o.fOp)}</strong></td>
+      <td>${Dt(o.fSalCrudo)}</td><td>${Dt(o.fLleCrudo)}</td>
+      <td>${Dt(o.fSalRef)}</td><td>${Dt(o.fLleEnv)}</td><td>${Dt(o.fCob)}</td>
+      <td><strong>${o.proveedor}</strong></td><td>${o.comprador||'—'}</td>
+      <td>${o.transportista||'—'}</td><td>${o.comisionista||'—'}</td><td>${o.refinador||'—'}</td>
+      <td><span class="badge ${o.tipo==='granel'?'bg2':'be2'}">${o.tipo==='granel'?'Granel':'Envase'}</span></td>
+      <td>${o.producto}</td><td>${o.presentacion||'—'}</td>
+      <td class="tdb">${Tn(o.tn1)}</td><td class="tdo">${Tn(o.tn2)}</td>
+      <td style="color:${DC(o.dif1||0)};font-weight:700">${o.dif1?DS(o.dif1):'—'}</td>
+      <td class="tdg">${Tn(o.tn3)}</td><td class="tdr">${Tn(o.tn4)}</td>
+      <td style="color:${DC(o.dif2||0)};font-weight:700">${o.dif2?DS(o.dif2):'—'}</td>
+      <td class="tdg">${Tn(o.tnVendidas)}</td>
+      <td>${o.pcompra?MF(o.pcompra)+'/tn':'—'}</td><td>${o.pventa?MF(o.pventa)+'/tn':'—'}</td>
+      <td>${o.pcIva?MF(o.pcIva)+'/tn':'—'}</td><td>${o.pvIva?MF(o.pvIva)+'/tn':'—'}</td>
+      <td>${o.refServicio?MF(o.refServicio):'—'}</td>
+      <td>${o.flete1?MF(o.flete1):'—'}</td><td>${o.flete2?MF(o.flete2):'—'}</td>
+      <td>${o.comPct?o.comPct+'%':'—'}</td>
+      <td class="tdr">${o.costoTotal?MF(o.costoTotal):'—'}</td>
+      <td class="tdg">${o.totalVenta?MF(o.totalVenta):'—'}</td>
+      <td><span class="badge ${winD?'bwin':loseD?'blose':'bpar'}">${winD?'✓ ':loseD?'✗ ':''}${MF(Math.abs(o.resultado||0))}</span></td>
+      <td><span class="badge ${winM?'bwin':loseM?'blose':'bpar'}">${winM?'✓ ':loseM?'✗ ':''}${MF(Math.abs(o.profitMay||0))}</span></td>
+      <td><span class="badge ${winB?'bwin':loseB?'blose':'bpar'}">${winB?'✓ ':loseB?'✗ ':''}${MF(Math.abs(o.profitBlue||0))}</span></td>
+      <td style="color:var(--t2)">${o.pctMargen?o.pctMargen.toFixed(2)+'%':'—'}</td>
+      <td class="tdb">${o.adelTotal?MF(o.adelTotal):'—'}</td>
+      <td style="font-size:10px">${o.dolarTipo1||'—'}${o.dolarVal1?' ($'+Math.round(o.dolarVal1).toLocaleString('es-AR')+')':''}</td>
+      <td style="font-size:10px">${o.dolarTipo2||'—'}${o.dolarVal2?' ($'+Math.round(o.dolarVal2).toLocaleString('es-AR')+')':''}</td>
+      <td style="font-size:10px">${o.provPago||'—'}</td>
+      <td style="font-size:10px">${o.refEst||'—'}</td>
+      <td style="font-size:10px">${o.transpEst||'—'}</td>
+      <td style="font-size:10px">${o.comEst||'—'}</td>
+      <td><span class="badge ${o.compEst==='Cobrado'?'bcob':'bpend'}" style="font-size:9px">${o.compEst||'—'}</span></td>
+      <td><span class="badge ${bee[o.estEntrega]||'bpend'}">${o.estEntrega||'—'}</span></td>
+      <td><span class="badge ${bc[o.estCobro]||'bpend'}">${o.estCobro||'—'}</span></td>
+      <td style="font-size:10px">${o.pago||'—'}</td>
+      <td>${o.remito||'—'}</td><td>${o.factura||'—'}</td>
+      <td>${tHtml}</td>
+      <td style="max-width:90px;overflow:hidden;text-overflow:ellipsis;color:var(--t2);font-size:10px">${o.notas||'—'}</td>
+      <td style="white-space:nowrap;position:sticky;right:0;background:var(--surf);z-index:1;box-shadow:-2px 0 6px rgba(0,0,0,.15)">
+        <button class="bi" onclick="editOp(${o.id})" title="Editar"><i class="ti ti-pencil" style="font-size:11px"></i></button>
+        <button class="bi del" onclick="deleteOp(${o.id})" title="Eliminar"><i class="ti ti-trash" style="font-size:11px"></i></button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function renderDash(){
+  let totV=0,totE=0,totR=0,totA=0,pendCob=0,pendEnt=0;
+  ops.forEach(o=>{
+    totV+=o.tnVendidas||0;totE+=(o.tn4||o.tn3)||0;totR+=o.resultado||0;totA+=o.adelTotal||0;
+    if(o.estCobro==='Pendiente'||o.estCobro==='Parcial')pendCob++;
+    if(o.estEntrega==='Pendiente'||o.estEntrega==='Parcial')pendEnt++;
+  });
+  const hM=new Date().toISOString().slice(0,7);
+  document.getElementById('dc').innerHTML=`
+    <div class="sc sc-b"><div class="lbl">Operaciones</div><div class="val">${ops.length}</div><div class="sub">${ops.filter(o=>o.fOp&&o.fOp.slice(0,7)===hM).length} este mes</div></div>
+    <div class="sc sc-g"><div class="lbl">Tn vendidas</div><div class="val g sm">${totV.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc sc-g"><div class="lbl">Tn entregadas</div><div class="val g sm">${totE.toLocaleString('es-AR',{maximumFractionDigits:2})}</div></div>
+    <div class="sc ${totR>=0?'sc-g':'sc-r'}"><div class="lbl">Resultado acum.</div><div class="val ${totR>=0?'g':'r'} sm">${MF(totR)}</div></div>
+    <div class="sc sc-o"><div class="lbl">Adelantos</div><div class="val o sm">${MF(totA)}</div></div>
+    <div class="sc sc-r"><div class="lbl">Cobros pend.</div><div class="val r">${pendCob}</div><div class="sub">${pendEnt} entregas pend.</div></div>`;
+  const alerts=[];
+  ops.forEach(o=>{
+    if((o.pctMerma1||0)>0.5)alerts.push(`<div class="alert awarn"><i class="ti ti-alert-circle"></i>Op #${o.id} — merma crudo ${(o.pctMerma1||0).toFixed(2)}% (${o.proveedor})</div>`);
+    if((o.pctMerma2||0)>0.5)alerts.push(`<div class="alert awarn"><i class="ti ti-alert-circle"></i>Op #${o.id} — merma refinado ${(o.pctMerma2||0).toFixed(2)}% (${o.proveedor})</div>`);
+    if((o.estCobro==='Pendiente'||o.estCobro==='Parcial')&&(o.adelTotal||0)>0)alerts.push(`<div class="alert awarn"><i class="ti ti-coin"></i>Op #${o.id} — cobro ${(o.estCobro||'').toLowerCase()} con adelanto ${MF(o.adelTotal)}</div>`);
+    if(o.transpEst==='Pendiente'&&(o.fleteTotal||0)>0)alerts.push(`<div class="alert awarn"><i class="ti ti-truck"></i>Op #${o.id} — flete pendiente: ${MF(o.fleteTotal)}</div>`);
+    if(o.comEst==='Echeq rechazado')alerts.push(`<div class="alert aerr"><i class="ti ti-alert-circle"></i>Op #${o.id} — echeq comisionista rechazado (${o.comisionista||''})</div>`);
+    if((o.resultado||0)<-100)alerts.push(`<div class="alert aerr"><i class="ti ti-trending-down"></i>Op #${o.id} — resultado negativo: ${MF(o.resultado)}</div>`);
+  });
+  echeqs.filter(e=>e.estado==='Rechazado').forEach(e=>{
+    alerts.push(`<div class="alert aerr"><i class="ti ti-x"></i>Echeq RECHAZADO — ${e.empresa||''} ${MF(e.imp)} Op#${e.opRef||'?'}</div>`);
+  });
+  echeqs.filter(e=>e.estado==='Pendiente'&&e.fc).forEach(e=>{
+    const d=Math.ceil((new Date(e.fc)-new Date())/864e5);
+    if(d<=7)alerts.push(`<div class="alert ${d<0?'aerr':'awarn'}"><i class="ti ti-credit-card"></i>Echeq ${e.empresa||''} ${d<0?'VENCIDO hace '+Math.abs(d)+'d':'vence en '+d+'d'} — ${MF(e.imp)}</div>`);
+  });
+  document.getElementById('d-alerts').innerHTML=alerts.length?alerts.join(''):'<div style="color:var(--t3);font-size:12px;padding:5px 0">Sin alertas activas ✓</div>';
+  const months={};
+  ops.forEach(o=>{if(o.fOp){const m=o.fOp.slice(0,7);months[m]=(months[m]||0)+(o.resultado||0);}});
+  const sorted=Object.entries(months).sort((a,b)=>a[0].localeCompare(b[0])).slice(-7);
+  const maxP=Math.max(...sorted.map(x=>Math.abs(x[1])),1);
+  document.getElementById('monthly-chart').innerHTML=sorted.length?sorted.map(([m,p])=>{
+    const h=Math.round(Math.abs(p)/maxP*70)+2;
+    return`<div class="chart-col"><div class="chart-bar" style="height:${h}px;background:${p<0?'var(--dan)':'var(--pri)'};opacity:.7" title="${m}: ${MF(p)}"></div><div class="chart-lbl">${m.slice(5)+'/'+m.slice(2,4)}</div></div>`;
+  }).join(''):'<div style="color:var(--t3);font-size:12px">Sin datos</div>';
+  const echeqsUniq=[...new Map(echeqs.map(e=>[e.id,e])).values()];
+  const prox=echeqsUniq.filter(e=>{if(e.estado!=='Pendiente'||!e.fc)return false;return Math.ceil((new Date(e.fc)-new Date())/864e5)<=14;});
+  document.getElementById('d-echeqs').innerHTML=prox.length
+    ?prox.map(e=>{const d=Math.ceil((new Date(e.fc)-new Date())/864e5);return`<div class="alert ${d<0?'aerr':d<=3?'aerr':'awarn'}"><i class="ti ti-credit-card"></i><strong>${e.empresa||''}</strong> — ${MF(e.imp)} — ${Dt(e.fc)} (${d<0?Math.abs(d)+'d vencido':d+'d'})</div>`;}).join('')
+    :'<div style="color:var(--t3);font-size:12px;padding:5px 0">Sin echeqs próximos ✓</div>';
+  const be2={Pendiente:'bpend',Parcial:'bpar',Cobrado:'bcob',Completa:'bcob','A cuenta':'bpar'};
+  document.getElementById('d-recent').innerHTML=[...ops].reverse().slice(0,7).map(o=>`<tr>
+    <td><span class="opn">#${o.id}</span></td><td>${Dt(o.fOp)}</td>
+    <td>${o.proveedor}</td><td>${o.producto}</td>
+    <td class="tdg">${Tn(o.tnVendidas)}</td>
+    <td><span class="badge ${(o.resultado||0)>=0?'bwin':'blose'}">${(o.resultado||0)>=0?'✓ ':'✗ '}${MF(Math.abs(o.resultado||0))}</span></td>
+    <td><span class="badge ${be2[o.estEntrega||'']||'bpend'}">${o.estEntrega||'—'}</span></td>
+    <td><span class="badge ${be2[o.estCobro||'']||'bpend'}">${o.estCobro||'—'}</span></td>
+    <td><button class="bi" onclick="editOp(${o.id})" title="Editar"><i class="ti ti-pencil" style="font-size:11px"></i></button></td>
+  </tr>`).join('')||'<tr class="empty"><td colspan="9">Sin operaciones</td></tr>';
+}
+let editProvId=null;
+function renderProvs(){
+  const q=(V('pq')||'').toLowerCase(),tipo=V('pq-tipo');
+  const list=proveedores.filter(p=>(!q||(p.nombre||'').toLowerCase().includes(q))&&(!tipo||p.rol===tipo));
+  const grid=document.getElementById('provs-grid');
+  const rc={proveedor:'sc-b',refinador:'sc-g',transportista:'sc-o',comisionista:'sc-p',comprador:'sc-r'};
+  if(!list.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px;grid-column:1/-1;padding:16px 0">Sin actores registrados.</div>';return;}
+  grid.innerHTML=list.map(p=>{
+    const op2=ops.filter(o=>[o.proveedor,o.comprador,o.transportista,o.comisionista,o.refinador].includes(p.nombre));
+    return`<div class="sc ${rc[p.rol]||'sc-b'}" style="padding:13px 15px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:3px">${p.nombre}</div>
+      <div style="font-size:11px;color:var(--t2);margin-bottom:6px;text-transform:capitalize">${p.rol||'—'}${p.rs?' · '+p.rs:''}</div>
+      ${p.tel?`<div style="font-size:11px;color:var(--t2)"><i class="ti ti-phone" style="font-size:10px"></i> ${p.tel}</div>`:''}
+      ${p.loc?`<div style="font-size:11px;color:var(--t2)"><i class="ti ti-map-pin" style="font-size:10px"></i> ${p.loc}</div>`:''}
+      <div style="font-size:11px;color:var(--t2);margin-top:7px;padding-top:7px;border-top:1px solid var(--bor)">${op2.length} ops</div>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button class="bi" onclick="editProv('${p.id}')"><i class="ti ti-pencil" style="font-size:11px"></i></button>
+        <button class="bi del" onclick="deleteProv('${p.id}')"><i class="ti ti-trash" style="font-size:11px"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openProvModal(id,rolInicial){
+  editProvId=id||null;
+  document.getElementById('prov-modal-title').textContent=id?'Editar actor':'Nuevo actor';
+  ['nombre','rs','cuit','tel','email','loc','notas'].forEach(k=>{const e=document.getElementById('pm-'+k);if(e)e.value='';});
+  if(id){
+    const p=proveedores.find(x=>x.id===id);
+    if(p){
+      ['nombre','rs','cuit','tel','email','loc','notas'].forEach(k=>{const e=document.getElementById('pm-'+k);if(e)e.value=p[k]||'';});
+      document.getElementById('pm-rol').value=p.rol||'proveedor';
+    }
+  } else if(rolInicial){
+    document.getElementById('pm-rol').value=rolInicial;
+  }
+  document.getElementById('prov-modal').style.display='flex';
+}
+function editProv(id){openProvModal(id);}
+function closeProvModal(){document.getElementById('prov-modal').style.display='none';editProvId=null;}
+function saveProv(){
+  const nombre=V('pm-nombre');if(!nombre){toast('Nombre requerido','err');return;}
+  const data={nombre,rol:V('pm-rol'),rs:V('pm-rs'),cuit:V('pm-cuit'),tel:V('pm-tel'),email:V('pm-email'),loc:V('pm-loc'),notas:V('pm-notas')};
+  if(editProvId){
+    const idx=proveedores.findIndex(p=>p.id===editProvId);
+    if(idx>=0){proveedores[idx]={...proveedores[idx],...data};toast('✓ Actor actualizado');}
+  } else {
+    data.id='p'+Date.now();
+    proveedores.push(data);
+    toast('✓ '+data.nombre+' guardado');
+  }
+  save();closeProvModal();renderProvs();fillActorSelects(true);
+}
+function deleteProv(id){if(!confirm('¿Eliminar?'))return;proveedores=proveedores.filter(p=>p.id!==id);save();renderProvs();}
+function saveGasto(){
+  const fecha=V('g-fecha'),imp=V('g-imp');
+  if(!fecha||!imp){toast('Completá fecha e importe','err');return;}
+  gastos.push({id:Date.now(),fecha,cat:V('g-cat'),imp:Number(imp),prov:V('g-prov'),desc:V('g-desc')});
+  save();renderGastos();toast('✓ Gasto registrado');
+  ['g-imp','g-imp-iva','g-prov','g-desc'].forEach(id=>document.getElementById(id).value='');
+}
+function deleteGasto(id){if(!confirm('¿Eliminar?'))return;gastos=gastos.filter(g=>g.id!==id);save();renderGastos();}
+function renderGastos(){
+  const c={Flete:'bg2',Laboratorio:'be2',Almacenaje:'bo2',Administración:'bm2',Impuestos:'bm2','Gasto financiero':'bcan',Otro:'bpend'};
+  const tots={};let tot=0;
+  gastos.forEach(g=>{tots[g.cat]=(tots[g.cat]||0)+g.imp;tot+=g.imp;});
+  document.getElementById('g-cards').innerHTML=`
+    <div class="sc sc-r"><div class="lbl">Total gastos</div><div class="val r sm">${MF(tot)}</div></div>
+    ${Object.entries(tots).map(([k,v])=>`<div class="sc"><div class="lbl">${k}</div><div class="val r sm">${MF(v)}</div></div>`).join('')}`;
+  const tb=document.getElementById('tb-gastos');
+  if(!gastos.length){tb.innerHTML='<tr class="empty"><td colspan="7">Sin gastos</td></tr>';return;}
+  tb.innerHTML=[...gastos].reverse().map(g=>`<tr>
+    <td>${Dt(g.fecha)}</td><td><span class="badge ${c[g.cat]||'bpend'}">${g.cat}</span></td>
+    <td>${g.prov||'—'}</td><td>${g.desc||'—'}</td>
+    <td class="tdr">${MF(g.imp)}</td><td class="tdr">${MF(IVA(g.imp))}</td>
+    <td><button class="bi del" onclick="deleteGasto(${g.id})"><i class="ti ti-trash" style="font-size:11px"></i></button></td>
+  </tr>`).join('');
+}
+function saveCfg(){cfg.empresa=V('cfg-empresa');cfg.cuit=V('cfg-cuit');cfg.dir=V('cfg-dir');save();toast('✓ Guardado');}
+function loadCfg(){
+  if(cfg.empresa)document.getElementById('cfg-empresa').value=cfg.empresa;
+  if(cfg.cuit)document.getElementById('cfg-cuit').value=cfg.cuit;
+  if(cfg.dir)document.getElementById('cfg-dir').value=cfg.dir;
+  dolar.divisa=cfg.dolarDiv||0;dolar.mayorista=cfg.dolarMay||0;dolar.blue=cfg.dolarBlue||0;
+  updateWidget();
+}
+function backupData(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({ops,echeqs,gastos,proveedores,cfg,cnt,ts:new Date().toISOString()},null,2)],{type:'application/json'}));
+  a.download='alborada_backup_'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();toast('✓ Backup exportado');
+}
+function restoreData(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!confirm('¿Restaurar backup del '+(d.ts||'').slice(0,10)+'?'))return;
+      ops=d.ops||[];echeqs=d.echeqs||[];gastos=d.gastos||[];proveedores=d.proveedores||[];cfg=d.cfg||{};cnt=d.cnt||0;
+      save();loadCfg();renderDash();toast('✓ Backup restaurado');
+    }catch{toast('Error al leer archivo','err');}
+  };
+  r.readAsText(f);input.value='';
+}
+function confirmClear(){
+  if(!confirm('¿Borrar TODOS los datos?'))return;
+  if(!confirm('Confirmá: ¿borrar todo?'))return;
+  ops=[];echeqs=[];gastos=[];proveedores=[];cnt=0;save();renderDash();toast('Datos borrados','err');
+}
+function exportCSV(){
+  if(!ops.length){toast('No hay operaciones','err');return;}
+  const h=['#','F.Op','F.Sal.Crudo','F.Lle.Refin','F.Sal.Ref','F.Lle.Env','F.Cobro',
+    'Proveedor','Comprador','Transportista','Comisionista','Refinador','Tipo','Producto','Presentacion',
+    'CargaCrudo','DescCrudo','DifCrudo','CargaRef','EntregaRef','DifRef','TnVendidas',
+    'PCompra','PVenta','PCompraIVA','PVentaIVA','ServRefin','Flete1','Flete2','ComPct',
+    'CostoTotal','IngresoTotal','ResultDivisa','ResultMayor','ResultBlue','Margen%',
+    'Adelantos','DolTipo1','DolVal1','DolTipo2','DolVal2',
+    'PagoProv','PagoRefin','PagoTransp','PagoCom','CobroComp',
+    'EstEntrega','EstCobro','FormaPago','Remito','Factura','Tickets','Notas'];
+  const rows=ops.map(o=>[o.id,o.fOp,o.fSalCrudo||'',o.fLleCrudo||'',o.fSalRef||'',o.fLleEnv||'',o.fCob||'',
+    o.proveedor,o.comprador||'',o.transportista||'',o.comisionista||'',o.refinador||'',o.tipo,o.producto,o.presentacion||'',
+    o.tn1||'',o.tn2||'',(o.dif1||0).toFixed(3),o.tn3||'',o.tn4||'',(o.dif2||0).toFixed(3),o.tnVendidas||'',
+    o.pcompra||'',o.pventa||'',o.pcIva||'',o.pvIva||'',o.refServicio||'',o.flete1||'',o.flete2||'',o.comPct||'',
+    Math.round(o.costoTotal||0),Math.round(o.totalVenta||0),
+    Math.round(o.resultado||0),Math.round(o.profitMay||0),Math.round(o.profitBlue||0),(o.pctMargen||0).toFixed(2),
+    o.adelTotal||'',o.dolarTipo1||'',o.dolarVal1||'',o.dolarTipo2||'',o.dolarVal2||'',
+    o.provPago||'',o.refEst||'',o.transpEst||'',o.comEst||'',o.compEst||'',
+    o.estEntrega||'',o.estCobro||'',o.pago||'',o.remito||'',o.factura||'',
+    ((o.tickets1||[]).length+(o.tickets2||[]).length),o.notas||'']);
+  const csv=[h,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='alborada_ops_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();toast('✓ CSV exportado ('+ops.length+' ops)');
+}
+const hoy=new Date();
+document.getElementById('hbadge').textContent=ops.filter(o=>o.id&&o.proveedor).length+' ops';
+document.getElementById('f-fop').value=hoy.toISOString().split('T')[0];
+document.getElementById('g-fecha').value=hoy.toISOString().split('T')[0];
+document.getElementById('e-fr').value=hoy.toISOString().split('T')[0];
 loadCfg();
-fetchDolar();</span></div>
-<div class="how"><strong>Ubicación:</strong> bloque de inicialización al final del <code>&lt;script&gt;</code></div>
+fetchDolar();
+setInterval(fetchDolar,15*60*1000);
+fillActorSelects();
+renderDash();
+renderEcheqs();
+fillOpFilter();
+</script>
+
+<!-- CALCULADORA FLOTANTE -->
+<div id="calc-fab" onclick="toggleCalc()" title="Calculadora" style="position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.4);font-size:22px;transition:transform .15s">🧮</div>
+<div id="calc-panel" style="display:none;position:fixed;bottom:82px;right:24px;width:260px;background:var(--surf2);border:1.5px solid var(--bor);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:998;overflow:hidden">
+  <div style="background:var(--surf3);padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px"><i class="ti ti-calculator"></i> Calculadora</span>
+    <button onclick="toggleCalc()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;line-height:1"><i class="ti ti-x"></i></button>
+  </div>
+  <div style="padding:12px">
+    <div id="calc-expr" style="font-size:11px;color:var(--t3);min-height:16px;text-align:right;padding:0 4px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+    <div id="calc-display" style="font-size:26px;font-weight:700;color:var(--text);text-align:right;padding:4px 4px 10px;border-bottom:1px solid var(--bor);margin-bottom:10px;min-height:42px;word-break:break-all">0</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+      <button class="cb cbf" onclick="calcPct()">%</button>
+      <button class="cb cbf" onclick="calcClear()">C</button>
+      <button class="cb cbf" onclick="calcDel()">⌫</button>
+      <button class="cb cbo" onclick="calcOp('/')">÷</button>
+      <button class="cb" onclick="calcNum('7')">7</button>
+      <button class="cb" onclick="calcNum('8')">8</button>
+      <button class="cb" onclick="calcNum('9')">9</button>
+      <button class="cb cbo" onclick="calcOp('*')">×</button>
+      <button class="cb" onclick="calcNum('4')">4</button>
+      <button class="cb" onclick="calcNum('5')">5</button>
+      <button class="cb" onclick="calcNum('6')">6</button>
+      <button class="cb cbo" onclick="calcOp('-')">−</button>
+      <button class="cb" onclick="calcNum('1')">1</button>
+      <button class="cb" onclick="calcNum('2')">2</button>
+      <button class="cb" onclick="calcNum('3')">3</button>
+      <button class="cb cbo" onclick="calcOp('+')">+</button>
+      <button class="cb" onclick="calcSign()">+/−</button>
+      <button class="cb" onclick="calcNum('0')">0</button>
+      <button class="cb" onclick="calcDot()">,</button>
+      <button class="cb cbeq" onclick="calcEq()">=</button>
+    </div>
+  </div>
 </div>
-
-<!-- BUG I -->
-<div class="bug">
-<h3><span class="sev high">ALTO</span> Bug I — editOp(): selects de actores se resetean</h3>
-<p>
-  <code>editOp()</code> llama a <code>fillActorSelects()</code> sin pasar <code>keepVal=true</code>.
-  Esto regenera los <code>&lt;select&gt;</code> de actores perdiendo el valor seleccionado.
-  Aunque los valores se reasignan inmediatamente después con <code>sv()</code>/<code>ss()</code>,
-  hay un momento en que el select queda en valor vacío, y si hay timing issues (por 
-  el <code>setTimeout(liveCalc, 50)</code>), puede calcularse con valores incorrectos.
-</p>
-<div class="code"><span class="del">fillActorSelects();</span>
-<span class="add">fillActorSelects(true); // FIX: keepVal=true para preservar selección actual</span></div>
-<div class="how"><strong>Ubicación:</strong> función <code>editOp()</code>, llamada a <code>fillActorSelects</code></div>
-</div>
-
-<hr style="margin:32px 0;border-color:#d8e2f0">
-<h2 style="color:#1e4d8c">📋 Cómo aplicar los parches</h2>
-<p style="font-size:14px;color:#5a6a8a">
-  Abrí el archivo HTML original en un editor de texto y aplicá cada cambio según las 
-  indicaciones de "Ubicación". O bien, copiá el bloque de JavaScript de correcciones 
-  y pegalo justo antes de <code>&lt;/body&gt;</code> en el HTML original para aplicar 
-  los fixes sin modificar el código fuente:
-</p>
-<div class="code" style="font-size:11px">
-&lt;!-- PEGAR ANTES DE &lt;/body&gt; --&gt;
-&lt;script&gt;
-// FIX F: NpTC parsing robusto
-NpTC = id =&gt; { const e=document.getElementById(id); if(!e)return 0; let s=(e.value+'').trim().replace(/\s/g,''); if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');} else {const stripped=s.replace(/\./g,''); s=(parseFloat(stripped)&gt;=100)?stripped:s;} return parseFloat(s)||0; };
-
-// FIX A+B: calcSaldo reescrita
-calcSaldo = actor =&gt; { const echeqSum=sumActorEcheqs(actor); if(actor==='prov'){const tv=parseInt((document.getElementById('f-tv')?.value||'').replace(/\D/g,''))||0; const p=(Np('f-prov-pagado')||0)+echeqSum; if(tv)document.getElementById('f-prov-saldo').value=MF(tv-p);} else if(actor==='ref'){const c=Np('f-ref-costo'); const p=(Np('f-ref-pagado')||0)+echeqSum; if(c)document.getElementById('f-ref-saldo').value=MF(c-p);} else if(actor==='transp'){const t=Np('f-flete1')+Np('f-flete2'); const p=Np('f-transp-pag1')+Np('f-transp-pag2')+echeqSum; if(t)document.getElementById('f-transp-saldo').value=MF(t-p);} else if(actor==='comp'){const tv=parseInt((document.getElementById('f-tv')?.value||'').replace(/\D/g,''))||0; const c=(Np('f-comp-cobrado')||0)+echeqSum; if(tv)document.getElementById('f-comp-saldo').value=MF(tv-c);} };
-
-// FIX E: clearForm limpia f-tnventa
-{const _o=clearForm; clearForm=()=>{_o(); const el=document.getElementById('f-tnventa'); if(el)el.value='';}}
-
-// FIX G: renderDash deduplicado
-{const _o=renderDash; renderDash=()=>{const _b=echeqs; echeqs=[...new Map(_b.map(e=>[e.id,e])).values()]; _o(); echeqs=_b;}}
-
-// FIX I: editOp preserva valores
-{const _o=editOp; editOp=id=>{const _f=fillActorSelects; fillActorSelects=(kv)=&gt;_f(kv!==false); _o(id); fillActorSelects=_f;}}
-
-// FIX D: saveOp guarda tnVenta
-{const _o=saveOp; saveOp=()=>{const l=ops.length; _o(); if(ops.length&gt;l){const op=ops[ops.length-1]; if(op&&op.tnVenta===undefined){op.tnVenta=NpTN('f-tnventa')||NpTN('f-tnv'); save();}}}}
-
-// FIX H: fixEcheqs en init
-if(typeof fixEcheqs==='function')fixEcheqs();
-&lt;/script&gt;
-</div>
+<style>
+.cb{background:var(--surf3);border:1px solid var(--bor);border-radius:8px;color:var(--text);font-size:15px;font-weight:600;padding:10px 0;cursor:pointer;transition:background .1s}
+.cb:hover{background:var(--surf)}
+.cbf{color:var(--acc)}
+.cbo{color:var(--pri);background:var(--prl)}
+.cbeq{background:var(--pri);color:#fff;border-color:var(--pri)}
+.cbeq:hover{opacity:.9}
+</style>
+<script>
+let calcVal='0',calcPrev='',calcOper='',calcNewNum=true,calcExpr='';
+function toggleCalc(){
+  const p=document.getElementById('calc-panel');
+  const f=document.getElementById('calc-fab');
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  f.style.transform=open?'rotate(15deg)':'';
+}
+function calcShow(){
+  document.getElementById('calc-display').textContent=parseFloat(calcVal).toLocaleString('es-AR',{maximumFractionDigits:8});
+  document.getElementById('calc-expr').textContent=calcExpr;
+}
+function calcNum(n){
+  if(calcNewNum){calcVal=n==='0'&&calcVal==='0'?'0':n;calcNewNum=false;}
+  else calcVal=calcVal==='0'?n:calcVal+n;
+  calcShow();
+}
+function calcDot(){
+  if(calcNewNum){calcVal='0,';calcNewNum=false;}
+  else if(!calcVal.includes(','))calcVal+=',';
+  calcShow();
+}
+function calcSign(){calcVal=(parseFloat(calcVal.replace(',','.'))*-1)+'';calcVal=calcVal.replace('.',',');calcShow();}
+function calcOp(op){
+  const v=parseFloat(calcVal.replace(',','.'));
+  if(calcOper&&!calcNewNum){
+    const r=calcCompute(calcPrev,v,calcOper);
+    calcVal=(r+'').replace('.',',');calcPrev=r;
+  }else{calcPrev=v;}
+  calcOper=op;calcNewNum=true;
+  const sym={'+':('+'),'-':('−'),'*':('×'),'/':('÷')}[op]||op;
+  calcExpr=parseFloat(calcVal.replace(',','.')).toLocaleString('es-AR',{maximumFractionDigits:8})+' '+sym;
+  calcShow();
+}
+function calcCompute(a,b,op){
+  if(op==='+')return a+b;
+  if(op==='-')return a-b;
+  if(op==='*')return a*b;
+  if(op==='/')return b!==0?a/b:0;
+  return b;
+}
+function calcEq(){
+  if(!calcOper)return;
+  const v=parseFloat(calcVal.replace(',','.'));
+  const r=calcCompute(calcPrev,v,calcOper);
+  const sym={'+':('+'),'-':('−'),'*':('×'),'/':('÷')}[calcOper]||calcOper;
+  calcExpr=calcPrev.toLocaleString?calcPrev.toLocaleString('es-AR',{maximumFractionDigits:8})+' '+sym+' '+v.toLocaleString('es-AR',{maximumFractionDigits:8})+' =':'';
+  calcVal=(r+'').replace('.',',');calcOper='';calcPrev='';calcNewNum=true;
+  calcShow();
+}
+function calcPct(){
+  const v=parseFloat(calcVal.replace(',','.'));
+  const r=calcPrev&&calcOper?calcCompute(calcPrev,calcPrev*v/100,calcOper):v/100;
+  calcVal=(r+'').replace('.',',');calcShow();
+}
+function calcClear(){calcVal='0';calcPrev='';calcOper='';calcNewNum=true;calcExpr='';calcShow();}
+function calcDel(){
+  if(calcNewNum){calcVal='0';return;}
+  calcVal=calcVal.length>1?calcVal.slice(0,-1):'0';
+  calcShow();
+}
+</script>
 
 </body>
 </html>
