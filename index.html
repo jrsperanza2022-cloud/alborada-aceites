@@ -2,19 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>eCheqs — Gestión empresarial</title>
-
-  <!-- PWA: esto es lo que permite "Instalar app" / "Agregar a pantalla de inicio" -->
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#F97316" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="eCheqs" />
-  <link rel="icon" href="icon-192.png" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -518,9 +507,8 @@
       <div class="nav-item" onclick="showSection('cobrados')" id="nav-cobrados"><i class="ti ti-coin"></i> Cobrados / Ganancias</div>
       <div class="nav-item" onclick="showSection('flujo')" id="nav-flujo"><i class="ti ti-chart-bar"></i> Flujo de caja</div>
       <div class="nav-section-label">Acciones</div>
-      <div class="nav-item" onclick="abrirFormularioNuevo()" id="nav-nuevo"><i class="ti ti-circle-plus"></i> Nuevo eCheq</div>
+      <div class="nav-item" onclick="showSection('nuevo')" id="nav-nuevo"><i class="ti ti-circle-plus"></i> Nuevo eCheq</div>
       <div class="nav-item" onclick="showSection('clientes')" id="nav-clientes"><i class="ti ti-users"></i> Clientes</div>
-      <div class="nav-item" onclick="showSection('beneficiarios')" id="nav-beneficiarios"><i class="ti ti-user-check"></i> Beneficiarios</div>
     </nav>
   </aside>
 
@@ -532,7 +520,7 @@
         <span class="topbar-title" id="topbar-title">Alertas</span>
       </div>
       <div class="topbar-right">
-        <button class="btn btn-primary btn-sm" onclick="abrirFormularioNuevo()"><i class="ti ti-plus"></i> Nuevo eCheq</button>
+        <button class="btn btn-primary btn-sm" onclick="showSection('nuevo')"><i class="ti ti-plus"></i> Nuevo eCheq</button>
       </div>
     </header>
 
@@ -691,12 +679,11 @@
       <!-- ── NUEVO ECHEQ ── -->
       <section id="nuevo" class="section">
         <div class="card">
-          <div class="card-header"><span class="card-title" id="form-titulo">Registrar nuevo eCheq</span></div>
+          <div class="card-header"><span class="card-title">Registrar nuevo eCheq</span></div>
           <div class="card-body">
-            <div id="edit-warning" style="display:none;background:var(--amber-light);color:var(--amber);border:1px solid #FDE68A;border-radius:var(--radius);padding:10px 14px;font-size:12.5px;margin-bottom:1rem"></div>
             <div class="form-grid">
               <div class="form-field">
-                <label for="f-tipo">Tipo de operación</label>
+                <label>Tipo de operación</label>
                 <select id="f-tipo">
                   <option value="recibido">Recibido</option>
                   <option value="emitido">Emitido</option>
@@ -708,11 +695,11 @@
                 </select>
               </div>
               <div class="form-field">
-                <label for="f-nro">Número de cheque</label>
+                <label>Número de cheque</label>
                 <input id="f-nro" placeholder="Ej: 00012345" />
               </div>
               <div class="form-field">
-                <label for="f-librador">Librador / Emisor</label>
+                <label>Librador / Emisor</label>
                 <div class="ac-wrap">
                   <input id="f-librador" placeholder="Escribí o buscá un cliente..." autocomplete="off"
                     oninput="acFiltrar()" onfocus="acFiltrar()" onblur="setTimeout(acCerrar,180)" />
@@ -723,18 +710,11 @@
                 </button>
               </div>
               <div class="form-field">
-                <label for="f-beneficiario">Beneficiario / A quién se cedió</label>
-                <div class="ac-wrap">
-                  <input id="f-beneficiario" placeholder="Destinatario (si aplica)" autocomplete="off"
-                    oninput="acFiltrarBenef()" onfocus="acFiltrarBenef()" onblur="setTimeout(acCerrarBenef,180)" />
-                  <div class="ac-dropdown" id="ac-dropdown-benef"></div>
-                </div>
-                <button class="clientes-btn" type="button" onclick="showSection('beneficiarios')">
-                  <i class="ti ti-user-check"></i> Gestionar beneficiarios guardados
-                </button>
+                <label>Beneficiario / A quién se cedió</label>
+                <input id="f-beneficiario" placeholder="Destinatario (si aplica)" />
               </div>
               <div class="form-field">
-                <label for="f-banco">Banco</label>
+                <label>Banco</label>
                 <select id="f-banco">
                   <option>Banco Nación Argentina</option>
                   <option>Banco Provincia de Buenos Aires</option>
@@ -752,29 +732,29 @@
                 </select>
               </div>
               <div class="form-field">
-                <label for="f-monto">Monto (ARS $)</label>
-                <input id="f-monto" type="text" inputmode="decimal" placeholder="0" oninput="formatearInputMonto(this)" />
+                <label>Monto (ARS $)</label>
+                <input id="f-monto" type="number" placeholder="0.00" min="0" />
               </div>
               <div class="form-field">
-                <label for="f-emision">Fecha de emisión</label>
+                <label>Fecha de emisión</label>
                 <input id="f-emision" type="date" />
               </div>
               <div class="form-field">
-                <label for="f-cobro">Fecha de cobro / pago</label>
+                <label>Fecha de cobro / pago</label>
                 <input id="f-cobro" type="date" />
               </div>
               <div class="form-field">
-                <label for="f-cuit">CUIT del librador</label>
+                <label>CUIT del librador</label>
                 <input id="f-cuit" placeholder="20-12345678-9" />
               </div>
               <div class="form-field full">
-                <label for="f-obs">Observaciones</label>
+                <label>Observaciones</label>
                 <input id="f-obs" placeholder="Notas internas, número de factura, etc." />
               </div>
             </div>
             <div style="display:flex;gap:10px;margin-top:1.5rem">
-              <button class="btn btn-primary" id="btn-guardar-cheque" onclick="agregarCheque()"><i class="ti ti-device-floppy"></i> Guardar eCheq</button>
-              <button class="btn btn-outline" onclick="editandoId=null; showSection('recibidos')">Cancelar</button>
+              <button class="btn btn-primary" onclick="agregarCheque()"><i class="ti ti-device-floppy"></i> Guardar eCheq</button>
+              <button class="btn btn-outline" onclick="showSection('recibidos')">Cancelar</button>
             </div>
           </div>
         </div>
@@ -796,22 +776,6 @@
         </div>
       </section>
 
-      <!-- ── BENEFICIARIOS ── -->
-      <section id="beneficiarios" class="section">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title"><i class="ti ti-user-check" style="color:var(--orange)"></i> Beneficiarios guardados</span>
-            <button class="btn btn-primary btn-sm" onclick="abrirNuevoBeneficiario()"><i class="ti ti-plus"></i> Nuevo beneficiario</button>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Nombre / Razón social</th><th>CUIT</th><th>Obs.</th><th></th></tr></thead>
-              <tbody id="tb-beneficiarios"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
     </main>
   </div>
 </div>
@@ -822,15 +786,15 @@
     <div class="modal-title" id="modal-cliente-titulo"><i class="ti ti-user-plus" style="color:var(--orange)"></i> Nuevo cliente</div>
     <div class="form-grid">
       <div class="form-field full">
-        <label for="cl-nombre">Nombre / Razón social *</label>
+        <label>Nombre / Razón social *</label>
         <input id="cl-nombre" placeholder="Ej: Construcciones del Sur S.A." />
       </div>
       <div class="form-field">
-        <label for="cl-cuit">CUIT</label>
+        <label>CUIT</label>
         <input id="cl-cuit" placeholder="20-12345678-9" />
       </div>
       <div class="form-field">
-        <label for="cl-banco">Banco habitual</label>
+        <label>Banco habitual</label>
         <select id="cl-banco">
           <option value="">— Sin especificar —</option>
           <option>Banco Nación Argentina</option>
@@ -849,7 +813,7 @@
         </select>
       </div>
       <div class="form-field full">
-        <label for="cl-obs">Observaciones</label>
+        <label>Observaciones</label>
         <input id="cl-obs" placeholder="Notas opcionales" />
       </div>
     </div>
@@ -860,42 +824,17 @@
   </div>
 </div>
 
-<!-- MODAL NUEVO BENEFICIARIO -->
-<div class="modal-backdrop" id="modal-beneficiario">
-  <div class="modal">
-    <div class="modal-title" id="modal-beneficiario-titulo"><i class="ti ti-user-plus" style="color:var(--orange)"></i> Nuevo beneficiario</div>
-    <div class="form-grid">
-      <div class="form-field full">
-        <label for="bf-nombre">Nombre / Razón social *</label>
-        <input id="bf-nombre" placeholder="Ej: Proveedor del Sur S.A." />
-      </div>
-      <div class="form-field">
-        <label for="bf-cuit">CUIT</label>
-        <input id="bf-cuit" placeholder="20-12345678-9" />
-      </div>
-      <div class="form-field full">
-        <label for="bf-obs">Observaciones</label>
-        <input id="bf-obs" placeholder="Notas opcionales" />
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-beneficiario')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarBeneficiario()"><i class="ti ti-device-floppy"></i> Guardar beneficiario</button>
-    </div>
-  </div>
-</div>
-
 
 <div class="modal-backdrop" id="modal-depositar">
   <div class="modal">
     <div class="modal-title"><i class="ti ti-building-bank" style="color:var(--blue)"></i> Registrar depósito</div>
     <div class="form-grid">
       <div class="form-field">
-        <label for="dep-fecha">Fecha de depósito</label>
+        <label>Fecha de depósito</label>
         <input id="dep-fecha" type="date" />
       </div>
       <div class="form-field">
-        <label for="dep-banco">Banco donde se deposita</label>
+        <label>Banco donde se deposita</label>
         <select id="dep-banco">
           <option>Banco Nación Argentina</option>
           <option>Banco Provincia de Buenos Aires</option>
@@ -921,12 +860,12 @@
     <div class="modal-title"><i class="ti ti-receipt" style="color:var(--purple)"></i> Registrar acreditación</div>
     <div class="form-grid" style="margin-bottom:1rem">
       <div class="form-field">
-        <label for="ac-fecha">Fecha de acreditación</label>
+        <label>Fecha de acreditación</label>
         <input id="ac-fecha" type="date" />
       </div>
       <div class="form-field">
-        <label for="ac-importe">Importe bruto acreditado (ARS)</label>
-        <input id="ac-importe" type="text" inputmode="decimal" oninput="formatearInputMonto(this); calcImpuestosModal();" />
+        <label>Importe bruto acreditado (ARS)</label>
+        <input id="ac-importe" type="number" oninput="calcImpuestosModal()" />
       </div>
     </div>
     <div id="ac-impuestos-box"></div>
@@ -952,16 +891,8 @@
 // ── DATA ──
 const HOY = new Date(); HOY.setHours(0,0,0,0);
 
-function parseLocalDate(d) {
-  // "YYYY-MM-DD" pasado a new Date() se interpreta como UTC, lo que en zonas
-  // horarias negativas (ej. Argentina, UTC-3) corre la fecha un día hacia
-  // atrás. Parseamos los componentes a mano para construir la fecha en
-  // horario LOCAL y evitar ese desfasaje.
-  const [y, m, day] = d.split('-').map(Number);
-  return new Date(y, m - 1, day);
-}
 function daysFrom(d) {
-  const t = parseLocalDate(d);
+  const t = new Date(d); t.setHours(0,0,0,0);
   return Math.round((t - HOY) / 86400000);
 }
 function fmt(d) {
@@ -973,38 +904,6 @@ function fmtARS(n) {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 2 }).format(n);
 }
 function todayISO() { return HOY.toISOString().split('T')[0]; }
-
-// ── MONTO: formato argentino (punto de miles, coma decimal) ──
-// Un <input type="number"> normal usa SIEMPRE punto como separador
-// decimal y no entiende el punto de miles. Si alguien escribía
-// "4.600.000" pesos, el navegador lo recortaba a "4.600000" → quedaba
-// guardado como 4,6. Por eso el campo de monto es texto, con esta
-// máscara propia.
-function formatearInputMonto(el) {
-  const cursorAlFinal = el.selectionStart === el.value.length;
-  let raw = el.value.replace(/[^\d,]/g, '');
-  const partes = raw.split(',');
-  let entero = partes[0].replace(/^0+(?=\d)/, '');
-  let decimal = partes.length > 1 ? partes.slice(1).join('').slice(0, 2) : undefined;
-  if (entero === '') entero = '';
-  entero = entero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  el.value = decimal !== undefined ? `${entero},${decimal}` : entero;
-  if (cursorAlFinal) el.setSelectionRange(el.value.length, el.value.length);
-}
-
-function parsearMonto(texto) {
-  if (!texto) return 0;
-  const limpio = String(texto).replace(/\./g, '').replace(',', '.');
-  const n = parseFloat(limpio);
-  return isNaN(n) ? 0 : n;
-}
-
-function formatearMonto(n) {
-  if (n === null || n === undefined || isNaN(n)) return '';
-  const partes = Number(n).toFixed(2).split('.');
-  let entero = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  return partes[1] === '00' ? entero : `${entero},${partes[1]}`;
-}
 
 // Tasas impuestos
 const TASA_CHEQUE = 0.006;  // 0.6% impuesto al cheque
@@ -1021,105 +920,9 @@ function calcImp(monto) {
 
 let nextId = 1;
 let selectedId = null;
-let editandoId = null; // si no es null, el formulario "Nuevo eCheq" está editando este cheque en vez de crear uno
 
 let cheques = [
 ];
-
-// ── BASE DE DATOS LOCAL (IndexedDB) ──
-// Esta es una base de datos real que vive en el celular/navegador, no
-// depende de Claude para nada ni de tener internet. Usa IndexedDB, que
-// viene incorporado en todos los navegadores Android (Chrome, Samsung
-// Internet, etc.) y soporta muchísimo más espacio que localStorage.
-//
-// Estructura: 3 "tablas" (object stores) — cheques, clientes y meta
-// (esta última solo guarda el contador nextId).
-const DB_NAME = 'echeqsDB';
-const DB_VERSION = 2;
-let db = null;
-
-function abrirDB() {
-  if (db) return Promise.resolve(db);
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = (e) => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains('cheques'))  d.createObjectStore('cheques',  { keyPath: 'id' });
-      if (!d.objectStoreNames.contains('clientes')) d.createObjectStore('clientes', { keyPath: 'id' });
-      if (!d.objectStoreNames.contains('beneficiarios')) d.createObjectStore('beneficiarios', { keyPath: 'id' });
-      if (!d.objectStoreNames.contains('meta'))     d.createObjectStore('meta',     { keyPath: 'key' });
-    };
-    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
-    req.onerror   = (e) => reject(e.target.error);
-  });
-}
-
-function idbGetAll(storeName) {
-  return abrirDB().then((d) => new Promise((resolve, reject) => {
-    const req = d.transaction(storeName, 'readonly').objectStore(storeName).getAll();
-    req.onsuccess = () => resolve(req.result || []);
-    req.onerror   = () => reject(req.error);
-  }));
-}
-
-function idbPut(storeName, value) {
-  return abrirDB().then((d) => new Promise((resolve, reject) => {
-    const tx = d.transaction(storeName, 'readwrite');
-    tx.objectStore(storeName).put(value);
-    tx.oncomplete = () => resolve();
-    tx.onerror    = () => reject(tx.error);
-  }));
-}
-
-// Reemplaza todo el contenido de una tabla por el array actual (simple y
-// robusto para el volumen de datos de esta app: cheques y clientes).
-function idbReemplazarTabla(storeName, items) {
-  return abrirDB().then((d) => new Promise((resolve, reject) => {
-    const tx = d.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    store.clear();
-    items.forEach((item) => store.put(item));
-    tx.oncomplete = () => resolve();
-    tx.onerror    = () => reject(tx.error);
-  }));
-}
-
-async function cargarDatosGuardados() {
-  const [cheques_, clientes_, beneficiarios_, metaRows] = await Promise.all([
-    idbGetAll('cheques'),
-    idbGetAll('clientes'),
-    idbGetAll('beneficiarios'),
-    idbGetAll('meta'),
-  ]);
-  const meta = metaRows.find((m) => m.key === 'counters');
-  return { cheques: cheques_, clientes: clientes_, beneficiarios: beneficiarios_, nextId: meta ? meta.nextId : null };
-}
-
-async function guardarDatos() {
-  try {
-    await Promise.all([
-      idbReemplazarTabla('cheques', cheques),
-      idbReemplazarTabla('clientes', clientes),
-      idbReemplazarTabla('beneficiarios', beneficiarios),
-      idbPut('meta', { key: 'counters', nextId }),
-    ]);
-  } catch (e) {
-    toast('⚠ No se pudo guardar en la base de datos del celular', true);
-  }
-}
-
-// Migración única: si esta es la primera vez que corre la versión con
-// IndexedDB pero el celular tenía datos de una versión anterior guardados
-// con localStorage, los recupera una sola vez y los pasa a la base nueva.
-async function migrarDatosViejos() {
-  try {
-    const raw = localStorage.getItem('echeqs:data');
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch (e) {
-    return null;
-  }
-}
 
 // ── ESTADO / BADGES ──
 function getEstado(c) {
@@ -1154,38 +957,28 @@ function getAlertas() {
   cheques.forEach(c => {
     if (!['recibido','endosado','presentado'].includes(c.tipo)) return;
     if (c.acreditado) return;
-
-    // Si ya está depositado o presentado al cobro, no tiene sentido seguir
-    // mostrando el aviso de "depositalo antes de que venza": esa etapa ya
-    // se cumplió. Antes se mostraban las dos alertas (depositar + acreditar)
-    // al mismo tiempo para el mismo cheque.
-    const enTransito = c.estado === 'depositado' || c.estado === 'presentado';
-
-    if (!enTransito) {
-      const d = daysFrom(c.cobro);
-      if (d < 0) {
-        res.push({ tipo:'danger', icon:'ti-alert-triangle', id:c.id,
-          titulo:`eCheq #${c.nro} VENCIDO hace ${Math.abs(d)} días`,
-          sub:`${c.librador} · ${fmtARS(c.monto)} · Cobro: ${fmt(c.cobro)}`,
-          action:'depositar' });
-      } else if (d === 0) {
-        res.push({ tipo:'danger', icon:'ti-alarm', id:c.id,
-          titulo:`eCheq #${c.nro} — vence HOY · ¡Depositá ya!`,
-          sub:`${c.librador} · ${fmtARS(c.monto)}`,
-          action:'depositar' });
-      } else if (d <= 7) {
-        res.push({ tipo:'warning', icon:'ti-bell-ringing', id:c.id,
-          titulo:`eCheq #${c.nro} vence en ${d} días`,
-          sub:`${c.librador} · ${fmtARS(c.monto)} · Cobro: ${fmt(c.cobro)}`,
-          action:'depositar' });
-      } else if (d <= 30) {
-        res.push({ tipo:'warning', icon:'ti-clock', id:c.id,
-          titulo:`eCheq #${c.nro} próximo a cobrar (${d} días)`,
-          sub:`${c.librador} · ${fmtARS(c.monto)} · Cobro: ${fmt(c.cobro)}`,
-          action:null });
-      }
+    const d = daysFrom(c.cobro);
+    if (d < 0) {
+      res.push({ tipo:'danger', icon:'ti-alert-triangle', id:c.id,
+        titulo:`eCheq #${c.nro} VENCIDO hace ${Math.abs(d)} días`,
+        sub:`${c.librador} · ${fmtARS(c.monto)} · Cobro: ${fmt(c.cobro)}`,
+        action:'depositar' });
+    } else if (d === 0) {
+      res.push({ tipo:'danger', icon:'ti-alarm', id:c.id,
+        titulo:`eCheq #${c.nro} — vence HOY · ¡Depositá ya!`,
+        sub:`${c.librador} · ${fmtARS(c.monto)}`,
+        action:'depositar' });
+    } else if (d <= 7) {
+      res.push({ tipo:'warning', icon:'ti-bell-ringing', id:c.id,
+        titulo:`eCheq #${c.nro} vence en ${d} días`,
+        sub:`${c.librador} · ${fmtARS(c.monto)} · Cobro: ${fmt(c.cobro)}`,
+        action:'depositar' });
+    } else if (d <= 30) {
+      res.push({ tipo:'warning', icon:'ti-clock', id:c.id,
+        titulo:`eCheq #${c.nro} próximo a cobrar (${d} días)`,
+        sub:`${c.librador} · ${fmtARS(c.monto)} · Cobro: ${fmt(c.cobro)}`,
+        action:null });
     }
-
     if (c.estado === 'depositado' && !c.acreditado) {
       res.push({ tipo:'info', icon:'ti-building-bank', id:c.id,
         titulo:`eCheq #${c.nro} depositado — pendiente de acreditación`,
@@ -1260,22 +1053,18 @@ function renderRecibidos() {
     let acc = '';
     if (c.acreditado) {
       acc = `<button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button>
-             <button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button>
              <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button>`;
     } else if (c.estado === 'presentado') {
       acc = `<button class="btn btn-accredit btn-sm" onclick="abrirAcreditar(${c.id})">Acreditar</button>
              <button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button>
-             <button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button>
              <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button>`;
     } else if (c.estado === 'depositado') {
       acc = `<button class="btn btn-accredit btn-sm" onclick="abrirAcreditar(${c.id})">Acreditar</button>
              <button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button>
-             <button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button>
              <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button>`;
     } else {
       acc = `<button class="btn btn-deposit btn-sm" onclick="abrirDepositar(${c.id})"><i class="ti ti-building-bank"></i> Depositar</button>
              <button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button>
-             <button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button>
              <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button>`;
     }
     return `<tr>
@@ -1306,7 +1095,7 @@ function renderEmitidos() {
       <td style="font-size:12px">${fmt(c.emision)}</td>
       <td style="font-size:12px">${fmt(c.cobro)}</td>
       <td><span class="badge ${ei.cls}">${ei.txt}</span></td>
-      <td><div style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></div></td>
+      <td><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></td>
     </tr>`;
   }).join('');
 }
@@ -1318,11 +1107,9 @@ function renderPresentados() {
   tb.innerHTML = rows.map(c => {
     const acc = c.acreditado
       ? `<button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button>
-         <button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button>
          <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button>`
       : `<button class="btn btn-accredit btn-sm" onclick="abrirAcreditar(${c.id})"><i class="ti ti-receipt"></i> Acreditar</button>
          <button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button>
-         <button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button>
          <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button>`;
     const ei = getEstado(c);
     return `<tr>
@@ -1373,7 +1160,7 @@ function renderCobrados() {
       <td style="font-weight:700;color:var(--green)">${fmtARS(c.acreditadoImporte)}</td>
       <td style="font-size:12px">${fmt(c.cobro)}</td>
       <td style="font-size:12px">${fmt(c.acreditadoFecha)}</td>
-      <td><button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button> <button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button></td>
+      <td><button class="btn btn-outline btn-sm" onclick="verDetalle(${c.id})"><i class="ti ti-eye"></i></button></td>
     </tr>`).join('') + `
     <tr class="ganancia-total">
       <td colspan="3" style="color:var(--green)">TOTAL</td>
@@ -1397,7 +1184,7 @@ function renderEndosados() {
     <td style="font-weight:600">${fmtARS(c.monto)}</td>
     <td style="font-size:12px">${fmt(c.cobro)}</td>
     <td><span class="badge b-endosado">Endosado</span></td>
-    <td><div style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></div></td>
+    <td><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></td>
   </tr>`).join('');
 }
 
@@ -1412,7 +1199,7 @@ function renderCustodia() {
     <td style="font-weight:600">${fmtARS(c.monto)}</td>
     <td style="font-size:12px">${fmt(c.cobro)}</td>
     <td><span class="badge b-custodia">En custodia</span></td>
-    <td><div style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></div></td>
+    <td><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></td>
   </tr>`).join('');
 }
 
@@ -1427,7 +1214,7 @@ function renderCedidos() {
     <td style="font-weight:600">${fmtARS(c.monto)}</td>
     <td style="font-size:12px">${fmt(c.cobro)}</td>
     <td><span class="badge b-endosado">Cedido</span></td>
-    <td><div style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="editarCheque(${c.id})"><i class="ti ti-edit"></i></button><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></div></td>
+    <td><button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarCheque(${c.id})"><i class="ti ti-trash"></i></button></td>
   </tr>`).join('');
 }
 
@@ -1471,15 +1258,13 @@ function renderAll() {
   renderCedidos();
   renderFlujo();
   renderClientes();
-  renderBeneficiarios();
 }
 
 // ── NAVEGACIÓN ──
 const TITLES = { alertas:'Alertas', recibidos:'eCheqs recibidos', emitidos:'eCheqs emitidos',
   presentados:'Presentados al cobro', cobrados:'Cobrados / Ganancias',
   endosados:'eCheqs endosados', custodia:'En custodia', cedidos:'eCheqs cedidos',
-  flujo:'Flujo de caja', nuevo:'Nuevo eCheq', clientes:'Clientes / Libradores',
-  beneficiarios:'Beneficiarios' };
+  flujo:'Flujo de caja', nuevo:'Nuevo eCheq', clientes:'Clientes / Libradores' };
 
 function showSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -1513,7 +1298,6 @@ function confirmarDepositar() {
   const c = cheques.find(x => x.id === selectedId);
   if (c) { c.estado = 'depositado'; c.depositadoEn = document.getElementById('dep-fecha').value; }
   closeModal('modal-depositar');
-  guardarDatos();
   toast('eCheq marcado como depositado');
   renderAll();
 }
@@ -1523,12 +1307,12 @@ function abrirAcreditar(id) {
   selectedId = id;
   const c = cheques.find(x => x.id === id);
   document.getElementById('ac-fecha').value = todayISO();
-  document.getElementById('ac-importe').value = c ? formatearMonto(c.monto) : '';
+  document.getElementById('ac-importe').value = c ? c.monto : '';
   calcImpuestosModal();
   openModal('modal-acreditar');
 }
 function calcImpuestosModal() {
-  const monto = parsearMonto(document.getElementById('ac-importe').value);
+  const monto = parseFloat(document.getElementById('ac-importe').value) || 0;
   const { imp, iibb, liq, neto } = calcImp(monto);
   document.getElementById('ac-impuestos-box').innerHTML = monto > 0 ? `
     <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;margin-top:.5rem">
@@ -1550,7 +1334,7 @@ function calcImpuestosModal() {
 function confirmarAcreditar() {
   const c = cheques.find(x => x.id === selectedId);
   if (c) {
-    const monto = parsearMonto(document.getElementById('ac-importe').value) || c.monto;
+    const monto = parseFloat(document.getElementById('ac-importe').value) || c.monto;
     const imp = calcImp(monto);
     c.acreditado = true;
     c.acreditadoImporte = imp.neto;
@@ -1559,7 +1343,6 @@ function confirmarAcreditar() {
     c.estado = 'acreditado';
   }
   closeModal('modal-acreditar');
-  guardarDatos();
   toast('✓ Cheque cobrado y acreditado correctamente');
   showSection('cobrados');
 }
@@ -1606,51 +1389,14 @@ function verDetalle(id) {
   openModal('modal-detalle');
 }
 
-// ── NUEVO ECHEQ / EDITAR ECHEQ ──
-function abrirFormularioNuevo() {
-  editandoId = null;
-  ['f-nro','f-librador','f-beneficiario','f-monto','f-emision','f-cobro','f-cuit','f-obs']
-    .forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-tipo').value = 'recibido';
-  document.getElementById('form-titulo').textContent = 'Registrar nuevo eCheq';
-  document.getElementById('btn-guardar-cheque').innerHTML = '<i class="ti ti-device-floppy"></i> Guardar eCheq';
-  document.getElementById('edit-warning').style.display = 'none';
-  showSection('nuevo');
-}
-
-function editarCheque(id) {
-  const c = cheques.find(x => x.id === id);
-  if (!c) return;
-  editandoId = id;
-  document.getElementById('f-tipo').value = c.tipo === 'recibido' && c.acreditado ? 'cobrado' : c.tipo;
-  document.getElementById('f-nro').value = c.nro;
-  document.getElementById('f-librador').value = c.librador;
-  document.getElementById('f-beneficiario').value = c.beneficiario || '';
-  document.getElementById('f-banco').value = c.banco;
-  document.getElementById('f-monto').value = formatearMonto(c.monto);
-  document.getElementById('f-emision').value = c.emision;
-  document.getElementById('f-cobro').value = c.cobro;
-  document.getElementById('f-cuit').value = c.cuit || '';
-  document.getElementById('f-obs').value = c.obs || '';
-  document.getElementById('form-titulo').textContent = `Editar eCheq #${c.nro}`;
-  document.getElementById('btn-guardar-cheque').innerHTML = '<i class="ti ti-device-floppy"></i> Guardar cambios';
-  const aviso = document.getElementById('edit-warning');
-  if (c.acreditado) {
-    aviso.style.display = '';
-    aviso.textContent = '⚠ Este cheque ya fue acreditado. Si cambiás el monto acá, los impuestos ya calculados NO se recalculan solos — volvé a hacer "Acreditar" después de guardar si necesitás corregir el neto.';
-  } else {
-    aviso.style.display = 'none';
-  }
-  showSection('nuevo');
-}
-
+// ── NUEVO ECHEQ ──
 function agregarCheque() {
   const tipo        = document.getElementById('f-tipo').value;
   const nro         = document.getElementById('f-nro').value.trim();
   const librador    = document.getElementById('f-librador').value.trim();
   const beneficiario = document.getElementById('f-beneficiario').value.trim();
   const banco       = document.getElementById('f-banco').value;
-  const monto       = parsearMonto(document.getElementById('f-monto').value);
+  const monto       = parseFloat(document.getElementById('f-monto').value) || 0;
   const emision     = document.getElementById('f-emision').value;
   const cobro       = document.getElementById('f-cobro').value;
   const cuit        = document.getElementById('f-cuit').value.trim();
@@ -1667,66 +1413,14 @@ function agregarCheque() {
     renderClientes();
   }
 
-  // Guardar beneficiario (si se completó) como beneficiario guardado si no existe aún
-  if (beneficiario && !beneficiarios.some(b => b.nombre.toLowerCase() === beneficiario.toLowerCase())) {
-    beneficiarios.push({ id: Date.now() + 1, nombre: beneficiario, cuit: '', obs: '' });
-    renderBeneficiarios();
-  }
-
   const esCobrado = tipo === 'cobrado';
-
-  // ── MODO EDICIÓN: actualizar un cheque existente en vez de crear uno ──
-  if (editandoId !== null) {
-    const c = cheques.find(x => x.id === editandoId);
-    if (c) {
-      let estadoNuevo = c.estado;
-      if (esCobrado) {
-        estadoNuevo = 'acreditado';
-      } else if (['presentado','endosado','custodia','cedido'].includes(tipo)) {
-        estadoNuevo = tipo;
-      } else if (!c.acreditado) {
-        estadoNuevo = 'pendiente';
-      }
-      c.tipo = esCobrado ? 'recibido' : tipo;
-      c.nro = nro; c.librador = librador; c.beneficiario = beneficiario; c.banco = banco;
-      c.monto = monto; c.emision = emision || todayISO(); c.cobro = cobro; c.cuit = cuit; c.obs = obs;
-      c.estado = estadoNuevo;
-      if (esCobrado && !c.acreditado) {
-        const imp = calcImp(monto);
-        c.acreditado = true;
-        c.acreditadoImporte = imp.neto;
-        c.acreditadoFecha = cobro || todayISO();
-        c.impuestos = imp;
-      }
-    }
-    editandoId = null;
-    guardarDatos();
-    const destMapEdit = { recibido:'recibidos', emitido:'emitidos', presentado:'presentados',
-                          cobrado:'cobrados', endosado:'endosados', custodia:'custodia', cedido:'cedidos' };
-    showSection(destMapEdit[tipo] || 'recibidos');
-    toast('✓ Cambios guardados');
-    return;
-  }
-
-  // ── MODO CREACIÓN: cheque nuevo ──
   const imp = esCobrado ? calcImp(monto) : null;
-
-  // El estado inicial debe reflejar el tipo elegido: si se registra
-  // directamente como presentado/endosado/custodia/cedido, el estado
-  // tiene que coincidir (antes quedaba siempre en 'pendiente' y la
-  // insignia mostrada no correspondía con la sección donde aparecía).
-  let estadoInicial = 'pendiente';
-  if (esCobrado) {
-    estadoInicial = 'acreditado';
-  } else if (['presentado','endosado','custodia','cedido'].includes(tipo)) {
-    estadoInicial = tipo;
-  }
 
   cheques.push({
     id: nextId++, tipo: esCobrado ? 'recibido' : tipo,
     nro, librador, beneficiario, banco, monto,
     emision: emision || todayISO(), cobro, cuit, obs,
-    estado: estadoInicial,
+    estado: esCobrado ? 'acreditado' : 'pendiente',
     depositadoEn:'',
     acreditado: esCobrado,
     acreditadoImporte: esCobrado ? imp.neto : 0,
@@ -1735,7 +1429,6 @@ function agregarCheque() {
   });
   ['f-nro','f-librador','f-beneficiario','f-monto','f-emision','f-cobro','f-cuit','f-obs']
     .forEach(id => document.getElementById(id).value = '');
-  guardarDatos();
   const destMap = { recibido:'recibidos', emitido:'emitidos', presentado:'presentados',
                     cobrado:'cobrados', endosado:'endosados', custodia:'custodia', cedido:'cedidos' };
   showSection(destMap[tipo] || 'recibidos');
@@ -1745,8 +1438,6 @@ function agregarCheque() {
 // ── CLIENTES ──
 let clientes = [];
 let editClienteId = null;
-let beneficiarios = [];
-let editBeneficiarioId = null;
 
 function guardarCliente() {
   const nombre = document.getElementById('cl-nombre').value.trim();
@@ -1763,7 +1454,6 @@ function guardarCliente() {
   }
   closeModal('modal-cliente');
   renderClientes();
-  guardarDatos();
   toast('Cliente guardado');
 }
 
@@ -1791,7 +1481,6 @@ function eliminarCliente(id) {
   if (!confirm(`¿Eliminar el cliente "${c.nombre}"?`)) return;
   clientes = clientes.filter(x => x.id !== id);
   renderClientes();
-  guardarDatos();
   toast('Cliente eliminado');
 }
 
@@ -1813,122 +1502,6 @@ function renderClientes() {
       </div>
     </td>
   </tr>`).join('');
-}
-
-// ── BENEFICIARIOS ──
-function guardarBeneficiario() {
-  const nombre = document.getElementById('bf-nombre').value.trim();
-  if (!nombre) { toast('El nombre es obligatorio', true); return; }
-  const cuit = document.getElementById('bf-cuit').value.trim();
-  const obs  = document.getElementById('bf-obs').value.trim();
-  if (editBeneficiarioId !== null) {
-    const b = beneficiarios.find(x => x.id === editBeneficiarioId);
-    if (b) { b.nombre = nombre; b.cuit = cuit; b.obs = obs; }
-    editBeneficiarioId = null;
-  } else {
-    beneficiarios.push({ id: Date.now(), nombre, cuit, obs });
-  }
-  closeModal('modal-beneficiario');
-  renderBeneficiarios();
-  guardarDatos();
-  toast('Beneficiario guardado');
-}
-
-function abrirNuevoBeneficiario() {
-  editBeneficiarioId = null;
-  document.getElementById('modal-beneficiario-titulo').innerHTML = '<i class="ti ti-user-plus" style="color:var(--orange)"></i> Nuevo beneficiario';
-  ['bf-nombre','bf-cuit','bf-obs'].forEach(id => document.getElementById(id).value = '');
-  openModal('modal-beneficiario');
-}
-
-function editarBeneficiario(id) {
-  const b = beneficiarios.find(x => x.id === id); if (!b) return;
-  editBeneficiarioId = id;
-  document.getElementById('modal-beneficiario-titulo').innerHTML = '<i class="ti ti-edit" style="color:var(--orange)"></i> Editar beneficiario';
-  document.getElementById('bf-nombre').value = b.nombre;
-  document.getElementById('bf-cuit').value   = b.cuit;
-  document.getElementById('bf-obs').value    = b.obs;
-  openModal('modal-beneficiario');
-}
-
-function eliminarBeneficiario(id) {
-  const b = beneficiarios.find(x => x.id === id); if (!b) return;
-  if (!confirm(`¿Eliminar el beneficiario "${b.nombre}"?`)) return;
-  beneficiarios = beneficiarios.filter(x => x.id !== id);
-  renderBeneficiarios();
-  guardarDatos();
-  toast('Beneficiario eliminado');
-}
-
-function renderBeneficiarios() {
-  const tb = document.getElementById('tb-beneficiarios');
-  if (!tb) return;
-  if (!beneficiarios.length) {
-    tb.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="ti ti-user-check"></i>Sin beneficiarios guardados.<br>Agregá uno con el botón de arriba.</div></td></tr>`;
-    return;
-  }
-  tb.innerHTML = beneficiarios.map(b => `<tr>
-    <td style="font-weight:600">${b.nombre}</td>
-    <td><code>${b.cuit || '—'}</code></td>
-    <td style="font-size:12px;color:var(--text-2)">${b.obs || '—'}</td>
-    <td>
-      <div style="display:flex;gap:5px">
-        <button class="btn btn-outline btn-sm" onclick="editarBeneficiario(${b.id})"><i class="ti ti-edit"></i></button>
-        <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="eliminarBeneficiario(${b.id})"><i class="ti ti-trash"></i></button>
-      </div>
-    </td>
-  </tr>`).join('');
-}
-
-// ── AUTOCOMPLETE BENEFICIARIO (mismo patrón que el de Librador) ──
-function acFiltrarBenef() {
-  const q = document.getElementById('f-beneficiario').value.toLowerCase();
-  const dd = document.getElementById('ac-dropdown-benef');
-  const matches = q.length === 0
-    ? beneficiarios
-    : beneficiarios.filter(b => b.nombre.toLowerCase().includes(q) || (b.cuit && b.cuit.includes(q)));
-
-  if (!beneficiarios.length && q.length === 0) { dd.classList.remove('open'); return; }
-
-  let html = matches.map(b => `
-    <div class="ac-item" onmousedown="acSeleccionarBenef(${b.id})">
-      <div>
-        <div class="ac-item-name">${b.nombre}</div>
-        ${b.cuit ? `<div class="ac-item-cuit">CUIT: ${b.cuit}</div>` : ''}
-      </div>
-    </div>`).join('');
-
-  if (q.length > 0) {
-    const existe = beneficiarios.some(b => b.nombre.toLowerCase() === q);
-    if (!existe) {
-      html += `<div class="ac-add-new" onmousedown="acGuardarNuevoBenef()">
-        <i class="ti ti-plus"></i> Guardar "${document.getElementById('f-beneficiario').value}" como nuevo beneficiario
-      </div>`;
-    }
-  }
-
-  dd.innerHTML = html || '<div style="padding:8px 12px;font-size:13px;color:var(--text-3)">Sin resultados</div>';
-  dd.classList.add('open');
-}
-
-function acSeleccionarBenef(id) {
-  const b = beneficiarios.find(x => x.id === id); if (!b) return;
-  document.getElementById('f-beneficiario').value = b.nombre;
-  document.getElementById('ac-dropdown-benef').classList.remove('open');
-}
-
-function acGuardarNuevoBenef() {
-  const nombre = document.getElementById('f-beneficiario').value.trim();
-  if (!nombre) return;
-  beneficiarios.push({ id: Date.now(), nombre, cuit: '', obs: '' });
-  document.getElementById('ac-dropdown-benef').classList.remove('open');
-  guardarDatos();
-  toast(`Beneficiario "${nombre}" guardado`);
-  renderBeneficiarios();
-}
-
-function acCerrarBenef() {
-  document.getElementById('ac-dropdown-benef').classList.remove('open');
 }
 
 // ── AUTOCOMPLETE ──
@@ -1978,7 +1551,6 @@ function acGuardarNuevo() {
   if (!nombre) return;
   clientes.push({ id: Date.now(), nombre, cuit: document.getElementById('f-cuit').value.trim(), banco: '', obs: '' });
   document.getElementById('ac-dropdown').classList.remove('open');
-  guardarDatos();
   toast(`Cliente "${nombre}" guardado`);
   renderClientes();
 }
@@ -1991,9 +1563,8 @@ function acCerrar() {
 function eliminarCheque(id) {
   const c = cheques.find(x => x.id === id);
   if (!c) return;
-  if (!confirm(`¿Eliminar el eCheq #${c.nro} de ${c.librador}?\n\nEsta acción no se puede deshacer.`)) return;
+  if (!confirm(`¿Eliminár el eCheq #${c.nro} de ${c.librador}?\n\nEsta acción no se puede deshacer.`)) return;
   cheques = cheques.filter(x => x.id !== id);
-  guardarDatos();
   toast('eCheq eliminado');
   renderAll();
 }
@@ -2009,50 +1580,7 @@ function toast(msg, error = false) {
 }
 
 // ── INIT ──
-(async function iniciarApp() {
-  try {
-    const datos = await cargarDatosGuardados();
-    cheques  = datos.cheques  || [];
-    clientes = datos.clientes || [];
-    beneficiarios = datos.beneficiarios || [];
-    nextId   = datos.nextId   || null;
-
-    // Si la base de datos está vacía, puede ser la primera vez que se
-    // abre esta versión: buscamos datos de la versión anterior (la que
-    // guardaba en localStorage) y los migramos una sola vez.
-    if (!cheques.length && !clientes.length) {
-      const viejos = await migrarDatosViejos();
-      if (viejos) {
-        cheques  = viejos.cheques  || [];
-        clientes = viejos.clientes || [];
-        beneficiarios = viejos.beneficiarios || [];
-        nextId   = viejos.nextId   || null;
-        await guardarDatos();
-        localStorage.removeItem('echeqs:data');
-        toast('Se recuperaron los datos guardados anteriormente');
-      }
-    }
-
-    if (!nextId) nextId = (cheques.reduce((m, c) => Math.max(m, c.id), 0) + 1) || 1;
-
-    // Le pedimos al navegador que NO borre estos datos automáticamente
-    // si el celular necesita liberar espacio (no siempre se otorga, pero
-    // no cuesta nada pedirlo).
-    if (navigator.storage && navigator.storage.persist) {
-      navigator.storage.persist().catch(() => {});
-    }
-  } catch (e) {
-    toast('⚠ No se pudo abrir la base de datos local del celular', true);
-  }
-  renderAll();
-})();
-
-// Service worker: permite que la app instalada funcione sin internet.
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
-  });
-}
+renderAll();
 </script>
 </body>
 </html>
