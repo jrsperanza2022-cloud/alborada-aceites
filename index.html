@@ -408,6 +408,7 @@ tr:hover td{background:var(--prl);}
       <div id="actor-echeqs-prov" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al proveedor <button class="btn bsm bs" onclick="addActorEcheq('prov')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
         <div id="actor-echeq-rows-prov"></div>
+        <div id="actor-echeq-total-prov"></div>
       </div>
     </div>
     <div class="actor-card a-ref">
@@ -450,6 +451,7 @@ tr:hover td{background:var(--prl);}
       <div id="actor-echeqs-ref" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al refinador <button class="btn bsm bs" onclick="addActorEcheq('ref')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
         <div id="actor-echeq-rows-ref"></div>
+        <div id="actor-echeq-total-ref"></div>
       </div>
     </div>
     <div class="actor-card a-transp">
@@ -498,6 +500,7 @@ tr:hover td{background:var(--prl);}
       <div id="actor-echeqs-transp" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al transportista <button class="btn bsm bs" onclick="addActorEcheq('transp')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
         <div id="actor-echeq-rows-transp"></div>
+        <div id="actor-echeq-total-transp"></div>
       </div>
     </div>
     <div class="actor-card a-com">
@@ -537,6 +540,7 @@ tr:hover td{background:var(--prl);}
       <div id="actor-echeqs-com" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs al comisionista <button class="btn bsm bs" onclick="addActorEcheq('com')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
         <div id="actor-echeq-rows-com"></div>
+        <div id="actor-echeq-total-com"></div>
       </div>
     </div>
     <div class="actor-card a-comp" style="margin-bottom:0">
@@ -573,16 +577,18 @@ tr:hover td{background:var(--prl);}
       <div id="actor-echeqs-comp" style="display:none;margin-top:10px;background:var(--prl);border:1.5px solid var(--prb);border-radius:var(--rsm);padding:10px 12px">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--pri);margin-bottom:8px;display:flex;align-items:center;gap:8px"><i class="ti ti-credit-card"></i>Echeqs del comprador <button class="btn bsm bs" onclick="addActorEcheq('comp')"><i class="ti ti-plus"></i>Agregar echeq</button></div>
         <div id="actor-echeq-rows-comp"></div>
+        <div id="actor-echeq-total-comp"></div>
       </div>
     </div>
   </div>
 
   <!-- ECHEQS INLINE -->
   <div class="card" id="card-echeqs-inline" style="display:none">
-    <div class="sec"><span><i class="ti ti-credit-card"></i>Echeqs de esta operación (hasta 6)</span>
+    <div class="sec"><span><i class="ti ti-credit-card"></i>Echeqs de esta operación</span>
       <button class="btn bsm bp" onclick="addEcheqRow()"><i class="ti ti-plus"></i>Agregar echeq</button>
     </div>
     <div id="echeqs-inline-container"></div>
+    <div id="inline-echeq-total"></div>
     <div class="alert ainfo" style="margin-top:8px"><i class="ti ti-info-circle"></i>Los echeqs cargados aquí se guardan también en la sección Echeqs vinculados a esta operación.</div>
   </div>
 
@@ -949,9 +955,28 @@ const DC=v=>v>0?'var(--dan)':v<0?'var(--suc)':'var(--t3)';
 const DS=v=>(v>0?'+':'')+Number(v).toLocaleString('es-AR',{maximumFractionDigits:3})+' tn';
 const N=id=>parseFloat(document.getElementById(id)?.value)||0;
 const Np=id=>{const e=document.getElementById(id);if(!e)return 0;return NpV(e.value);};
+// ── Corrección de ambigüedad "." vs "," ──────────────────────────────────
+// Convención es-AR: "," = decimal, "." = separador de miles (agrupa de a 3).
+// PERO si el usuario tipea "." como decimal (muy común: teclado numérico de
+// celular, costumbre de "." en vez de ",") y NO queda un grupo de 3 dígitos
+// exactos al final (p.ej. "446.48" o "32.5"), entonces ese punto NO es un
+// separador de miles válido (un grupo de miles real siempre tiene 3 dígitos:
+// "446.480"), así que se interpreta como separador decimal. Esto es lo que
+// evitaba que precios como "446,48" tipeados con punto se transformaran en
+// barbaridades como "44.648" al perder el punto y arrastrar los dígitos.
+function normDecimalDot(s){
+  if(s.includes(','))return s;
+  const dots=(s.match(/\./g)||[]).length;
+  if(dots===1){
+    const after=s.split('.')[1]||'';
+    if(after.length<=2)return s.replace('.',',');
+  }
+  return s;
+}
 const NpV=v=>{
   if(v===null||v===undefined||v==='')return 0;
   let s=(v+'').trim().replace(/\s+/g,'');
+  s=normDecimalDot(s);
   if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
   else{s=s.replace(/\./g,'');}
   return parseFloat(s)||0;
@@ -960,6 +985,7 @@ const NpTC=id=>{
   const e=document.getElementById(id);
   if(!e)return 0;
   let s=(e.value+'').trim().replace(/\s/g,'');
+  s=normDecimalDot(s);
   // TC values are 1000-2000 range: point = thousands sep, comma = decimal
   // e.g. "1.393" = 1393, "1.393,50" = 1393.50
   if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
@@ -971,8 +997,12 @@ const NpTN=id=>{
   const e=document.getElementById(id);
   if(!e)return 0;
   let s=(e.value+'').trim().replace(/\s+/g,'');
-  if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.');}
-  else{s=s.replace(/\./g,'');}
+  // Tn: un camión pesa decenas de tn, nunca miles → el separador SIEMPRE es
+  // decimal acá (admite "28.020" y "28,020" como el mismo valor: 28,02 tn,
+  // tal cual indica el placeholder del campo).
+  s=s.replace(',','.');
+  const li=s.lastIndexOf('.');
+  if(li!==-1)s=s.slice(0,li).replace(/\./g,'')+'.'+s.slice(li+1).replace(/\./g,'');
   return parseFloat(s)||0;
 };
 const V=id=>document.getElementById(id)?.value||'';
@@ -985,7 +1015,7 @@ const actorEcheqCount={prov:0,ref:0,transp:0,com:0,comp:0};
 
 
 function fmtNum(el){
-  const v=el.value;
+  const v=normDecimalDot(el.value);
   const hasComma=v.includes(',');
   const parts=v.replace(/[^\d,]/g,'').split(',');
   const intPart=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');
@@ -1115,7 +1145,6 @@ function toggleActorEcheq(actor,val){
 }
 
 function addActorEcheq(actor){
-  if(actorEcheqCount[actor]>=6){toast('Máximo 6 echeqs por actor','err');return;}
   actorEcheqCount[actor]++;
   const i=actorEcheqCount[actor];
   const row=document.createElement('div');
@@ -1128,16 +1157,17 @@ function addActorEcheq(actor){
     <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}"></div>
     <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}"></div>
     <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}"></div>
-    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" placeholder="ej: 7.000.000" oninput="calcSaldo('${actor}')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" placeholder="ej: 7.000.000" oninput="fmtNum(this);calcSaldo('${actor}')" onkeypress="return /[\d.,]/.test(event.key)"></div>
     <div class="field"><label>Estado</label>
       <select id="aei-est-${actor}-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
-    <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+    <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();calcSaldo('${actor}')" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
   document.getElementById('actor-echeq-rows-'+actor).appendChild(row);
+  updateActorEcheqTotal(actor);
 }
 
 function getActorEcheqs(actor,opId){
   const result=[];
-  for(let i=1;i<=6;i++){
+  for(let i=1;i<=actorEcheqCount[actor];i++){
     const el=document.getElementById('aer-'+actor+'-'+i);if(!el)continue;
     const raw=document.getElementById('aei-imp-'+actor+'-'+i)?.value||'';const imp=NpV(raw);if(!imp)continue;
     result.push({id:Date.now()+Math.random(),
@@ -1159,6 +1189,7 @@ function clearActorEcheqs(){
     actorEcheqCount[actor]=0;
     const c=document.getElementById('actor-echeq-rows-'+actor);if(c)c.innerHTML='';
     const p=document.getElementById('actor-echeqs-'+actor);if(p)p.style.display='none';
+    updateActorEcheqTotal(actor);
   });
 }
 
@@ -1182,14 +1213,15 @@ function restoreActorEcheqs(opId){
         <div class="field"><label>N° cheque</label><input type="text" id="aei-num-${actor}-${i}" value="${e.num||''}"></div>
         <div class="field"><label>F. realizado</label><input type="date" id="aei-fr-${actor}-${i}" value="${e.fr||''}"></div>
         <div class="field"><label>F. cobro</label><input type="date" id="aei-fc-${actor}-${i}" value="${e.fc||''}"></div>
-        <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" value="${e.imp||''}"></div>
+        <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="aei-imp-${actor}-${i}" value="${e.imp||''}" oninput="fmtNum(this);calcSaldo('${actor}')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Estado</label>
           <select id="aei-est-${actor}-${i}">
             ${['Pendiente','Al cobro','Cobrado total','Endosado','Rechazado'].map(opt=>`<option${opt===e.estado?' selected':''}>${opt}</option>`).join('')}
           </select></div>
-        <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();actorEcheqCount['${actor}']--" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+        <button class="bi del" onclick="document.getElementById('aer-${actor}-${i}').remove();calcSaldo('${actor}')" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
       document.getElementById('actor-echeq-rows-'+actor).appendChild(row);
     });
+    updateActorEcheqTotal(actor);
   });
 }
 
@@ -1357,7 +1389,6 @@ function toggleEcheqInline(){
   set('lbl-at', isEcheq?'Total echeqs':'Total adelantos');
 }
 function addEcheqRow(){
-  if(inlineEcheqCount>=6){toast('Máximo 6 echeqs','err');return;}
   inlineEcheqCount++;
   const i=inlineEcheqCount;
   const div=document.createElement('div');
@@ -1368,11 +1399,12 @@ function addEcheqRow(){
     <div class="field"><label>N° cheque</label><input type="text" id="ei-num-${i}"></div>
     <div class="field"><label>F. realizado</label><input type="date" id="ei-fr-${i}"></div>
     <div class="field"><label>F. cobro</label><input type="date" id="ei-fc-${i}"></div>
-    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="ei-imp-${i}" placeholder="ej: 7.000.000" onkeypress="return /[\d.,]/.test(event.key)"></div>
+    <div class="field"><label>Importe ($)</label><input type="text" inputmode="numeric" id="ei-imp-${i}" placeholder="ej: 7.000.000" oninput="fmtNum(this);updateInlineEcheqTotal()" onkeypress="return /[\d.,]/.test(event.key)"></div>
     <div class="field"><label>Estado</label>
       <select id="ei-est-${i}"><option>Pendiente</option><option>Al cobro</option><option>Cobrado total</option><option>Endosado</option><option>Rechazado</option></select></div>
-    <button class="bi del" onclick="document.getElementById('er-${i}').remove()" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
+    <button class="bi del" onclick="document.getElementById('er-${i}').remove();updateInlineEcheqTotal()" style="align-self:flex-end"><i class="ti ti-trash"></i></button>`;
   document.getElementById('echeqs-inline-container').appendChild(div);
+  updateInlineEcheqTotal();
 }
 function getInlineEcheqs(opId){
   const result=[];
@@ -1386,17 +1418,46 @@ function getInlineEcheqs(opId){
   }
   return result;
 }
+function sumInlineEcheqs(){
+  let total=0;
+  for(let i=1;i<=inlineEcheqCount;i++){
+    const imp=document.getElementById('ei-imp-'+i);
+    if(imp)total+=NpV(imp.value);
+  }
+  return total;
+}
+function updateInlineEcheqTotal(){
+  const box=document.getElementById('inline-echeq-total');
+  if(!box)return;
+  const total=sumInlineEcheqs();
+  if(!total){box.innerHTML='';return;}
+  box.innerHTML=`<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px dashed var(--prb)">
+    <div><div style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.4px;font-weight:700">Total cheques sin IVA</div><b style="font-size:14px">${MF(total)}</b></div>
+    <div><div style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.4px;font-weight:700">Total cheques c/IVA (21%)</div><b style="font-size:14px;color:var(--acc)">${MF(IVA(total))}</b></div>
+  </div>`;
+}
 function sumActorEcheqs(actor){
   // Suma los importes de los echeqs del panel parcial de ese actor
   let total=0;
-  for(let i=1;i<=6;i++){
+  for(let i=1;i<=actorEcheqCount[actor];i++){
     const imp=document.getElementById('aei-imp-'+actor+'-'+i);
     if(imp)total+=NpV(imp.value);
   }
   return total;
 }
+function updateActorEcheqTotal(actor){
+  const box=document.getElementById('actor-echeq-total-'+actor);
+  if(!box)return;
+  const total=sumActorEcheqs(actor);
+  if(!total){box.innerHTML='';return;}
+  box.innerHTML=`<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px dashed var(--prb)">
+    <div><div style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.4px;font-weight:700">Total cheques sin IVA</div><b style="font-size:14px">${MF(total)}</b></div>
+    <div><div style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:.4px;font-weight:700">Total cheques c/IVA (21%)</div><b style="font-size:14px;color:var(--acc)">${MF(IVA(total))}</b></div>
+  </div>`;
+}
 function calcSaldo(actor){
   const echeqSum=sumActorEcheqs(actor);
+  updateActorEcheqTotal(actor);
   if(actor==='prov'){
     const tv=N('f-tv');
     const p=(Np('f-prov-pagado')||0)+echeqSum;
@@ -1742,6 +1803,7 @@ function clearForm(){
   document.getElementById('save-lbl').textContent='Guardar operación';
   document.getElementById('card-echeqs-inline').style.display='none';
   document.getElementById('echeqs-inline-container').innerHTML='';
+  document.getElementById('inline-echeq-total').innerHTML='';
   inlineEcheqCount=0;
   editingId=null;tix1=[];tix2=[];renderTix('tix1');renderTix('tix2');clearActorEcheqs();
   // Reset IVA mode selects
