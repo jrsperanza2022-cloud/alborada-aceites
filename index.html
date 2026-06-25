@@ -394,14 +394,14 @@ tr:hover td{background:var(--prl);}
         <div class="field" id="f-prov-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
           <input type="text" inputmode="numeric" id="f-prov-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
       </div>
-      <div class="g4" style="margin-top:8px">
-        <div class="field"><label id="lbl-a1">Adelanto 1 ($)</label><input type="text" inputmode="numeric" id="f-a1" placeholder="ej: 20.000.000" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
-        <div class="field"><label id="lbl-a2">Adelanto 2 ($)</label><input type="text" inputmode="numeric" id="f-a2" placeholder="ej: 0" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
-        <div class="field"><label id="lbl-a3">Adelanto 3 ($)</label><input type="text" inputmode="numeric" id="f-a3" placeholder="ej: 0" oninput="calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
-        <div class="field"><label id="lbl-at">Total adelantos</label><input type="text" id="f-at" readonly></div>
+      <div class="g4" id="prov-adel-block" style="margin-top:8px">
+        <div class="field"><label>Adelanto 1 ($)</label><input type="text" inputmode="numeric" id="f-a1" placeholder="ej: 20.000.000" oninput="fmtNum(this);calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Adelanto 2 ($)</label><input type="text" inputmode="numeric" id="f-a2" placeholder="ej: 0" oninput="fmtNum(this);calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Adelanto 3 ($)</label><input type="text" inputmode="numeric" id="f-a3" placeholder="ej: 0" oninput="fmtNum(this);calcAdel()" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field"><label>Total adelantos</label><input type="text" id="f-at" readonly></div>
       </div>
       <div class="g3" style="margin-top:8px">
-        <div class="field"><label id="lbl-prov-pagado">Importe pagado ($)</label><input type="text" inputmode="numeric" id="f-prov-pagado" oninput="fmtNum(this);calcSaldo('prov')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="fld-prov-pagado"><label>Importe pagado ($)</label><input type="text" inputmode="numeric" id="f-prov-pagado" oninput="fmtNum(this);calcSaldo('prov')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-prov-saldo" readonly></div>
         <div class="field"><label>Notas</label><input type="text" id="f-prov-notas" placeholder="ej: saldo a 30 días"></div>
       </div>
@@ -439,7 +439,7 @@ tr:hover td{background:var(--prl);}
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Costo servicio neto ($)</label><input type="text" inputmode="numeric" id="f-ref-costo" placeholder="ej: 6.500.000" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Costo c/IVA ($)</label><input type="text" id="f-ref-civa" readonly></div>
-        <div class="field"><label id="lbl-ref-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-ref-pagado" oninput="fmtNum(this);calcSaldo('ref')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="fld-ref-pagado"><label>Pagado ($)</label><input type="text" inputmode="numeric" id="f-ref-pagado" oninput="fmtNum(this);calcSaldo('ref')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo ($)</label><input type="text" id="f-ref-saldo" readonly></div>
       </div>
       <div class="g3" style="margin-top:8px">
@@ -488,8 +488,8 @@ tr:hover td{background:var(--prl);}
       <div class="g4" style="margin-top:8px">
         <div class="field"><label>Total flete neto ($)</label><input type="text" id="f-flete-total" readonly></div>
         <div class="field"><label>Total flete c/IVA ($)</label><input type="text" id="f-flete-total-iva" readonly></div>
-        <div class="field"><label id="lbl-transp-pag1">Pagado tramo 1 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag1" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
-        <div class="field"><label id="lbl-transp-pag2">Pagado tramo 2 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag2" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="fld-transp-pag1"><label>Pagado tramo 1 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag1" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="fld-transp-pag2"><label>Pagado tramo 2 ($)</label><input type="text" inputmode="numeric" id="f-transp-pag2" oninput="fmtNum(this);calcSaldo('transp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g3" style="margin-top:8px">
         <div class="field"><label>Saldo pendiente ($)</label><input type="text" id="f-transp-saldo" readonly></div>
@@ -532,7 +532,7 @@ tr:hover td{background:var(--prl);}
             <option value="blue">Blue</option><option value="manual">Manual</option></select></div>
         <div class="field" id="f-com-tc-val-wrap" style="display:none"><label>Valor USD ($)</label>
           <input type="text" inputmode="numeric" id="f-com-tc-val" placeholder="ej: 1.393" oninput="liveCalc()" onkeypress="return /[\d.,\-]/.test(event.key)"><div class="hint">TC de esa fecha (ej: 1.393)</div></div>
-        <div class="field"><label id="lbl-com-pagado">Pagado ($)</label><input type="text" inputmode="numeric" id="f-com-pagado" oninput="fmtNum(this);calcSaldo('com')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="fld-com-pagado"><label>Pagado ($)</label><input type="text" inputmode="numeric" id="f-com-pagado" oninput="fmtNum(this);calcSaldo('com')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Estado</label>
           <select id="f-com-est"><option>Pendiente</option><option>Parcial</option><option>Pagado</option><option>Echeq rechazado</option></select></div>
       </div>
@@ -568,7 +568,7 @@ tr:hover td{background:var(--prl);}
         <div class="field" id="f-comp-tc-val-wrap" style="display:none"><label>Valor dólar ($)</label><input type="text" inputmode="numeric" id="f-comp-tc-val" placeholder="ej: 1391" oninput="liveCalc()" onkeypress="return /[\d.,]/.test(event.key)"></div>
       </div>
       <div class="g4" style="margin-top:8px">
-        <div class="field"><label id="lbl-comp-cobrado">Cobrado al comprador ($)</label><input type="text" inputmode="numeric" id="f-comp-cobrado" oninput="fmtNum(this);calcSaldo('comp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
+        <div class="field" id="fld-comp-cobrado"><label>Cobrado al comprador ($)</label><input type="text" inputmode="numeric" id="f-comp-cobrado" oninput="fmtNum(this);calcSaldo('comp')" onkeypress="return /[\d.,]/.test(event.key)"></div>
         <div class="field"><label>Saldo a cobrar ($)</label><input type="text" id="f-comp-saldo" readonly></div>
         <div class="field"><label>Estado cobro</label>
           <select id="f-comp-est"><option>Pendiente</option><option>Parcial</option><option>A cuenta</option><option>Cobrado</option></select></div>
@@ -1122,26 +1122,25 @@ function toggleCompMoneda(){
   if(dvw)dvw.style.display=isDol?'':'none';
 }
 
+const ACTOR_PAGADO_FIELDS={
+  prov:[{wrap:'fld-prov-pagado',input:'f-prov-pagado'}],
+  ref:[{wrap:'fld-ref-pagado',input:'f-ref-pagado'}],
+  transp:[{wrap:'fld-transp-pag1',input:'f-transp-pag1'},{wrap:'fld-transp-pag2',input:'f-transp-pag2'}],
+  com:[{wrap:'fld-com-pagado',input:'f-com-pagado'}],
+  comp:[{wrap:'fld-comp-cobrado',input:'f-comp-cobrado'}],
+};
 function toggleActorEcheq(actor,val){
   const v=(val||'').toLowerCase();
   const isEcheq=v.includes('echeq');
-  const isTotal=v.includes('total');
-  const isEcheqParcial=isEcheq&&!isTotal;
-  // Panel de echeqs individuales solo si es echeq parcial
+  // Panel de "Agregar echeq" (alta dinámica, sin límite): visible para Echeq total o parcial
   const panel=document.getElementById('actor-echeqs-'+actor);
-  if(panel)panel.style.display=isEcheqParcial?'block':'none';
-  // Renombrar labels según contexto
-  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
-  const labels={
-    prov:{pagado:'lbl-prov-pagado', def:'Importe pagado ($)', echeq:'Importe echeq ($)'},
-    ref: {pagado:'lbl-ref-pagado',  def:'Pagado ($)',         echeq:'Importe echeq ($)'},
-    transp:{pagado:'lbl-transp-pag1',def:'Pagado tramo 1 ($)',echeq:'Echeq tramo 1 ($)'},
-    com: {pagado:'lbl-com-pagado',  def:'Pagado ($)',         echeq:'Importe echeq ($)'},
-    comp:{pagado:'lbl-comp-cobrado',def:'Cobrado al comprador ($)',echeq:'Importe echeq ($)'},
-  };
-  const lbl=labels[actor];
-  if(lbl)set(lbl.pagado, isEcheq?lbl.echeq:lbl.def);
-  if(actor==='transp')set('lbl-transp-pag2',isEcheq?'Echeq tramo 2 ($)':'Pagado tramo 2 ($)');
+  if(panel)panel.style.display=isEcheq?'block':'none';
+  // El importe ya no se tipea aparte: cuando hay echeq, sale de sumar los cheques cargados abajo.
+  (ACTOR_PAGADO_FIELDS[actor]||[]).forEach(f=>{
+    const wrap=document.getElementById(f.wrap);
+    if(wrap)wrap.style.display=isEcheq?'none':'';
+  });
+  calcSaldo(actor);
 }
 
 function addActorEcheq(actor){
@@ -1370,23 +1369,13 @@ function checkPrecioRazonable(){
 function toggleAdelantos(val){
   const v=(val||'').toLowerCase();
   const isEcheq=v.includes('echeq');
-  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
-  set('lbl-a1', isEcheq?'Echeq 1 ($)':'Adelanto 1 ($)');
-  set('lbl-a2', isEcheq?'Echeq 2 ($)':'Adelanto 2 ($)');
-  set('lbl-a3', isEcheq?'Echeq 3 ($)':'Adelanto 3 ($)');
-  set('lbl-at', isEcheq?'Total echeqs':'Total adelantos');
+  const block=document.getElementById('prov-adel-block');
+  if(block)block.style.display=isEcheq?'none':'';
 }
 function toggleEcheqInline(){
   const v=V('f-pago').toLowerCase();
   const isEcheq=v.includes('echeq');
-  const isTotal=v.includes('total');
-  const isEcheqParcial=isEcheq&&!isTotal;
-  document.getElementById('card-echeqs-inline').style.display=isEcheqParcial?'block':'none';
-  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
-  set('lbl-a1', isEcheq?'Echeq 1 ($)':'Adelanto 1 ($)');
-  set('lbl-a2', isEcheq?'Echeq 2 ($)':'Adelanto 2 ($)');
-  set('lbl-a3', isEcheq?'Echeq 3 ($)':'Adelanto 3 ($)');
-  set('lbl-at', isEcheq?'Total echeqs':'Total adelantos');
+  document.getElementById('card-echeqs-inline').style.display=isEcheq?'block':'none';
 }
 function addEcheqRow(){
   inlineEcheqCount++;
